@@ -1,0 +1,17 @@
+{
+  "name": "@my-harness/spec-parser",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "main": "lib/task-format.js",
+  "exports": {
+    ".": "./lib/task-format.js",
+    "./scan-lines": "./lib/scan-lines.js",
+    "./config-kiro": "./lib/config-kiro.js",
+    "./event-format": "./lib/event-format.js",
+    "./signature-line": "./lib/signature-line.js",
+    "./waves": "./lib/waves.js",
+    "./declared-diffs.json": "./declared-diffs.json"
+  },
+  "scripts": { "test": "node --test test/*.test.mjs" }
+}

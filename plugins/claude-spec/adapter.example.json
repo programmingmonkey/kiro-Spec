@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "specsRoot": ".kiro/specs",
+  "signatureTimeZone": "Asia/Shanghai",
+  "writePolicy": {
+    "mode": "authorized",
+    "authorityFile": ".kiro/steering/spec-conventions.md",
+    "authorityHash": "sha256:REPLACE_WITH_COMPUTED_HASH"
+  },
+  "rules": [
+    {
+      "match": [
+        ".kiro/specs/**/*.md"
+      ],
+      "contextFiles": [
+        ".kiro/steering/spec-conventions.md"
+      ]
+    }
+  ],
+  "validators": [
+    {
+      "id": "spec-tasks-lint",
+      "profile": "kiro-spec/spec-tasks-lint-v1"
+    }
+  ]
+}

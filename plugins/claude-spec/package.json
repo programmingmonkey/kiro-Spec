@@ -1,0 +1,38 @@
+{
+  "name": "claude-spec",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Kiro-compatible requirements-first Spec authoring, PreToolUse stage gating, and serial task execution for Claude — local Claude Code CLI by default, Claude Cowork as an explicit alternate topology. collaborative tier.",
+  "type": "module",
+  "dependencies": {
+    "@my-harness/kiro-rules": "workspace:*",
+    "@my-harness/spec-analysis": "workspace:*",
+    "@my-harness/spec-revision": "workspace:*",
+    "@my-harness/spec-state": "workspace:*"
+  },
+  "engines": {
+    "node": ">=20 <26"
+  },
+  "files": [
+    ".claude-plugin",
+    ".mcp.json",
+    "adapter.example.json",
+    "hooks",
+    "scripts",
+    "mcp-server.mjs",
+    "lib",
+    "fixtures",
+    "skills",
+    "README.md",
+    "INSTALL.md"
+  ],
+  "scripts": {
+    "check": "node scripts/check-syntax.mjs",
+    "build": "node scripts/check-syntax.mjs",
+    "test": "node --test test/*.test.mjs",
+    "doctor": "npm run check && npm test"
+  },
+  "devDependencies": {
+    "@my-harness/spec-diagnose": "workspace:*"
+  }
+}

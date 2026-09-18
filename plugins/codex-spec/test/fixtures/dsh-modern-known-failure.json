@@ -1,0 +1,8 @@
+{
+  "fixture": "codex-modern-tasks.md",
+  "expectations": {
+    "codexParser": "pass",
+    "dshCurrentParser": "known-failure"
+  },
+  "reason": "DSH 当前实现仅接受整数任务 ID，并将其转换为 Number；它尚不能保留现代任意层级字符串 ID。"
+}

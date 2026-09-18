@@ -1,0 +1,3525 @@
+{
+  "schemaVersion": 1,
+  "generatedBy": "packages/spec-parser/test/tools/gen-policy-coupling.mjs",
+  "about": [
+    "属性化「策略耦合」语料（第 3.5 期 Task 0.1）。用途：把白名单封闭性的语料从 7 行定值换成笛卡尔积。",
+    "只含语料本身，不含测量结果——测量留给 declared-diffs.test.mjs，避免生成器与校验器同源。",
+    "轴：state × subjectIndent × fenceIndent × openRun × closeRun × guard。",
+    "规格数：288。重跑：node packages/spec-parser/test/tools/gen-policy-coupling.mjs"
+  ],
+  "axes": [
+    {
+      "name": "state",
+      "values": [
+        " ",
+        "x",
+        "X",
+        "-",
+        "~",
+        "/"
+      ],
+      "note": "`~` / `/` 是两策略判定不同的两态，耦合的触发条件"
+    },
+    {
+      "name": "subjectIndent",
+      "values": [
+        0,
+        2,
+        4
+      ],
+      "note": "主语任务行的缩进"
+    },
+    {
+      "name": "fenceIndent",
+      "values": [
+        2,
+        4
+      ],
+      "note": "围栏行的缩进；>3 时才需要「认闭合」"
+    },
+    {
+      "name": "openRun",
+      "values": [
+        3,
+        4
+      ],
+      "note": "开围栏的反引号 run 长度"
+    },
+    {
+      "name": "closeRun",
+      "values": [
+        3,
+        4
+      ],
+      "note": "闭围栏的反引号 run 长度；< 开 run 则不闭合"
+    },
+    {
+      "name": "guard",
+      "values": [
+        false,
+        true
+      ],
+      "note": "开闭之间是否插入缩进更小的任务行（影响 hasFenceClose）"
+    }
+  ],
+  "count": 288,
+  "corpusSha256": "0ec16480125a0c3b5d7f4fe2463af1a4e6460c88277d97dfe4d33325643950a9",
+  "specimens": [
+    {
+      "id": "s0-0-2-33n",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "- [ ] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-0-2-33g",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "- [ ] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-0-2-34n",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "- [ ] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-0-2-34g",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "- [ ] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-0-2-43n",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "- [ ] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-0-2-43g",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "- [ ] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-0-2-44n",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "- [ ] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-0-2-44g",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "- [ ] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-0-4-33n",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "- [ ] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-0-4-33g",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "- [ ] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-0-4-34n",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "- [ ] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-0-4-34g",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "- [ ] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-0-4-43n",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "- [ ] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-0-4-43g",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "- [ ] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-0-4-44n",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "- [ ] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-0-4-44g",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "- [ ] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-2-2-33n",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "  - [ ] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-2-2-33g",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "  - [ ] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-2-2-34n",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "  - [ ] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-2-2-34g",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "  - [ ] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-2-2-43n",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "  - [ ] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-2-2-43g",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "  - [ ] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-2-2-44n",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "  - [ ] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-2-2-44g",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "  - [ ] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-2-4-33n",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "  - [ ] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-2-4-33g",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "  - [ ] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-2-4-34n",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "  - [ ] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-2-4-34g",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "  - [ ] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-2-4-43n",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "  - [ ] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-2-4-43g",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "  - [ ] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-2-4-44n",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "  - [ ] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-2-4-44g",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "  - [ ] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-4-2-33n",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "    - [ ] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-4-2-33g",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "    - [ ] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-4-2-34n",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "    - [ ] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-4-2-34g",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "    - [ ] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-4-2-43n",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "    - [ ] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-4-2-43g",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "    - [ ] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-4-2-44n",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "    - [ ] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-4-2-44g",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "    - [ ] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-4-4-33n",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "    - [ ] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-4-4-33g",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "    - [ ] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-4-4-34n",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "    - [ ] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-4-4-34g",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "    - [ ] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-4-4-43n",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "    - [ ] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-4-4-43g",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "    - [ ] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-4-4-44n",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "    - [ ] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s0-4-4-44g",
+      "axes": {
+        "state": " ",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "    - [ ] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-0-2-33n",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "- [x] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-0-2-33g",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "- [x] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-0-2-34n",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "- [x] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-0-2-34g",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "- [x] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-0-2-43n",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "- [x] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-0-2-43g",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "- [x] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-0-2-44n",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "- [x] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-0-2-44g",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "- [x] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-0-4-33n",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "- [x] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-0-4-33g",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "- [x] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-0-4-34n",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "- [x] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-0-4-34g",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "- [x] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-0-4-43n",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "- [x] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-0-4-43g",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "- [x] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-0-4-44n",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "- [x] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-0-4-44g",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "- [x] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-2-2-33n",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "  - [x] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-2-2-33g",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "  - [x] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-2-2-34n",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "  - [x] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-2-2-34g",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "  - [x] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-2-2-43n",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "  - [x] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-2-2-43g",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "  - [x] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-2-2-44n",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "  - [x] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-2-2-44g",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "  - [x] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-2-4-33n",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "  - [x] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-2-4-33g",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "  - [x] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-2-4-34n",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "  - [x] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-2-4-34g",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "  - [x] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-2-4-43n",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "  - [x] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-2-4-43g",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "  - [x] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-2-4-44n",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "  - [x] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-2-4-44g",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "  - [x] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-4-2-33n",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "    - [x] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-4-2-33g",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "    - [x] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-4-2-34n",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "    - [x] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-4-2-34g",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "    - [x] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-4-2-43n",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "    - [x] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-4-2-43g",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "    - [x] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-4-2-44n",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "    - [x] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-4-2-44g",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "    - [x] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-4-4-33n",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "    - [x] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-4-4-33g",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "    - [x] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-4-4-34n",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "    - [x] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-4-4-34g",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "    - [x] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-4-4-43n",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "    - [x] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-4-4-43g",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "    - [x] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-4-4-44n",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "    - [x] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s1-4-4-44g",
+      "axes": {
+        "state": "x",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "    - [x] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-0-2-33n",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "- [X] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-0-2-33g",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "- [X] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-0-2-34n",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "- [X] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-0-2-34g",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "- [X] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-0-2-43n",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "- [X] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-0-2-43g",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "- [X] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-0-2-44n",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "- [X] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-0-2-44g",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "- [X] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-0-4-33n",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "- [X] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-0-4-33g",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "- [X] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-0-4-34n",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "- [X] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-0-4-34g",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "- [X] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-0-4-43n",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "- [X] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-0-4-43g",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "- [X] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-0-4-44n",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "- [X] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-0-4-44g",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "- [X] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-2-2-33n",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "  - [X] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-2-2-33g",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "  - [X] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-2-2-34n",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "  - [X] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-2-2-34g",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "  - [X] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-2-2-43n",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "  - [X] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-2-2-43g",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "  - [X] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-2-2-44n",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "  - [X] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-2-2-44g",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "  - [X] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-2-4-33n",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "  - [X] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-2-4-33g",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "  - [X] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-2-4-34n",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "  - [X] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-2-4-34g",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "  - [X] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-2-4-43n",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "  - [X] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-2-4-43g",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "  - [X] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-2-4-44n",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "  - [X] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-2-4-44g",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "  - [X] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-4-2-33n",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "    - [X] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-4-2-33g",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "    - [X] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-4-2-34n",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "    - [X] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-4-2-34g",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "    - [X] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-4-2-43n",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "    - [X] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-4-2-43g",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "    - [X] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-4-2-44n",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "    - [X] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-4-2-44g",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "    - [X] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-4-4-33n",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "    - [X] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-4-4-33g",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "    - [X] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-4-4-34n",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "    - [X] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-4-4-34g",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "    - [X] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-4-4-43n",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "    - [X] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-4-4-43g",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "    - [X] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-4-4-44n",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "    - [X] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s2-4-4-44g",
+      "axes": {
+        "state": "X",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "    - [X] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-0-2-33n",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "- [-] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-0-2-33g",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "- [-] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-0-2-34n",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "- [-] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-0-2-34g",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "- [-] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-0-2-43n",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "- [-] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-0-2-43g",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "- [-] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-0-2-44n",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "- [-] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-0-2-44g",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "- [-] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-0-4-33n",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "- [-] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-0-4-33g",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "- [-] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-0-4-34n",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "- [-] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-0-4-34g",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "- [-] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-0-4-43n",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "- [-] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-0-4-43g",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "- [-] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-0-4-44n",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "- [-] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-0-4-44g",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "- [-] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-2-2-33n",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "  - [-] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-2-2-33g",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "  - [-] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-2-2-34n",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "  - [-] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-2-2-34g",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "  - [-] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-2-2-43n",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "  - [-] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-2-2-43g",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "  - [-] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-2-2-44n",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "  - [-] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-2-2-44g",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "  - [-] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-2-4-33n",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "  - [-] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-2-4-33g",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "  - [-] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-2-4-34n",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "  - [-] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-2-4-34g",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "  - [-] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-2-4-43n",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "  - [-] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-2-4-43g",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "  - [-] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-2-4-44n",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "  - [-] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-2-4-44g",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "  - [-] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-4-2-33n",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "    - [-] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-4-2-33g",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "    - [-] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-4-2-34n",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "    - [-] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-4-2-34g",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "    - [-] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-4-2-43n",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "    - [-] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-4-2-43g",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "    - [-] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-4-2-44n",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "    - [-] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-4-2-44g",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "    - [-] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-4-4-33n",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "    - [-] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-4-4-33g",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "    - [-] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-4-4-34n",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "    - [-] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-4-4-34g",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "    - [-] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-4-4-43n",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "    - [-] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-4-4-43g",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "    - [-] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-4-4-44n",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "    - [-] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s3-4-4-44g",
+      "axes": {
+        "state": "-",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "    - [-] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-0-2-33n",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "- [~] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-0-2-33g",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "- [~] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-0-2-34n",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "- [~] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-0-2-34g",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "- [~] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-0-2-43n",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "- [~] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-0-2-43g",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "- [~] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-0-2-44n",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "- [~] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-0-2-44g",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "- [~] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-0-4-33n",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "- [~] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-0-4-33g",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "- [~] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-0-4-34n",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "- [~] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-0-4-34g",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "- [~] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-0-4-43n",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "- [~] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-0-4-43g",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "- [~] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-0-4-44n",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "- [~] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-0-4-44g",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "- [~] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-2-2-33n",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "  - [~] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-2-2-33g",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "  - [~] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-2-2-34n",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "  - [~] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-2-2-34g",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "  - [~] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-2-2-43n",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "  - [~] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-2-2-43g",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "  - [~] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-2-2-44n",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "  - [~] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-2-2-44g",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "  - [~] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-2-4-33n",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "  - [~] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-2-4-33g",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "  - [~] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-2-4-34n",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "  - [~] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-2-4-34g",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "  - [~] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-2-4-43n",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "  - [~] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-2-4-43g",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "  - [~] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-2-4-44n",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "  - [~] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-2-4-44g",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "  - [~] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-4-2-33n",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "    - [~] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-4-2-33g",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "    - [~] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-4-2-34n",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "    - [~] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-4-2-34g",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "    - [~] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-4-2-43n",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "    - [~] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-4-2-43g",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "    - [~] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-4-2-44n",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "    - [~] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-4-2-44g",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "    - [~] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-4-4-33n",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "    - [~] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-4-4-33g",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "    - [~] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-4-4-34n",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "    - [~] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-4-4-34g",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "    - [~] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-4-4-43n",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "    - [~] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-4-4-43g",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "    - [~] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-4-4-44n",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "    - [~] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s4-4-4-44g",
+      "axes": {
+        "state": "~",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "    - [~] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-0-2-33n",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "- [/] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-0-2-33g",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "- [/] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-0-2-34n",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "- [/] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-0-2-34g",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "- [/] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-0-2-43n",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "- [/] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-0-2-43g",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "- [/] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-0-2-44n",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "- [/] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-0-2-44g",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 0,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "- [/] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-0-4-33n",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "- [/] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-0-4-33g",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "- [/] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-0-4-34n",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "- [/] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-0-4-34g",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "- [/] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-0-4-43n",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "- [/] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-0-4-43g",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "- [/] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-0-4-44n",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "- [/] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-0-4-44g",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 0,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "- [/] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-2-2-33n",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "  - [/] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-2-2-33g",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "  - [/] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-2-2-34n",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "  - [/] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-2-2-34g",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "  - [/] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-2-2-43n",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "  - [/] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-2-2-43g",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "  - [/] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-2-2-44n",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "  - [/] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-2-2-44g",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 2,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "  - [/] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-2-4-33n",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "  - [/] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-2-4-33g",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "  - [/] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-2-4-34n",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "  - [/] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-2-4-34g",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "  - [/] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-2-4-43n",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "  - [/] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-2-4-43g",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "  - [/] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-2-4-44n",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "  - [/] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-2-4-44g",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 2,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "  - [/] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-4-2-33n",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "    - [/] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-4-2-33g",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "    - [/] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-4-2-34n",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "    - [/] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-4-2-34g",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "    - [/] 1.1 subject\n  ```\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-4-2-43n",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "    - [/] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-4-2-43g",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "    - [/] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-4-2-44n",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "    - [/] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-4-2-44g",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 4,
+        "fenceIndent": 2,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "    - [/] 1.1 subject\n  ````\n  - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n  ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-4-4-33n",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "    - [/] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-4-4-33g",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "    - [/] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-4-4-34n",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "    - [/] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-4-4-34g",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 3,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "    - [/] 1.1 subject\n    ```\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-4-4-43n",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": false
+      },
+      "text": "    - [/] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-4-4-43g",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 3,
+        "guard": true
+      },
+      "text": "    - [/] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ```\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-4-4-44n",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": false
+      },
+      "text": "    - [/] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n    ````\n- [ ] 1.4 after"
+    },
+    {
+      "id": "s5-4-4-44g",
+      "axes": {
+        "state": "/",
+        "subjectIndent": 4,
+        "fenceIndent": 4,
+        "openRun": 4,
+        "closeRun": 4,
+        "guard": true
+      },
+      "text": "    - [/] 1.1 subject\n    ````\n    - [ ] 2.1 hidden\n- [ ] 1.3 shallower\n    ````\n- [ ] 1.4 after"
+    }
+  ]
+}

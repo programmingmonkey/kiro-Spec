@@ -1,0 +1,13 @@
+{
+  "name": "claude-spec",
+  "displayName": "claude-spec",
+  "version": "1.0.0",
+  "description": "Kiro-compatible requirements-first Spec authoring, PreToolUse stage gating, and serial task execution for Claude — local Claude Code CLI by default, Claude Cowork as an explicit alternate topology. collaborative tier — see README.",
+  "author": {
+    "name": "kiro-spec"
+  },
+  "license": "MIT",
+  "skills": "./skills/",
+  "hooks": "./hooks/hooks.json",
+  "mcpServers": "./.mcp.json"
+}

@@ -1,0 +1,875 @@
+{
+  "schemaVersion": 1,
+  "about": [
+    "Task 1 的五个模块行为快照。这是**证据不是 golden**：抽取后必须逐字段相同，",
+    "唯一允许的例外是 Task 0.3 判定为收敛的那三处，且必须逐条对着后果清单解释。",
+    "由 test/tools/gen-behaviour-snapshot.mjs 生成，勿手改。",
+    "不记来源目录、也不记时间戳：否则前后两份会因为与行为无关的字段不等，而「比较时忽略某字段」正是本仓要消灭的形态。",
+    "唯一的时钟依赖（未署名提示里那句示例署名的日期）被换成显式占位符 <today> —— 它是今天由 test/evidence.test.mjs 单独断言，不是被抹平。"
+  ],
+  "toolSurface": {
+    "commands": [
+      "spec"
+    ],
+    "tools": {
+      "spec_amend": {
+        "params": [
+          "anchor",
+          "body",
+          "file",
+          "from",
+          "heading",
+          "kind",
+          "pointer",
+          "spec",
+          "title",
+          "to"
+        ],
+        "required": [
+          "kind"
+        ]
+      },
+      "spec_archive": {
+        "params": [
+          "archiveRoot",
+          "spec"
+        ],
+        "required": []
+      },
+      "spec_checklist": {
+        "params": [
+          "spec"
+        ],
+        "required": []
+      },
+      "spec_diagnostics": {
+        "params": [],
+        "required": []
+      },
+      "spec_drift": {
+        "params": [
+          "spec"
+        ],
+        "required": []
+      },
+      "spec_init": {
+        "params": [
+          "detailLevel",
+          "feature",
+          "goal",
+          "kind",
+          "workflow"
+        ],
+        "required": [
+          "goal"
+        ]
+      },
+      "spec_meta": {
+        "params": [
+          "action",
+          "chatSessionId",
+          "executionId",
+          "spec",
+          "task",
+          "timestamp"
+        ],
+        "required": []
+      },
+      "spec_read": {
+        "params": [
+          "file",
+          "spec"
+        ],
+        "required": []
+      },
+      "spec_run": {
+        "params": [
+          "dryRun",
+          "wave"
+        ],
+        "required": []
+      },
+      "spec_sign": {
+        "params": [
+          "action",
+          "changedFiles",
+          "env",
+          "spec",
+          "summary"
+        ],
+        "required": []
+      },
+      "spec_status": {
+        "params": [
+          "spec"
+        ],
+        "required": []
+      },
+      "spec_task_set": {
+        "params": [
+          "done",
+          "expectedRawRevision",
+          "index",
+          "spec",
+          "state"
+        ],
+        "required": [
+          "index"
+        ]
+      },
+      "spec_write": {
+        "params": [
+          "content",
+          "expectedRawRevision",
+          "file",
+          "spec"
+        ],
+        "required": [
+          "content",
+          "file"
+        ]
+      }
+    }
+  },
+  "modules": {
+    "checklist": {
+      "run": {
+        "specDir": "/specs/demo",
+        "counts": {
+          "error": 1,
+          "warning": 6,
+          "info": 0,
+          "total": 7,
+          "passed": 2
+        },
+        "missingFiles": [],
+        "findings": [
+          {
+            "ruleId": "checklist/no-ears-keyword",
+            "severity": "warning",
+            "source": "repo-convention",
+            "anchor": "2",
+            "message": "Requirement 2 criterion 1 has no uppercased EARS keyword (WHEN / WHILE / WHERE / IF / THEN / SHALL / THE SYSTEM): \"系统应当合理地尽快完成适当的工作\""
+          },
+          {
+            "ruleId": "checklist/vague-quantifier",
+            "severity": "warning",
+            "source": "repo-convention",
+            "anchor": "2",
+            "message": "Requirement 2 contains the untestable quantifier `适当`; replace it with a measurable criterion."
+          },
+          {
+            "ruleId": "checklist/vague-quantifier",
+            "severity": "warning",
+            "source": "repo-convention",
+            "anchor": "2",
+            "message": "Requirement 2 contains the untestable quantifier `合理`; replace it with a measurable criterion."
+          },
+          {
+            "ruleId": "checklist/vague-quantifier",
+            "severity": "warning",
+            "source": "repo-convention",
+            "anchor": "2",
+            "message": "Requirement 2 contains the untestable quantifier `尽快`; replace it with a measurable criterion."
+          },
+          {
+            "ruleId": "checklist/no-criteria",
+            "severity": "error",
+            "source": "kiro-binary",
+            "anchor": "4",
+            "message": "Requirement 4 has no `#### Acceptance Criteria` section."
+          },
+          {
+            "ruleId": "checklist/unreferenced-requirement",
+            "severity": "warning",
+            "source": "repo-convention",
+            "anchor": "4",
+            "message": "Requirement 4 is not cited by any `_Requirements:_` line in tasks.md."
+          },
+          {
+            "ruleId": "checklist/unreferenced-requirement",
+            "severity": "warning",
+            "source": "repo-convention",
+            "anchor": "5",
+            "message": "Requirement 5 is not cited by any `_Requirements:_` line in tasks.md."
+          }
+        ]
+      },
+      "port": {
+        "reads": 2,
+        "writes": 0,
+        "treeUnchanged": {
+          "/specs/demo/design.md": "# Design Document\n\n## Overview\n\n> 概述\n\n第一段。\n\n## Architecture\n\n> 架构\n\n第二段。\n",
+          "/specs/demo/notes-extra.md": "# Extra notes\n\n```\n- 2026-09-12 · DSH · 平衡围栏内的署名（两侧都不该看见）\n```\n\n说明：\n\n    ```\n- 2026-09-12 · DSH · 缩进 4 的围栏内的署名\n    ```\n\n- 2026-09-12 · DSH · CRLF 结尾的署名\r\n",
+          "/specs/demo/requirements.md": "# Requirements Document\n\n## Introduction\n\n> 背景\n\n## Glossary\n\n> 术语\n\n## Requirements\n\n> 需求\n\n### Requirement 1: Alpha\n**User Story:** As a dev I want A.\n\n#### Acceptance Criteria\n1. WHEN x THE SYSTEM SHALL do A\n\n### Requirement 2: Beta\n**User Story:** As a dev I want B.\n\n#### Acceptance Criteria\n1. 系统应当合理地尽快完成适当的工作\n\n### Requirement 3: Gamma\n**User Story:** As a dev I want C.\n\n#### Acceptance Criteria\n1. WHEN y THE SYSTEM SHALL do C\n\n### Requirement 4: Delta\n**User Story:** As a dev I want D.\n\n没有判据小节，也没有被任何任务引用。\n\n### Requirement 5: Epsilon\n**User Story:** As a dev I want E.\n\n#### Acceptance Criteria\n1. WHEN z THE SYSTEM SHALL do E\n",
+          "/specs/demo/tasks.md": "# Implementation Plan\n\n## Overview\n\n> 概述\n\n## Task Dependency Graph\n\n```json\n{\"waves\":[{\"id\":0,\"tasks\":[\"1.1\",\"1.2\"]},{\"id\":1,\"tasks\":[\"2.2\"]}]}\n```\n\n## Tasks\n\n> 任务清单\n\n- [ ] 1. 分组标签\n  - [ ]* 1.1 取子任务记法（星号紧贴 `]`，本仓自己的写法）\n    - _Requirements: 1_\n  - [ ] 2.foo 尾点后直接跟正文\n  - [ ] * 1.2 星号前有空格\n  - [ ] 1.2foo 粘连 id\n  - [x]* 2.1 已完成的取子任务\n    - _Requirements: 2_\n  - [ ] 2.2 普通任务\n    - _Requirements: 3_\n\n## Notes\n\n- 2026-09-12 · DSH · 冻结快照的语料\n",
+          "/specs/legacy/tasks.md": "# Implementation Plan\n\n## Tasks\n\n- [ ] 1.1 x\n\n## Notes\n",
+          "/specs/unsigned/requirements.md": "# Requirements Document\n\n## Introduction\n\n> 背景\n\n## Glossary\n\n> 术语\n\n## Requirements\n\n> 需求\n\n### Requirement 1: Alpha\n**User Story:** As a dev I want A.\n\n#### Acceptance Criteria\n1. WHEN x THE SYSTEM SHALL do A\n\n### Requirement 2: Beta\n**User Story:** As a dev I want B.\n\n#### Acceptance Criteria\n1. 系统应当合理地尽快完成适当的工作\n\n### Requirement 3: Gamma\n**User Story:** As a dev I want C.\n\n#### Acceptance Criteria\n1. WHEN y THE SYSTEM SHALL do C\n\n### Requirement 4: Delta\n**User Story:** As a dev I want D.\n\n没有判据小节，也没有被任何任务引用。\n\n### Requirement 5: Epsilon\n**User Story:** As a dev I want E.\n\n#### Acceptance Criteria\n1. WHEN z THE SYSTEM SHALL do E\n",
+          "/specs/unsigned/tasks.md": "# Implementation Plan\n\n## Tasks\n\n- [ ] 1.1 x\n\n## Notes\n"
+        }
+      }
+    },
+    "drift": {
+      "run": {
+        "specDir": "/specs/demo",
+        "frozen": false,
+        "missingFiles": [],
+        "entries": [
+          {
+            "requirement": "1",
+            "title": "Alpha",
+            "severity": "info",
+            "status": "referenced-not-done",
+            "evidence": "weak",
+            "tasks": [
+              "1.1"
+            ],
+            "recommendation": "Requirement 1 is referenced by still-open task(s) 1.1 — finish them, or, if the work moved, take a route below. Route 1 — open a fresh `demo-v2` spec. Route 2 — use the append-amendment channel, only for a change that has ALREADY landed in code (it records what happened, not what is planned)."
+          },
+          {
+            "requirement": "2",
+            "title": "Beta",
+            "severity": "info",
+            "status": "referenced-done",
+            "evidence": "weak",
+            "tasks": [
+              "2.1"
+            ],
+            "recommendation": "No drift: requirement 2 is covered by done task(s) 2.1. Route 1 — open a fresh `demo-v2` spec. Route 2 — use the append-amendment channel, only for a change that has ALREADY landed in code (it records what happened, not what is planned)."
+          },
+          {
+            "requirement": "3",
+            "title": "Gamma",
+            "severity": "info",
+            "status": "referenced-not-done",
+            "evidence": "weak",
+            "tasks": [
+              "2.2"
+            ],
+            "recommendation": "Requirement 3 is referenced by still-open task(s) 2.2 — finish them, or, if the work moved, take a route below. Route 1 — open a fresh `demo-v2` spec. Route 2 — use the append-amendment channel, only for a change that has ALREADY landed in code (it records what happened, not what is planned)."
+          },
+          {
+            "requirement": "4",
+            "title": "Delta",
+            "severity": "warning",
+            "status": "unreferenced",
+            "evidence": "weak",
+            "tasks": [],
+            "recommendation": "No implementation landing spot found for requirement 4 (evidence: task state only). Route 1 — open a fresh `demo-v2` spec. Route 2 — use the append-amendment channel, only for a change that has ALREADY landed in code (it records what happened, not what is planned)."
+          },
+          {
+            "requirement": "5",
+            "title": "Epsilon",
+            "severity": "warning",
+            "status": "unreferenced",
+            "evidence": "weak",
+            "tasks": [],
+            "recommendation": "No implementation landing spot found for requirement 5 (evidence: task state only). Route 1 — open a fresh `demo-v2` spec. Route 2 — use the append-amendment channel, only for a change that has ALREADY landed in code (it records what happened, not what is planned)."
+          }
+        ]
+      },
+      "port": {
+        "reads": 2,
+        "writes": 0,
+        "treeUnchanged": {
+          "/specs/demo/design.md": "# Design Document\n\n## Overview\n\n> 概述\n\n第一段。\n\n## Architecture\n\n> 架构\n\n第二段。\n",
+          "/specs/demo/notes-extra.md": "# Extra notes\n\n```\n- 2026-09-12 · DSH · 平衡围栏内的署名（两侧都不该看见）\n```\n\n说明：\n\n    ```\n- 2026-09-12 · DSH · 缩进 4 的围栏内的署名\n    ```\n\n- 2026-09-12 · DSH · CRLF 结尾的署名\r\n",
+          "/specs/demo/requirements.md": "# Requirements Document\n\n## Introduction\n\n> 背景\n\n## Glossary\n\n> 术语\n\n## Requirements\n\n> 需求\n\n### Requirement 1: Alpha\n**User Story:** As a dev I want A.\n\n#### Acceptance Criteria\n1. WHEN x THE SYSTEM SHALL do A\n\n### Requirement 2: Beta\n**User Story:** As a dev I want B.\n\n#### Acceptance Criteria\n1. 系统应当合理地尽快完成适当的工作\n\n### Requirement 3: Gamma\n**User Story:** As a dev I want C.\n\n#### Acceptance Criteria\n1. WHEN y THE SYSTEM SHALL do C\n\n### Requirement 4: Delta\n**User Story:** As a dev I want D.\n\n没有判据小节，也没有被任何任务引用。\n\n### Requirement 5: Epsilon\n**User Story:** As a dev I want E.\n\n#### Acceptance Criteria\n1. WHEN z THE SYSTEM SHALL do E\n",
+          "/specs/demo/tasks.md": "# Implementation Plan\n\n## Overview\n\n> 概述\n\n## Task Dependency Graph\n\n```json\n{\"waves\":[{\"id\":0,\"tasks\":[\"1.1\",\"1.2\"]},{\"id\":1,\"tasks\":[\"2.2\"]}]}\n```\n\n## Tasks\n\n> 任务清单\n\n- [ ] 1. 分组标签\n  - [ ]* 1.1 取子任务记法（星号紧贴 `]`，本仓自己的写法）\n    - _Requirements: 1_\n  - [ ] 2.foo 尾点后直接跟正文\n  - [ ] * 1.2 星号前有空格\n  - [ ] 1.2foo 粘连 id\n  - [x]* 2.1 已完成的取子任务\n    - _Requirements: 2_\n  - [ ] 2.2 普通任务\n    - _Requirements: 3_\n\n## Notes\n\n- 2026-09-12 · DSH · 冻结快照的语料\n",
+          "/specs/legacy/tasks.md": "# Implementation Plan\n\n## Tasks\n\n- [ ] 1.1 x\n\n## Notes\n",
+          "/specs/unsigned/requirements.md": "# Requirements Document\n\n## Introduction\n\n> 背景\n\n## Glossary\n\n> 术语\n\n## Requirements\n\n> 需求\n\n### Requirement 1: Alpha\n**User Story:** As a dev I want A.\n\n#### Acceptance Criteria\n1. WHEN x THE SYSTEM SHALL do A\n\n### Requirement 2: Beta\n**User Story:** As a dev I want B.\n\n#### Acceptance Criteria\n1. 系统应当合理地尽快完成适当的工作\n\n### Requirement 3: Gamma\n**User Story:** As a dev I want C.\n\n#### Acceptance Criteria\n1. WHEN y THE SYSTEM SHALL do C\n\n### Requirement 4: Delta\n**User Story:** As a dev I want D.\n\n没有判据小节，也没有被任何任务引用。\n\n### Requirement 5: Epsilon\n**User Story:** As a dev I want E.\n\n#### Acceptance Criteria\n1. WHEN z THE SYSTEM SHALL do E\n",
+          "/specs/unsigned/tasks.md": "# Implementation Plan\n\n## Tasks\n\n- [ ] 1.1 x\n\n## Notes\n"
+        }
+      }
+    },
+    "signature": {
+      "checkSigned": {
+        "dir": "/specs/demo",
+        "ok": true,
+        "applicable": true,
+        "signatures": [
+          {
+            "date": "2026-09-12",
+            "env": "DSH",
+            "summary": "冻结快照的语料",
+            "raw": "- 2026-09-12 · DSH · 冻结快照的语料"
+          },
+          {
+            "date": "2026-09-12",
+            "env": "DSH",
+            "summary": "CRLF 结尾的署名",
+            "raw": "- 2026-09-12 · DSH · CRLF 结尾的署名"
+          }
+        ],
+        "missingFiles": [
+          "bugfix.md"
+        ],
+        "finding": null
+      },
+      "checkUnsigned": {
+        "dir": "/specs/unsigned",
+        "ok": false,
+        "applicable": true,
+        "signatures": [],
+        "missingFiles": [
+          "design.md",
+          "bugfix.md"
+        ],
+        "finding": {
+          "ruleId": "repo/spec-unsigned",
+          "severity": "warning",
+          "source": "repo-convention",
+          "message": "1 spec file(s) changed in /specs/unsigned (requirements.md) but no attribution signature was found in any .md file of that spec directory. Attribution is judged per spec directory, so a single signature anywhere in the directory is enough — append one to the ## Notes section of tasks.md, e.g. \"- <today> · DSH · <what changed>\" (Kiro|DSH|Codex|Gemini). Warning only: this does not block the change."
+        }
+      },
+      "appendSignatureLine": "- 2026-09-12 · DSH · 冻结快照",
+      "appendSignatureAgain": "- 2026-09-12 · DSH · 冻结快照",
+      "port": {
+        "signedWrites": 0,
+        "unsignedWrites": 0,
+        "appendWrites": 1,
+        "tasksAfterAppend": "# Implementation Plan\n\n## Overview\n\n> 概述\n\n## Task Dependency Graph\n\n```json\n{\"waves\":[{\"id\":0,\"tasks\":[\"1.1\",\"1.2\"]},{\"id\":1,\"tasks\":[\"2.2\"]}]}\n```\n\n## Tasks\n\n> 任务清单\n\n- [ ] 1. 分组标签\n  - [ ]* 1.1 取子任务记法（星号紧贴 `]`，本仓自己的写法）\n    - _Requirements: 1_\n  - [ ] 2.foo 尾点后直接跟正文\n  - [ ] * 1.2 星号前有空格\n  - [ ] 1.2foo 粘连 id\n  - [x]* 2.1 已完成的取子任务\n    - _Requirements: 2_\n  - [ ] 2.2 普通任务\n    - _Requirements: 3_\n\n## Notes\n\n- 2026-09-12 · DSH · 冻结快照的语料\n- 2026-09-12 · DSH · 冻结快照\n"
+      }
+    },
+    "amendments": {
+      "paramEdit": {
+        "path": "/specs/demo/requirements.md",
+        "occurrences": 1,
+        "replaced": "As a dev I want A.",
+        "with": "As a dev I want A, changed."
+      },
+      "appendReq": {
+        "path": "/specs/demo/requirements.md",
+        "number": 6,
+        "pointer": "> 追加修正：Requirement 6 为本轮新增，见文末。"
+      },
+      "appendDesign": {
+        "path": "/specs/demo/design.md",
+        "createdAmendmentsSection": true,
+        "pointer": "> 见 `## Amendments`。",
+        "anchor": "第二段。",
+        "heading": "### 2026-09-12 · DSH · 补设计点"
+      },
+      "guardProbes": [
+        [
+          "- [ ] 1.1foo 粘连 id（旧谓词命中）",
+          "file-name gate only (text gate 见 guardText)"
+        ],
+        [
+          "- [ ]* 1.2 x（共享层认定的任务）",
+          "file-name gate only (text gate 见 guardText)"
+        ]
+      ],
+      "guardText": [
+        [
+          "glued-id",
+          "REFUSED",
+          true
+        ],
+        [
+          "star-subtask",
+          "ACCEPTED",
+          null
+        ],
+        [
+          "space-star",
+          "ACCEPTED",
+          null
+        ],
+        [
+          "plain",
+          "REFUSED",
+          true
+        ],
+        [
+          "no-checkbox",
+          "ACCEPTED",
+          null
+        ]
+      ],
+      "requirementsAfter": "# Requirements Document\n\n## Introduction\n\n> 背景\n\n## Glossary\n\n> 术语\n\n## Requirements\n\n> 需求\n\n### Requirement 1: Alpha\n**User Story:** As a dev I want A, changed.\n\n#### Acceptance Criteria\n1. WHEN x THE SYSTEM SHALL do A\n\n### Requirement 2: Beta\n**User Story:** As a dev I want B.\n\n#### Acceptance Criteria\n1. 系统应当合理地尽快完成适当的工作\n\n### Requirement 3: Gamma\n**User Story:** As a dev I want C.\n\n#### Acceptance Criteria\n1. WHEN y THE SYSTEM SHALL do C\n\n### Requirement 4: Delta\n**User Story:** As a dev I want D.\n\n没有判据小节，也没有被任何任务引用。\n\n### Requirement 5: Epsilon\n**User Story:** As a dev I want E.\n\n#### Acceptance Criteria\n1. WHEN z THE SYSTEM SHALL do E\n\n> 追加修正：Requirement 6 为本轮新增，见文末。\n\n### Requirement 6: Zeta\n\nWHEN q THE SYSTEM SHALL do Z.\n",
+      "designAfter": "# Design Document\n\n## Overview\n\n> 概述\n\n第一段。\n\n## Architecture\n\n> 架构\n\n第二段。\n> 见 `## Amendments`。\n\n## Amendments\n\n> 补充修正\n\n### 2026-09-12 · DSH · 补设计点\n\n补一个设计点。\n",
+      "writes": 3
+    },
+    "archive": {
+      "withMove": {
+        "feature": "legacy",
+        "source": "/specs/legacy",
+        "destination": "/specs/_archive/legacy",
+        "sourceRemoved": true,
+        "archiveRoot": "/specs/_archive",
+        "createdArchiveRoot": true,
+        "archiveRootVia": "mkdir",
+        "filesCopied": 0,
+        "note": null
+      },
+      "withoutMove": {
+        "feature": "legacy",
+        "source": "/specs/legacy",
+        "destination": "/specs/_archive/legacy",
+        "sourceRemoved": false,
+        "archiveRoot": "/specs/_archive",
+        "createdArchiveRoot": true,
+        "archiveRootVia": "mkdir",
+        "filesCopied": 1,
+        "note": "port.move is unavailable: 1 file(s) were copied into /specs/_archive/legacy, but /specs/legacy was NOT removed. This module never deletes anything outside a successful move, and it will not truncate the source to fake removal — the caller (or host) must delete the source directory itself."
+      },
+      "withMoveTree": {
+        "/specs/_archive/legacy/tasks.md": "# Implementation Plan\n\n## Tasks\n\n- [ ] 1.1 x\n\n## Notes\n",
+        "/specs/demo/design.md": "# Design Document\n\n## Overview\n\n> 概述\n\n第一段。\n\n## Architecture\n\n> 架构\n\n第二段。\n",
+        "/specs/demo/notes-extra.md": "# Extra notes\n\n```\n- 2026-09-12 · DSH · 平衡围栏内的署名（两侧都不该看见）\n```\n\n说明：\n\n    ```\n- 2026-09-12 · DSH · 缩进 4 的围栏内的署名\n    ```\n\n- 2026-09-12 · DSH · CRLF 结尾的署名\r\n",
+        "/specs/demo/requirements.md": "# Requirements Document\n\n## Introduction\n\n> 背景\n\n## Glossary\n\n> 术语\n\n## Requirements\n\n> 需求\n\n### Requirement 1: Alpha\n**User Story:** As a dev I want A.\n\n#### Acceptance Criteria\n1. WHEN x THE SYSTEM SHALL do A\n\n### Requirement 2: Beta\n**User Story:** As a dev I want B.\n\n#### Acceptance Criteria\n1. 系统应当合理地尽快完成适当的工作\n\n### Requirement 3: Gamma\n**User Story:** As a dev I want C.\n\n#### Acceptance Criteria\n1. WHEN y THE SYSTEM SHALL do C\n\n### Requirement 4: Delta\n**User Story:** As a dev I want D.\n\n没有判据小节，也没有被任何任务引用。\n\n### Requirement 5: Epsilon\n**User Story:** As a dev I want E.\n\n#### Acceptance Criteria\n1. WHEN z THE SYSTEM SHALL do E\n",
+        "/specs/demo/tasks.md": "# Implementation Plan\n\n## Overview\n\n> 概述\n\n## Task Dependency Graph\n\n```json\n{\"waves\":[{\"id\":0,\"tasks\":[\"1.1\",\"1.2\"]},{\"id\":1,\"tasks\":[\"2.2\"]}]}\n```\n\n## Tasks\n\n> 任务清单\n\n- [ ] 1. 分组标签\n  - [ ]* 1.1 取子任务记法（星号紧贴 `]`，本仓自己的写法）\n    - _Requirements: 1_\n  - [ ] 2.foo 尾点后直接跟正文\n  - [ ] * 1.2 星号前有空格\n  - [ ] 1.2foo 粘连 id\n  - [x]* 2.1 已完成的取子任务\n    - _Requirements: 2_\n  - [ ] 2.2 普通任务\n    - _Requirements: 3_\n\n## Notes\n\n- 2026-09-12 · DSH · 冻结快照的语料\n",
+        "/specs/unsigned/requirements.md": "# Requirements Document\n\n## Introduction\n\n> 背景\n\n## Glossary\n\n> 术语\n\n## Requirements\n\n> 需求\n\n### Requirement 1: Alpha\n**User Story:** As a dev I want A.\n\n#### Acceptance Criteria\n1. WHEN x THE SYSTEM SHALL do A\n\n### Requirement 2: Beta\n**User Story:** As a dev I want B.\n\n#### Acceptance Criteria\n1. 系统应当合理地尽快完成适当的工作\n\n### Requirement 3: Gamma\n**User Story:** As a dev I want C.\n\n#### Acceptance Criteria\n1. WHEN y THE SYSTEM SHALL do C\n\n### Requirement 4: Delta\n**User Story:** As a dev I want D.\n\n没有判据小节，也没有被任何任务引用。\n\n### Requirement 5: Epsilon\n**User Story:** As a dev I want E.\n\n#### Acceptance Criteria\n1. WHEN z THE SYSTEM SHALL do E\n",
+        "/specs/unsigned/tasks.md": "# Implementation Plan\n\n## Tasks\n\n- [ ] 1.1 x\n\n## Notes\n"
+      },
+      "withoutMoveTree": {
+        "/specs/_archive/legacy/tasks.md": "# Implementation Plan\n\n## Tasks\n\n- [ ] 1.1 x\n\n## Notes\n",
+        "/specs/demo/design.md": "# Design Document\n\n## Overview\n\n> 概述\n\n第一段。\n\n## Architecture\n\n> 架构\n\n第二段。\n",
+        "/specs/demo/notes-extra.md": "# Extra notes\n\n```\n- 2026-09-12 · DSH · 平衡围栏内的署名（两侧都不该看见）\n```\n\n说明：\n\n    ```\n- 2026-09-12 · DSH · 缩进 4 的围栏内的署名\n    ```\n\n- 2026-09-12 · DSH · CRLF 结尾的署名\r\n",
+        "/specs/demo/requirements.md": "# Requirements Document\n\n## Introduction\n\n> 背景\n\n## Glossary\n\n> 术语\n\n## Requirements\n\n> 需求\n\n### Requirement 1: Alpha\n**User Story:** As a dev I want A.\n\n#### Acceptance Criteria\n1. WHEN x THE SYSTEM SHALL do A\n\n### Requirement 2: Beta\n**User Story:** As a dev I want B.\n\n#### Acceptance Criteria\n1. 系统应当合理地尽快完成适当的工作\n\n### Requirement 3: Gamma\n**User Story:** As a dev I want C.\n\n#### Acceptance Criteria\n1. WHEN y THE SYSTEM SHALL do C\n\n### Requirement 4: Delta\n**User Story:** As a dev I want D.\n\n没有判据小节，也没有被任何任务引用。\n\n### Requirement 5: Epsilon\n**User Story:** As a dev I want E.\n\n#### Acceptance Criteria\n1. WHEN z THE SYSTEM SHALL do E\n",
+        "/specs/demo/tasks.md": "# Implementation Plan\n\n## Overview\n\n> 概述\n\n## Task Dependency Graph\n\n```json\n{\"waves\":[{\"id\":0,\"tasks\":[\"1.1\",\"1.2\"]},{\"id\":1,\"tasks\":[\"2.2\"]}]}\n```\n\n## Tasks\n\n> 任务清单\n\n- [ ] 1. 分组标签\n  - [ ]* 1.1 取子任务记法（星号紧贴 `]`，本仓自己的写法）\n    - _Requirements: 1_\n  - [ ] 2.foo 尾点后直接跟正文\n  - [ ] * 1.2 星号前有空格\n  - [ ] 1.2foo 粘连 id\n  - [x]* 2.1 已完成的取子任务\n    - _Requirements: 2_\n  - [ ] 2.2 普通任务\n    - _Requirements: 3_\n\n## Notes\n\n- 2026-09-12 · DSH · 冻结快照的语料\n",
+        "/specs/legacy/tasks.md": "# Implementation Plan\n\n## Tasks\n\n- [ ] 1.1 x\n\n## Notes\n",
+        "/specs/unsigned/requirements.md": "# Requirements Document\n\n## Introduction\n\n> 背景\n\n## Glossary\n\n> 术语\n\n## Requirements\n\n> 需求\n\n### Requirement 1: Alpha\n**User Story:** As a dev I want A.\n\n#### Acceptance Criteria\n1. WHEN x THE SYSTEM SHALL do A\n\n### Requirement 2: Beta\n**User Story:** As a dev I want B.\n\n#### Acceptance Criteria\n1. 系统应当合理地尽快完成适当的工作\n\n### Requirement 3: Gamma\n**User Story:** As a dev I want C.\n\n#### Acceptance Criteria\n1. WHEN y THE SYSTEM SHALL do C\n\n### Requirement 4: Delta\n**User Story:** As a dev I want D.\n\n没有判据小节，也没有被任何任务引用。\n\n### Requirement 5: Epsilon\n**User Story:** As a dev I want E.\n\n#### Acceptance Criteria\n1. WHEN z THE SYSTEM SHALL do E\n",
+        "/specs/unsigned/tasks.md": "# Implementation Plan\n\n## Tasks\n\n- [ ] 1.1 x\n\n## Notes\n"
+      },
+      "conflict": true,
+      "conflictNone": false
+    }
+  },
+  "pure": {
+    "checklist": {
+      "rules": [
+        {
+          "id": "checklist/no-criteria",
+          "severity": "error",
+          "source": "kiro-binary",
+          "verdict": "a requirement block has no `#### Acceptance Criteria`"
+        },
+        {
+          "id": "checklist/no-user-story",
+          "severity": "warning",
+          "source": "kiro-binary",
+          "verdict": "a requirement block has no `**User Story:**`"
+        },
+        {
+          "id": "checklist/no-ears-keyword",
+          "severity": "warning",
+          "source": "repo-convention",
+          "verdict": "an acceptance criteria line has no uppercased EARS keyword"
+        },
+        {
+          "id": "checklist/vague-quantifier",
+          "severity": "warning",
+          "source": "repo-convention",
+          "verdict": "text contains an untestable quantifier"
+        },
+        {
+          "id": "checklist/unreferenced-requirement",
+          "severity": "warning",
+          "source": "repo-convention",
+          "verdict": "a requirement is not cited by any task-side `_Requirements:_` line"
+        }
+      ],
+      "emptyDir": {
+        "counts": {
+          "error": 0,
+          "warning": 0,
+          "info": 0,
+          "total": 0,
+          "passed": 0
+        },
+        "missingFiles": [
+          "requirements.md",
+          "tasks.md"
+        ],
+        "findings": []
+      },
+      "noCriteria": {
+        "counts": {
+          "error": 1,
+          "warning": 0,
+          "info": 0,
+          "total": 1,
+          "passed": 0
+        },
+        "missingFiles": [],
+        "findings": [
+          {
+            "ruleId": "checklist/no-criteria",
+            "severity": "error",
+            "source": "kiro-binary",
+            "anchor": "1",
+            "message": "Requirement 1 has no `#### Acceptance Criteria` section."
+          }
+        ]
+      },
+      "emptyCriteriaSection": {
+        "counts": {
+          "error": 1,
+          "warning": 0,
+          "info": 0,
+          "total": 1,
+          "passed": 0
+        },
+        "missingFiles": [],
+        "findings": [
+          {
+            "ruleId": "checklist/no-criteria",
+            "severity": "error",
+            "source": "kiro-binary",
+            "anchor": "1",
+            "message": "Requirement 1 has an empty `#### Acceptance Criteria` section (no criteria lines)."
+          }
+        ]
+      },
+      "refsWildcard": {
+        "ids": [],
+        "all": true
+      },
+      "refsNumbers": {
+        "ids": [
+          "1",
+          "2",
+          "3"
+        ],
+        "all": false
+      }
+    },
+    "drift": {
+      "severityLadder": [
+        [
+          "error",
+          "error",
+          "warning"
+        ],
+        [
+          "warning",
+          "warning",
+          "info"
+        ],
+        [
+          "info",
+          "info",
+          "hint"
+        ],
+        [
+          "hint",
+          "hint",
+          "hint"
+        ]
+      ],
+      "suppressUnknown": "nope",
+      "parseEntries": [
+        {
+          "index": "1",
+          "state": " ",
+          "valid": true,
+          "done": false,
+          "requirements": [],
+          "referencesAll": false
+        },
+        {
+          "index": "1.1",
+          "state": " ",
+          "valid": true,
+          "done": false,
+          "requirements": [
+            "1"
+          ],
+          "referencesAll": false
+        },
+        {
+          "index": "1.2",
+          "state": " ",
+          "valid": true,
+          "done": false,
+          "requirements": [],
+          "referencesAll": false
+        },
+        {
+          "index": "2.1",
+          "state": "x",
+          "valid": true,
+          "done": true,
+          "requirements": [
+            "2"
+          ],
+          "referencesAll": false
+        },
+        {
+          "index": "2.2",
+          "state": " ",
+          "valid": true,
+          "done": false,
+          "requirements": [
+            "3"
+          ],
+          "referencesAll": false
+        }
+      ],
+      "parseEntriesEmpty": [],
+      "frozenAllDone": true,
+      "frozenNoTasks": false,
+      "frozenUndefined": false,
+      "frozenMixed": false,
+      "recommendations": [
+        "No implementation landing spot found for requirement 1 (evidence: task state only). Route 1 — open a fresh `demo-v2` spec. Route 2 — use the append-amendment channel, only for a change that has ALREADY landed in code (it records what happened, not what is planned).",
+        "Requirement 1 is referenced by still-open task(s) 1.1 — finish them, or, if the work moved, take a route below. Route 1 — open a fresh `demo-v2` spec. Route 2 — use the append-amendment channel, only for a change that has ALREADY landed in code (it records what happened, not what is planned).",
+        "No drift: requirement 1 is covered by done task(s) 1.1. Route 1 — open a fresh `demo-v2` spec. Route 2 — use the append-amendment channel, only for a change that has ALREADY landed in code (it records what happened, not what is planned). This spec is frozen (every task is `[x]`): report only — the task body is never edited.",
+        "Cannot judge requirement 1: tasks.md is absent, so no task state exists to cite as evidence. Route 1 — open a fresh `demo-v2` spec. Route 2 — use the append-amendment channel, only for a change that has ALREADY landed in code (it records what happened, not what is planned)."
+      ],
+      "buildReport": {
+        "frozen": false,
+        "missingFiles": [],
+        "entries": [
+          {
+            "requirement": "1",
+            "title": "Alpha",
+            "severity": "info",
+            "status": "referenced-not-done",
+            "evidence": "weak",
+            "tasks": [
+              "1.1"
+            ],
+            "recommendation": "Requirement 1 is referenced by still-open task(s) 1.1 — finish them, or, if the work moved, take a route below. Route 1 — open a fresh `demo-v2` spec. Route 2 — use the append-amendment channel, only for a change that has ALREADY landed in code (it records what happened, not what is planned)."
+          },
+          {
+            "requirement": "2",
+            "title": "Beta",
+            "severity": "info",
+            "status": "referenced-done",
+            "evidence": "weak",
+            "tasks": [
+              "2.1"
+            ],
+            "recommendation": "No drift: requirement 2 is covered by done task(s) 2.1. Route 1 — open a fresh `demo-v2` spec. Route 2 — use the append-amendment channel, only for a change that has ALREADY landed in code (it records what happened, not what is planned)."
+          },
+          {
+            "requirement": "3",
+            "title": "Gamma",
+            "severity": "info",
+            "status": "referenced-not-done",
+            "evidence": "weak",
+            "tasks": [
+              "2.2"
+            ],
+            "recommendation": "Requirement 3 is referenced by still-open task(s) 2.2 — finish them, or, if the work moved, take a route below. Route 1 — open a fresh `demo-v2` spec. Route 2 — use the append-amendment channel, only for a change that has ALREADY landed in code (it records what happened, not what is planned)."
+          },
+          {
+            "requirement": "4",
+            "title": "Delta",
+            "severity": "warning",
+            "status": "unreferenced",
+            "evidence": "weak",
+            "tasks": [],
+            "recommendation": "No implementation landing spot found for requirement 4 (evidence: task state only). Route 1 — open a fresh `demo-v2` spec. Route 2 — use the append-amendment channel, only for a change that has ALREADY landed in code (it records what happened, not what is planned)."
+          },
+          {
+            "requirement": "5",
+            "title": "Epsilon",
+            "severity": "warning",
+            "status": "unreferenced",
+            "evidence": "weak",
+            "tasks": [],
+            "recommendation": "No implementation landing spot found for requirement 5 (evidence: task state only). Route 1 — open a fresh `demo-v2` spec. Route 2 — use the append-amendment channel, only for a change that has ALREADY landed in code (it records what happened, not what is planned)."
+          }
+        ]
+      },
+      "buildReportNoTasks": {
+        "frozen": false,
+        "missingFiles": [
+          "tasks.md"
+        ],
+        "entries": [
+          {
+            "requirement": "1",
+            "title": "Alpha",
+            "severity": "warning",
+            "status": "no-tasks",
+            "evidence": "weak",
+            "tasks": [],
+            "recommendation": "Cannot judge requirement 1: tasks.md is absent, so no task state exists to cite as evidence. Route 1 — open a fresh `demo-v2` spec. Route 2 — use the append-amendment channel, only for a change that has ALREADY landed in code (it records what happened, not what is planned)."
+          },
+          {
+            "requirement": "2",
+            "title": "Beta",
+            "severity": "warning",
+            "status": "no-tasks",
+            "evidence": "weak",
+            "tasks": [],
+            "recommendation": "Cannot judge requirement 2: tasks.md is absent, so no task state exists to cite as evidence. Route 1 — open a fresh `demo-v2` spec. Route 2 — use the append-amendment channel, only for a change that has ALREADY landed in code (it records what happened, not what is planned)."
+          },
+          {
+            "requirement": "3",
+            "title": "Gamma",
+            "severity": "warning",
+            "status": "no-tasks",
+            "evidence": "weak",
+            "tasks": [],
+            "recommendation": "Cannot judge requirement 3: tasks.md is absent, so no task state exists to cite as evidence. Route 1 — open a fresh `demo-v2` spec. Route 2 — use the append-amendment channel, only for a change that has ALREADY landed in code (it records what happened, not what is planned)."
+          },
+          {
+            "requirement": "4",
+            "title": "Delta",
+            "severity": "warning",
+            "status": "no-tasks",
+            "evidence": "weak",
+            "tasks": [],
+            "recommendation": "Cannot judge requirement 4: tasks.md is absent, so no task state exists to cite as evidence. Route 1 — open a fresh `demo-v2` spec. Route 2 — use the append-amendment channel, only for a change that has ALREADY landed in code (it records what happened, not what is planned)."
+          },
+          {
+            "requirement": "5",
+            "title": "Epsilon",
+            "severity": "warning",
+            "status": "no-tasks",
+            "evidence": "weak",
+            "tasks": [],
+            "recommendation": "Cannot judge requirement 5: tasks.md is absent, so no task state exists to cite as evidence. Route 1 — open a fresh `demo-v2` spec. Route 2 — use the append-amendment channel, only for a change that has ALREADY landed in code (it records what happened, not what is planned)."
+          }
+        ]
+      },
+      "refs": {
+        "ids": [],
+        "all": true
+      }
+    },
+    "signature": {
+      "envs": [
+        "Kiro",
+        "DSH",
+        "Codex",
+        "Gemini"
+      ],
+      "todayDate": "2026-09-12",
+      "joinPath": [
+        "/a/b/c",
+        "/a/b/",
+        "",
+        "/a"
+      ],
+      "isSignatureEnv": [
+        [
+          "DSH",
+          true
+        ],
+        [
+          "Kiro",
+          true
+        ],
+        [
+          "",
+          false
+        ],
+        [
+          "dsh",
+          false
+        ]
+      ],
+      "parseLine": [
+        [
+          "\"- 2026-09-12 · DSH · x\"",
+          {
+            "date": "2026-09-12",
+            "env": "DSH",
+            "summary": "x",
+            "raw": "- 2026-09-12 · DSH · x"
+          }
+        ],
+        [
+          "\"- 2026-09-12 · DSH · x\\r\"",
+          null
+        ],
+        [
+          "\"  - 2026-09-12 · DSH · x\"",
+          {
+            "date": "2026-09-12",
+            "env": "DSH",
+            "summary": "x",
+            "raw": "- 2026-09-12 · DSH · x"
+          }
+        ],
+        [
+          "\"### 2026-09-12 · DSH · x\"",
+          {
+            "date": "2026-09-12",
+            "env": "DSH",
+            "summary": "x",
+            "raw": "### 2026-09-12 · DSH · x"
+          }
+        ],
+        [
+          "\"## 2026-09-12 · DSH · x\"",
+          null
+        ],
+        [
+          "\"- 2026-09-12 · DSH ·\"",
+          null
+        ],
+        [
+          "\"- 2026-09-12 ·DSH· x\"",
+          {
+            "date": "2026-09-12",
+            "env": "DSH",
+            "summary": "x",
+            "raw": "- 2026-09-12 ·DSH· x"
+          }
+        ],
+        [
+          "\"- 2026-09-12 · Nobody · x\"",
+          null
+        ]
+      ],
+      "renderOk": "- 2026-09-12 · DSH · 改了什么",
+      "renderRejects": [
+        [
+          "unknown env",
+          "renderSignature: unknown env \"Nobody\" — expected one of Kiro, DSH, Codex, Gemini",
+          null
+        ],
+        [
+          "bad date",
+          "renderSignature: date must be YYYY-MM-DD, got \"2026/09/12\"",
+          null
+        ],
+        [
+          "empty summary",
+          "renderSignature: summary must be a non-empty description of what changed",
+          null
+        ]
+      ]
+    },
+    "amendments": {
+      "assertNotTaskBody": [
+        [
+          "\"tasks\"",
+          true
+        ],
+        [
+          "\"tasks.md\"",
+          true
+        ],
+        [
+          "\"dir/tasks.md\"",
+          true
+        ],
+        [
+          "\"requirements\"",
+          null
+        ],
+        [
+          "\"design.md\"",
+          null
+        ],
+        [
+          "\"TASKS.MD\"",
+          true
+        ],
+        [
+          null,
+          null
+        ]
+      ]
+    }
+  }
+}

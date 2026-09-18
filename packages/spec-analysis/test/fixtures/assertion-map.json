@@ -1,0 +1,1824 @@
+{
+  "schemaVersion": 1,
+  "rev": "d1d7678",
+  "state": "pre-change（Task 0.1 的判定基准；搬移与收敛之前那一版 dsh-spec 测试文件）",
+  "about": "Task 0.1 的断言分布清单：plugins/dsh-spec/test 的 5 个混合文件里，每一条 it 测的是哪个模块、以及它能不能整体搬进 packages/spec-analysis。由 test/tools/gen-assertion-map.mjs 从 git blob d1d7678 现读生成（不是工作区那一版），勿手改。",
+  "rules": {
+    "movable": "主体不经过 dsh-spec 的插件装配层，只依赖某个模块自身（含其源码文本）。",
+    "not-movable": "依赖插件装配 / 工具层（mount + call(spec_*)），搬走就没有被测对象。",
+    "needs-split": "同一条断言里既有模块级又有装配级观测。",
+    "not-attributable": "五个模块都不涉及——五个文件里大部分断言属于解析器 / 规则表 / 工具面，与本期的搬移无关。",
+    "moduleAttribution": "归属只看函数体（不看文件顶部 import）：① 体里出现带引号的 spec_* 工具名 → 该模块；② 体里读 lib/${mod}.js → 该文件里 for (const mod of [...]) 列出的模块。都不命中则 modules 为空。每条命中的信号记在 evidence 里，可逐条复核。"
+  },
+  "totals": {
+    "movable": 1,
+    "not-movable": 45,
+    "needs-split": 0,
+    "not-attributable": 84
+  },
+  "perModule": {
+    "checklist": {
+      "movable": 1,
+      "not-movable": 16,
+      "needs-split": 0
+    },
+    "drift": {
+      "movable": 1,
+      "not-movable": 5,
+      "needs-split": 0
+    },
+    "amendments": {
+      "movable": 0,
+      "not-movable": 7,
+      "needs-split": 0
+    },
+    "archive": {
+      "movable": 0,
+      "not-movable": 13,
+      "needs-split": 0
+    },
+    "signature": {
+      "movable": 0,
+      "not-movable": 12,
+      "needs-split": 0
+    }
+  },
+  "files": [
+    {
+      "file": "boundaries.test.mjs",
+      "itCount": 51,
+      "tests": [
+        {
+          "file": "boundaries.test.mjs",
+          "line": 70,
+          "name": "parses `- [ ]* 4.1 text`",
+          "describes": [
+            "Req 2.1 — the optional task marker `*` is a real task, not a dropped line"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 78,
+          "name": "parses the escaped form `- [ ]\\\\* 4.2 text`",
+          "describes": [
+            "Req 2.1 — the optional task marker `*` is a real task, not a dropped line"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 84,
+          "name": "counts an optional-marked leaf as an executable unit",
+          "describes": [
+            "Req 2.1 — the optional task marker `*` is a real task, not a dropped line"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 92,
+          "name": "flags `### Task 5.1 …` with Kiro\\u2019s own code",
+          "describes": [
+            "Req 2.2 — heading-style tasks are reported, not silently ignored"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 97,
+          "name": "flags `## Task 5 …` too",
+          "describes": [
+            "Req 2.2 — heading-style tasks are reported, not silently ignored"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 102,
+          "name": "leaves the checkbox task alone",
+          "describes": [
+            "Req 2.2 — heading-style tasks are reported, not silently ignored"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 110,
+          "name": "a top-level line without an id is tasks/invalid-task-line",
+          "describes": [
+            "Req 2.3 — malformed task / sub-task lines get Kiro\\u2019s per-depth codes"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 115,
+          "name": "an indented line without a dotted id is tasks/invalid-subtask-line",
+          "describes": [
+            "Req 2.3 — malformed task / sub-task lines get Kiro\\u2019s per-depth codes"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 122,
+          "name": "a graph id with no checkbox line is a hard error",
+          "describes": [
+            "Req 2.4 — waves and checkboxes are cross-checked in BOTH directions"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 128,
+          "name": "a checkbox in no wave is reported (the runner would never dispatch it)",
+          "describes": [
+            "Req 2.4 — waves and checkboxes are cross-checked in BOTH directions"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 133,
+          "name": "a parent grouping label is NOT reported when absent from the graph",
+          "describes": [
+            "Req 2.4 — waves and checkboxes are cross-checked in BOTH directions"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 140,
+          "name": "a consistent spec reports neither direction",
+          "describes": [
+            "Req 2.4 — waves and checkboxes are cross-checked in BOTH directions"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 148,
+          "name": "a leaf without `_Requirements:_` is reported by the checklist layer",
+          "describes": [
+            "Req 2.7 — parent tasks are exempt from `_Requirements:_`, leaves are not"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 155,
+          "name": "a childless top-level task is NOT a parent",
+          "describes": [
+            "Req 2.7 — parent tasks are exempt from `_Requirements:_`, leaves are not"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 165,
+          "name": "[-] is legal and stays silent",
+          "describes": [
+            "Req 2.8 — the three state bands are distinguished, not collapsed"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 170,
+          "name": "[~] PARSES but is only a repo-convention warning",
+          "describes": [
+            "Req 2.8 — the three state bands are distinguished, not collapsed"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 179,
+          "name": "[/] is a hard error with Kiro\\u2019s malformed-checkbox code",
+          "describes": [
+            "Req 2.8 — the three state bands are distinguished, not collapsed"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 185,
+          "name": "[!] is a hard error with Kiro\\u2019s malformed-checkbox code",
+          "describes": [
+            "Req 2.8 — the three state bands are distinguished, not collapsed"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 199,
+          "name": "every finding carries source ∈ {kiro-binary, repo-convention}",
+          "describes": [
+            "Req 1.10 — every finding declares where its rule comes from"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 210,
+          "name": "a Kiro rule is labelled kiro-binary even when it matches a repo code shape",
+          "describes": [
+            "Req 1.10 — every finding declares where its rule comes from"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 215,
+          "name": "a plugin-only rule is labelled repo-convention",
+          "describes": [
+            "Req 1.10 — every finding declares where its rule comes from"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 223,
+          "name": "sniffs the bugfix variant from content alone",
+          "describes": [],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 231,
+          "name": "a bugfix design is NOT asked for the feature sections, even via kind=design",
+          "describes": [],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 239,
+          "name": "a missing design H1 is a warning labelled repo-convention (Kiro has no such rule)",
+          "describes": [],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 247,
+          "name": "bugfix.md is never judged on its H1",
+          "describes": [],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 263,
+          "name": "accepts a suffixed H1",
+          "describes": [
+            "Req 1.9 — `# Implementation Plan` matches by prefix"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 271,
+          "name": "no finding can ever use an invented code",
+          "describes": [
+            "Req 1.5 / 1.6 — the three invented design codes are gone for good"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 297,
+          "name": "the plugin emits exactly Kiro\\u2019s 41 codes across representative documents",
+          "describes": [
+            "Req 1.11 / 1.12 / 1.14 — the Kiro rule-code set is exactly 41, verified against the bundle"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 371,
+          "name": "no silently-swallowed assertion remains in this suite",
+          "describes": [
+            "a missing Kiro bundle must be a VISIBLE skip, never a silent return"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 390,
+          "name": "the table declares exactly the 41 codes the bundle contains",
+          "describes": [],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 411,
+          "name": "every rule entry carries a non-empty source and a compilable pattern",
+          "describes": [],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 465,
+          "name": "every design section rule really is emitted when its section is absent",
+          "describes": [],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 485,
+          "name": "REPO_CODES lists every repo-convention code AND nothing that is unreachable",
+          "describes": [],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 538,
+          "name": "the three invented codes appear nowhere in the frozen table",
+          "describes": [],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 577,
+          "name": null,
+          "describes": [
+            "Kiro normalisation is trimEnd, and several rules use the RAW line (Req 1.13)"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 585,
+          "name": "an indented property heading counts as NEITHER a property nor malformed",
+          "describes": [],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 597,
+          "name": "`Property` without a numeric `N:` is malformed",
+          "describes": [],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 607,
+          "name": "a property with no `**Validates:**` line is warned about",
+          "describes": [],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 612,
+          "name": "a property heading may be bare `Property N:` or `### Property N:`",
+          "describes": [],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 623,
+          "name": "every non-null target is an actual code, and no legacy code is still emitted",
+          "describes": [
+            "the legacy→Kiro code remap is real, not decorative"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 666,
+          "name": "parses ${JSON.stringify(line)} instead of dropping it",
+          "describes": [
+            "the parser never silently drops a line Kiro accepts"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 673,
+          "name": "counts an untitled task toward the total, so `complete` is not reachable early",
+          "describes": [
+            "the parser never silently drops a line Kiro accepts"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 681,
+          "name": "reports the Kiro line-shape errors it used to miss",
+          "describes": [
+            "the parser never silently drops a line Kiro accepts"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 693,
+          "name": "still rejects an id glued to text (a deliberate divergence from Kiro)",
+          "describes": [
+            "the parser never silently drops a line Kiro accepts"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 706,
+          "name": "bugfixTemplate is clean under the bugfix rules",
+          "describes": [
+            "the parser never silently drops a line Kiro accepts"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 711,
+          "name": "bugfixTemplate emits the three H3 sections with their exact suffixes",
+          "describes": [
+            "the parser never silently drops a line Kiro accepts"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 722,
+          "name": "bugfixTemplate does not demand the invented H1",
+          "describes": [
+            "the parser never silently drops a line Kiro accepts"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 726,
+          "name": "designTemplate is clean under the feature design rules",
+          "describes": [
+            "the parser never silently drops a line Kiro accepts"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 731,
+          "name": "designTemplate carries a real `Property N:` heading, not just `*For any*` prose",
+          "describes": [
+            "the parser never silently drops a line Kiro accepts"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 739,
+          "name": "a freshly initialised bugfix spec has zero errors in every artifact",
+          "describes": [
+            "the spec is scaffolded cleanly end to end through the tool layer"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "boundaries.test.mjs",
+          "line": 761,
+          "name": "no invented rule code survives anywhere in the source",
+          "describes": [
+            "the source file contains no rule asserting the three invented codes"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "file": "capabilities.test.mjs",
+      "itCount": 24,
+      "tests": [
+        {
+          "file": "capabilities.test.mjs",
+          "line": 73,
+          "name": "${mod}.js has no executable write call",
+          "describes": [
+            "read-only modules are statically incapable of writing (Req 4.7, 5.2)"
+          ],
+          "modules": [
+            "checklist",
+            "drift"
+          ],
+          "mentions": [],
+          "category": "movable",
+          "evidence": [
+            "source-scan:checklist",
+            "source-scan:drift"
+          ]
+        },
+        {
+          "file": "capabilities.test.mjs",
+          "line": 93,
+          "name": "reports findings with anchors and leaves the directory byte-identical",
+          "describes": [
+            "read-only modules are statically incapable of writing (Req 4.7, 5.2)",
+            "spec_checklist — requirements quality, read-only"
+          ],
+          "modules": [
+            "checklist"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_checklist"
+          ]
+        },
+        {
+          "file": "capabilities.test.mjs",
+          "line": 112,
+          "name": "separates Kiro verdicts from repo conventions",
+          "describes": [
+            "read-only modules are statically incapable of writing (Req 4.7, 5.2)",
+            "spec_checklist — requirements quality, read-only"
+          ],
+          "modules": [
+            "checklist"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_checklist"
+          ]
+        },
+        {
+          "file": "capabilities.test.mjs",
+          "line": 124,
+          "name": "records a missing artifact instead of throwing",
+          "describes": [
+            "read-only modules are statically incapable of writing (Req 4.7, 5.2)",
+            "spec_checklist — requirements quality, read-only"
+          ],
+          "modules": [
+            "checklist"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_checklist"
+          ]
+        },
+        {
+          "file": "capabilities.test.mjs",
+          "line": 132,
+          "name": "can inspect an existing but completely EMPTY spec directory",
+          "describes": [
+            "read-only modules are statically incapable of writing (Req 4.7, 5.2)",
+            "spec_checklist — requirements quality, read-only"
+          ],
+          "modules": [
+            "checklist",
+            "drift"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_checklist",
+            "mentions-tool:spec_drift"
+          ]
+        },
+        {
+          "file": "capabilities.test.mjs",
+          "line": 149,
+          "name": "never writes and always states its evidence strength (Req 5.2, 5.4)",
+          "describes": [
+            "read-only modules are statically incapable of writing (Req 4.7, 5.2)"
+          ],
+          "modules": [
+            "drift"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_drift"
+          ]
+        },
+        {
+          "file": "capabilities.test.mjs",
+          "line": 163,
+          "name": "offers BOTH ways forward, and gates the amendment route on landed code",
+          "describes": [
+            "read-only modules are statically incapable of writing (Req 4.7, 5.2)"
+          ],
+          "modules": [
+            "drift"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_drift"
+          ]
+        },
+        {
+          "file": "capabilities.test.mjs",
+          "line": 208,
+          "name": "a design.md change is satisfied by a signature in tasks.md (Req 3.2)",
+          "describes": [
+            "spec_sign — attribution, warn-only, per spec directory"
+          ],
+          "modules": [
+            "signature"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_sign"
+          ]
+        },
+        {
+          "file": "capabilities.test.mjs",
+          "line": 218,
+          "name": "warns without blocking when unsigned",
+          "describes": [
+            "spec_sign — attribution, warn-only, per spec directory"
+          ],
+          "modules": [
+            "signature"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_sign"
+          ]
+        },
+        {
+          "file": "capabilities.test.mjs",
+          "line": 228,
+          "name": "writes the documented format with the middle-dot separator",
+          "describes": [
+            "spec_sign — attribution, warn-only, per spec directory"
+          ],
+          "modules": [
+            "signature"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_sign"
+          ]
+        },
+        {
+          "file": "capabilities.test.mjs",
+          "line": 237,
+          "name": "is idempotent — signing twice does not duplicate the line",
+          "describes": [
+            "spec_sign — attribution, warn-only, per spec directory"
+          ],
+          "modules": [
+            "signature"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_sign"
+          ]
+        },
+        {
+          "file": "capabilities.test.mjs",
+          "line": 247,
+          "name": "rejects an unknown environment rather than inventing one",
+          "describes": [
+            "spec_sign — attribution, warn-only, per spec directory"
+          ],
+          "modules": [
+            "signature"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_sign"
+          ]
+        },
+        {
+          "file": "capabilities.test.mjs",
+          "line": 256,
+          "name": "edits a parameter IN PLACE, not by appending prose (Req 6.1)",
+          "describes": [
+            "spec_amend — incremental correction channel"
+          ],
+          "modules": [
+            "amendments"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_amend"
+          ]
+        },
+        {
+          "file": "capabilities.test.mjs",
+          "line": 269,
+          "name": "continues requirement numbering past the existing maximum (Req 6.2)",
+          "describes": [
+            "spec_amend — incremental correction channel"
+          ],
+          "modules": [
+            "amendments"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_amend"
+          ]
+        },
+        {
+          "file": "capabilities.test.mjs",
+          "line": 286,
+          "name": "writes `## Amendments` with the repo sub-title and an in-place pointer (Req 6.3)",
+          "describes": [
+            "spec_amend — incremental correction channel"
+          ],
+          "modules": [
+            "amendments"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_amend"
+          ]
+        },
+        {
+          "file": "capabilities.test.mjs",
+          "line": 306,
+          "name": "names `anchor` (not `pointer.text`) when a design amendment omits the pointer target",
+          "describes": [
+            "spec_amend — incremental correction channel"
+          ],
+          "modules": [
+            "amendments"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_amend"
+          ]
+        },
+        {
+          "file": "capabilities.test.mjs",
+          "line": 319,
+          "name": "REFUSES to touch a task body, naming the three machine consequences (Req 6.4)",
+          "describes": [
+            "spec_amend — incremental correction channel"
+          ],
+          "modules": [
+            "amendments"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_amend"
+          ]
+        },
+        {
+          "file": "capabilities.test.mjs",
+          "line": 338,
+          "name": "leaves the checkbox lines and waves JSON byte-identical after any writer",
+          "describes": [
+            "spec_amend — incremental correction channel"
+          ],
+          "modules": [
+            "amendments",
+            "signature"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_amend",
+            "mentions-tool:spec_sign"
+          ]
+        },
+        {
+          "file": "capabilities.test.mjs",
+          "line": 355,
+          "name": "moves the directory and removes the source",
+          "describes": [
+            "spec_archive — move whole dir, refuse to clobber (Req 6.5)"
+          ],
+          "modules": [
+            "archive"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_archive"
+          ]
+        },
+        {
+          "file": "capabilities.test.mjs",
+          "line": 365,
+          "name": "refuses when the archive name exists and changes nothing",
+          "describes": [
+            "spec_archive — move whole dir, refuse to clobber (Req 6.5)"
+          ],
+          "modules": [
+            "archive"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_archive"
+          ]
+        },
+        {
+          "file": "capabilities.test.mjs",
+          "line": 382,
+          "name": "refuses a spec already under _archive/",
+          "describes": [
+            "spec_archive — move whole dir, refuse to clobber (Req 6.5)"
+          ],
+          "modules": [
+            "archive"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_archive"
+          ]
+        },
+        {
+          "file": "capabilities.test.mjs",
+          "line": 400,
+          "name": "finds the sole spec directory",
+          "describes": [
+            "the new tools resolve a spec without an _active pointer (Req 7.5)"
+          ],
+          "modules": [
+            "checklist"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_checklist"
+          ]
+        },
+        {
+          "file": "capabilities.test.mjs",
+          "line": 408,
+          "name": "errors clearly instead of guessing when several specs exist",
+          "describes": [
+            "the new tools resolve a spec without an _active pointer (Req 7.5)"
+          ],
+          "modules": [
+            "checklist"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_checklist"
+          ]
+        },
+        {
+          "file": "capabilities.test.mjs",
+          "line": 418,
+          "name": "resolves an explicitly named spec among many",
+          "describes": [
+            "the new tools resolve a spec without an _active pointer (Req 7.5)"
+          ],
+          "modules": [
+            "checklist"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_checklist"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "pure.test.mjs",
+      "itCount": 26,
+      "tests": [
+        {
+          "file": "pure.test.mjs",
+          "line": 13,
+          "name": "counts only leaf tasks in the shipped template",
+          "describes": [
+            "F1 — a grouping parent must not make `complete` unreachable"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "pure.test.mjs",
+          "line": 21,
+          "name": "reaches complete once every graph task is done",
+          "describes": [
+            "F1 — a grouping parent must not make `complete` unreachable"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "pure.test.mjs",
+          "line": 37,
+          "name": "skips the parent label when choosing the next task",
+          "describes": [
+            "F1 — a grouping parent must not make `complete` unreachable"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "pure.test.mjs",
+          "line": 44,
+          "name": "ignores an un-numbered prose checklist",
+          "describes": [
+            "F2 — only id-bearing, unfenced checkbox lines are tasks"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "pure.test.mjs",
+          "line": 60,
+          "name": "DOES count an id-bearing task appended under its own heading",
+          "describes": [
+            "F2 — only id-bearing, unfenced checkbox lines are tasks"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "pure.test.mjs",
+          "line": 77,
+          "name": "ignores a checkbox inside a fenced example",
+          "describes": [
+            "F2 — only id-bearing, unfenced checkbox lines are tasks"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "pure.test.mjs",
+          "line": 86,
+          "name": "sees fourth-state and untitled lines instead of silently dropping them",
+          "describes": [
+            "F7 — parser and diagnostics agree on which lines are tasks"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "pure.test.mjs",
+          "line": 90,
+          "name": "counts an invalid-state task toward the total but never as done",
+          "describes": [
+            "F7 — parser and diagnostics agree on which lines are tasks"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "pure.test.mjs",
+          "line": 96,
+          "name": "still reports the invalid state as an error",
+          "describes": [
+            "F7 — parser and diagnostics agree on which lines are tasks"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "pure.test.mjs",
+          "line": 103,
+          "name": "rejects an id glued to non-space text",
+          "describes": [],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "pure.test.mjs",
+          "line": 109,
+          "name": "keeps the first declaration and warns",
+          "describes": [
+            "F4 — a task declared in two waves is dispatched once"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "pure.test.mjs",
+          "line": 121,
+          "name": "produces no plan and explains why",
+          "describes": [
+            "F8 — an explicitly empty graph is not \"run everything\""
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "pure.test.mjs",
+          "line": 129,
+          "name": "preserves the legacy \"no graph section at all\" behavior",
+          "describes": [
+            "F8 — an explicitly empty graph is not \"run everything\""
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "pure.test.mjs",
+          "line": 148,
+          "name": "does not let an example heading mask a missing section",
+          "describes": [
+            "F6 — headings inside a fence are not sections"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "pure.test.mjs",
+          "line": 171,
+          "name": "flags the imbalance",
+          "describes": [],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "pure.test.mjs",
+          "line": 177,
+          "name": "stays quiet on a balanced document",
+          "describes": [],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "pure.test.mjs",
+          "line": 189,
+          "name": "throws from the planner",
+          "describes": [
+            "F18 — duplicate task ids are refused rather than guessed"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "pure.test.mjs",
+          "line": 193,
+          "name": "is reported by the diagnostics",
+          "describes": [
+            "F18 — duplicate task ids are refused rather than guessed"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "pure.test.mjs",
+          "line": 199,
+          "name": "tells the child explicitly not to mark its own task",
+          "describes": [
+            "F11 — the runner owns task state, not the child"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "pure.test.mjs",
+          "line": 209,
+          "name": "reads the cited requirement ids out of the detail lines",
+          "describes": [
+            "F14 — spec context is narrowed and bounded"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "pure.test.mjs",
+          "line": 213,
+          "name": "injects only the cited block",
+          "describes": [
+            "F14 — spec context is narrowed and bounded"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "pure.test.mjs",
+          "line": 224,
+          "name": "falls back to the whole document when nothing is cited",
+          "describes": [
+            "F14 — spec context is narrowed and bounded"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "pure.test.mjs",
+          "line": 229,
+          "name": "keeps the total context within the byte budget",
+          "describes": [
+            "F14 — spec context is narrowed and bounded"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "pure.test.mjs",
+          "line": 242,
+          "name": "truncates on a code-point boundary",
+          "describes": [
+            "F14 — spec context is narrowed and bounded"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "pure.test.mjs",
+          "line": 248,
+          "name": "never exceeds the limit and preserves result order",
+          "describes": [
+            "F15 — wave concurrency is capped"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "pure.test.mjs",
+          "line": 270,
+          "name": "strips separators and dots",
+          "describes": [
+            "featureName — path traversal is slugged away"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "file": "regression-live-fire.test.mjs",
+      "itCount": 25,
+      "tests": [
+        {
+          "file": "regression-live-fire.test.mjs",
+          "line": 69,
+          "name": ":001 archive report loses no key to JSON.stringify",
+          "describes": [
+            "Property 1 / :001 — a tool result survives a JSON round-trip"
+          ],
+          "modules": [
+            "archive"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_archive"
+          ]
+        },
+        {
+          "file": "regression-live-fire.test.mjs",
+          "line": 92,
+          "name": ":001b the move path is the one that produced the defect",
+          "describes": [
+            "Property 1 / :001 — a tool result survives a JSON round-trip"
+          ],
+          "modules": [
+            "archive"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_archive"
+          ]
+        },
+        {
+          "file": "regression-live-fire.test.mjs",
+          "line": 106,
+          "name": ":002 a relative path resolves inside the project, not the harness cwd",
+          "describes": [
+            "Property 2 / :002 — relative spec paths do not follow process.cwd()"
+          ],
+          "modules": [
+            "checklist"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_checklist"
+          ]
+        },
+        {
+          "file": "regression-live-fire.test.mjs",
+          "line": 121,
+          "name": ":002b an absolute path inside the project still works",
+          "describes": [
+            "Property 2 / :002 — relative spec paths do not follow process.cwd()"
+          ],
+          "modules": [
+            "checklist"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_checklist"
+          ]
+        },
+        {
+          "file": "regression-live-fire.test.mjs",
+          "line": 129,
+          "name": ":002c a path escaping the specs parent is refused",
+          "describes": [
+            "Property 2 / :002 — relative spec paths do not follow process.cwd()"
+          ],
+          "modules": [
+            "checklist"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_checklist"
+          ]
+        },
+        {
+          "file": "regression-live-fire.test.mjs",
+          "line": 143,
+          "name": ":003 a non-existent path inside the specs parent throws",
+          "describes": [
+            "Property 3 / :003 — \"not found\" is never rendered as \"clean\""
+          ],
+          "modules": [
+            "checklist"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_checklist"
+          ]
+        },
+        {
+          "file": "regression-live-fire.test.mjs",
+          "line": 153,
+          "name": ":003b the same holds for every other tool that takes a spec",
+          "describes": [
+            "Property 3 / :003 — \"not found\" is never rendered as \"clean\""
+          ],
+          "modules": [
+            "checklist",
+            "drift",
+            "amendments",
+            "archive",
+            "signature"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_checklist",
+            "mentions-tool:spec_drift",
+            "mentions-tool:spec_amend",
+            "mentions-tool:spec_archive",
+            "mentions-tool:spec_sign"
+          ]
+        },
+        {
+          "file": "regression-live-fire.test.mjs",
+          "line": 174,
+          "name": ":004 zero signatures + no changedFiles must not render SIGNED",
+          "describes": [
+            "Property 4 / :004 — \"nothing to attribute\" is not \"signed\""
+          ],
+          "modules": [
+            "signature"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_sign"
+          ]
+        },
+        {
+          "file": "regression-live-fire.test.mjs",
+          "line": 185,
+          "name": ":004b unchanged files are UNSIGNED and carry the warning finding",
+          "describes": [
+            "Property 4 / :004 — \"nothing to attribute\" is not \"signed\""
+          ],
+          "modules": [
+            "signature"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_sign"
+          ]
+        },
+        {
+          "file": "regression-live-fire.test.mjs",
+          "line": 196,
+          "name": ":004c a real signature still reads SIGNED",
+          "describes": [
+            "Property 4 / :004 — \"nothing to attribute\" is not \"signed\""
+          ],
+          "modules": [
+            "signature"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_sign"
+          ]
+        },
+        {
+          "file": "regression-live-fire.test.mjs",
+          "line": 211,
+          "name": ":005 spec_init output can be signed without hand-adding ## Notes",
+          "describes": [
+            "Property 5 / :005 — the scaffold and the signature channel agree"
+          ],
+          "modules": [
+            "signature"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_sign"
+          ]
+        },
+        {
+          "file": "regression-live-fire.test.mjs",
+          "line": 223,
+          "name": ":005b the added section does not inflate the executable-unit count",
+          "describes": [
+            "Property 5 / :005 — the scaffold and the signature channel agree"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "regression-live-fire.test.mjs",
+          "line": 239,
+          "name": ":006 a dangling _active pointer is not left behind",
+          "describes": [
+            "Property 6 / :006 — archiving the active spec clears the pointer"
+          ],
+          "modules": [
+            "archive"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_archive"
+          ]
+        },
+        {
+          "file": "regression-live-fire.test.mjs",
+          "line": 253,
+          "name": ":006b an _active pointer naming something else is left alone",
+          "describes": [
+            "Property 6 / :006 — archiving the active spec clears the pointer"
+          ],
+          "modules": [
+            "archive"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_archive"
+          ]
+        },
+        {
+          "file": "regression-live-fire.test.mjs",
+          "line": 266,
+          "name": ":007 the rendered destination equals report.destination",
+          "describes": [
+            "Property 7 / :007 — the archive report field is the one that is rendered"
+          ],
+          "modules": [
+            "archive"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_archive"
+          ]
+        },
+        {
+          "file": "regression-live-fire.test.mjs",
+          "line": 280,
+          "name": "3.1 an existing archive is still refused, byte-for-byte nothing changes",
+          "describes": [
+            "Unchanged Behavior — the pre-fix outcomes still hold"
+          ],
+          "modules": [
+            "archive"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_archive"
+          ]
+        },
+        {
+          "file": "regression-live-fire.test.mjs",
+          "line": 296,
+          "name": "3.2 a bare feature name still resolves under the specs parent",
+          "describes": [
+            "Unchanged Behavior — the pre-fix outcomes still hold"
+          ],
+          "modules": [
+            "checklist"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_checklist"
+          ]
+        },
+        {
+          "file": "regression-live-fire.test.mjs",
+          "line": 304,
+          "name": "3.3 an existing but EMPTY spec directory is still inspectable",
+          "describes": [
+            "Unchanged Behavior — the pre-fix outcomes still hold"
+          ],
+          "modules": [
+            "checklist"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_checklist"
+          ]
+        },
+        {
+          "file": "regression-live-fire.test.mjs",
+          "line": 314,
+          "name": "3.4 spec_init still leaves an existing spec directory byte-identical",
+          "describes": [
+            "Unchanged Behavior — the pre-fix outcomes still hold"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "regression-live-fire.test.mjs",
+          "line": 325,
+          "name": "3.6 spec_task_set still touches only the checkbox character",
+          "describes": [
+            "Unchanged Behavior — the pre-fix outcomes still hold"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "regression-live-fire.test.mjs",
+          "line": 335,
+          "name": "3.7 the read-only tools still write nothing",
+          "describes": [
+            "Unchanged Behavior — the pre-fix outcomes still hold"
+          ],
+          "modules": [
+            "checklist",
+            "drift",
+            "signature"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_checklist",
+            "mentions-tool:spec_drift",
+            "mentions-tool:spec_sign"
+          ]
+        },
+        {
+          "file": "regression-live-fire.test.mjs",
+          "line": 356,
+          "name": "refuses the specs parent itself, with no side effect",
+          "describes": [
+            "Review follow-up — the specs parent is a container, not a spec"
+          ],
+          "modules": [
+            "archive"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_archive"
+          ]
+        },
+        {
+          "file": "regression-live-fire.test.mjs",
+          "line": 372,
+          "name": "a read tool refuses it too instead of reporting a clean scan of the parent",
+          "describes": [
+            "Review follow-up — the specs parent is a container, not a spec"
+          ],
+          "modules": [
+            "checklist"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_checklist"
+          ]
+        },
+        {
+          "file": "regression-live-fire.test.mjs",
+          "line": 382,
+          "name": "refuses an archive root nested inside the spec, with no side effect",
+          "describes": [
+            "Review follow-up — the specs parent is a container, not a spec"
+          ],
+          "modules": [
+            "archive"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_archive"
+          ]
+        },
+        {
+          "file": "regression-live-fire.test.mjs",
+          "line": 394,
+          "name": "still allows the normal archive root",
+          "describes": [
+            "Review follow-up — the specs parent is a container, not a spec"
+          ],
+          "modules": [
+            "archive"
+          ],
+          "mentions": [],
+          "category": "not-movable",
+          "evidence": [
+            "mentions-tool:spec_archive"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "tool-surface.test.mjs",
+      "itCount": 4,
+      "tests": [
+        {
+          "file": "tool-surface.test.mjs",
+          "line": 36,
+          "name": "all eight original tools are still registered with unchanged parameters",
+          "describes": [
+            "Req 8.1 — the pre-existing tools keep their exact call signatures"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "tool-surface.test.mjs",
+          "line": 45,
+          "name": "the /spec command is still registered",
+          "describes": [
+            "Req 8.1 — the pre-existing tools keep their exact call signatures"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "tool-surface.test.mjs",
+          "line": 50,
+          "name": "the five new tools are present in addition to the baseline",
+          "describes": [
+            "Req 8.1 — the pre-existing tools keep their exact call signatures"
+          ],
+          "modules": [],
+          "mentions": [],
+          "category": "not-attributable",
+          "evidence": []
+        },
+        {
+          "file": "tool-surface.test.mjs",
+          "line": 61,
+          "name": "each new tool accepts an optional `spec` so a multi-spec repo stays addressable",
+          "describes": [
+            "Req 8.1 — the pre-existing tools keep their exact call signatures"
+          ],
+          "modules": [],
+          "mentions": [
+            "checklist",
+            "drift",
+            "amendments",
+            "archive",
+            "signature"
+          ],
+          "category": "not-attributable",
+          "evidence": [
+            "mentions-tool:spec_checklist",
+            "mentions-tool:spec_drift",
+            "mentions-tool:spec_amend",
+            "mentions-tool:spec_archive",
+            "mentions-tool:spec_sign"
+          ]
+        }
+      ]
+    }
+  ]
+}

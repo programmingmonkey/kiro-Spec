@@ -1,0 +1,13 @@
+.DS_Store
+node_modules/
+
+# 打包产物（scripts/pack-plugin.mjs 生成）。派生自源码，且是二进制 —— 不入库。
+# 想验它有没有和源码漂开：node scripts/pack-plugin.mjs <plugin> --check
+dist/
+
+# claude-spec 阶段门控的运行时心跳/审计日志（覆盖/追加写的运行时状态，不是源码）。
+**/.claude/claude-spec-gate.log
+**/.claude/claude-spec-gate.heartbeat
+
+# 编辑器留下的时间戳备份
+*.bak-[0-9]*

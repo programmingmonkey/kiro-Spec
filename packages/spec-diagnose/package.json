@@ -1,0 +1,13 @@
+{
+  "name": "@my-harness/spec-diagnose",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": { ".": "./lib/index.js" },
+  "dependencies": {
+    "@my-harness/kiro-rules": "workspace:*",
+    "@my-harness/spec-parser": "workspace:*"
+  },
+  "scripts": { "test": "node --test test/*.test.mjs" }
+}

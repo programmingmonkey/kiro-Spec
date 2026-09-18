@@ -1,0 +1,306 @@
+{
+  "schemaVersion": 1,
+  "generatedBy": "packages/spec-parser/test/tools/gen-difference-matrix.mjs",
+  "about": [
+    "本文件是生成物，不要手改。重跑生成器（不带 --force）必须得到逐字节相同的结果。",
+    "人工输入在 difference-matrix.annotations.json（merge / evidence / after 三列）。",
+    "dsh / kiro 两列是抽取前两个宿主解析器的实测输出；kiroBin 列由真机 bundle 的判定分支复算。",
+    "after 是与 specimens 等长的数组，每项 null 或 { dsh?, kiro? }（部分覆盖）；null 表示「归并后与现状相同」或「尚未归并」。",
+    "读取期望值时：prior = specimen 的现状列；after[i] 里给了哪一侧就用哪一侧覆盖它（用 in 判断，null 是有效覆盖）。"
+  ],
+  "kiroBundle": {
+    "path": "/Applications/Kiro.app/Contents/Resources/app/extensions/kiro.kiro-agent/dist/extension.js",
+    "bytes": 13161950,
+    "sha256": "ce29c664ae8d69ef303a7b9b1e817871a93221f8ad2f5a42c7391775b8069d05"
+  },
+  "rows": [
+    {
+      "id": "A1",
+      "kind": "line",
+      "what": "第四态 `[~]`：在真机四字符类内，只由 repo 约定报警",
+      "specimens": [
+        {
+          "text": "- [~] 1. x",
+          "dsh": {
+            "index": "1",
+            "state": "~",
+            "text": "x",
+            "valid": true
+          },
+          "kiro": {
+            "kind": "invalid-state"
+          },
+          "kiroBin": {
+            "verdict": "ok"
+          }
+        }
+      ],
+      "merge": "保留分歧；登记 declared-diff `task-state-tilde`",
+      "evidence": "真机 f 命中（~ 在 [ x~-] 内）→ 非 malformed，且 d 命中 → 无 error。dsh 解析为任务 valid=true 并由 repo-convention 报 tasks/invalid-task-state（plugins/dsh-spec/lib/index.js:1328-1334）；kiro-spec 为 2026-09-08 显式收紧。",
+      "after": null
+    },
+    {
+      "id": "A2",
+      "kind": "line",
+      "what": "四字符类之外的单字符态（`[/]` `[!]`）",
+      "specimens": [
+        {
+          "text": "- [/] 1. x",
+          "dsh": {
+            "index": "1",
+            "state": "/",
+            "text": "x",
+            "valid": false
+          },
+          "kiro": {
+            "kind": "invalid-state"
+          },
+          "kiroBin": {
+            "verdict": "malformed-checkbox"
+          }
+        },
+        {
+          "text": "- [!] 1. x",
+          "dsh": {
+            "index": "1",
+            "state": "!",
+            "text": "x",
+            "valid": false
+          },
+          "kiro": {
+            "kind": "invalid-state"
+          },
+          "kiroBin": {
+            "verdict": "malformed-checkbox"
+          }
+        }
+      ],
+      "merge": "保留分歧；登记 declared-diff `task-state-illegal`",
+      "evidence": "真机 h 命中且 f 不命中 → tasks/malformed-checkbox，且该行不是任务。dsh 保留条目 valid=false 并计入 total（plugins/dsh-spec/lib/index.js:613-618：total += 1 在 valid 检查之前），报同码；kiro 在解析层拒绝。两边都不把它当任务，分歧仅在返回表示与计数口径。",
+      "after": null
+    },
+    {
+      "id": "B",
+      "kind": "line",
+      "what": "空标题（真机的两条任务正则都是前缀测试，不要求标题）",
+      "specimens": [
+        {
+          "text": "- [ ] 1.1",
+          "dsh": {
+            "index": "1.1",
+            "state": " ",
+            "text": "",
+            "valid": true
+          },
+          "kiro": {
+            "kind": "invalid-format"
+          },
+          "kiroBin": {
+            "verdict": "ok"
+          }
+        },
+        {
+          "text": "- [ ] 1.",
+          "dsh": {
+            "index": "1",
+            "state": " ",
+            "text": "",
+            "valid": true
+          },
+          "kiro": {
+            "kind": "invalid-format"
+          },
+          "kiroBin": {
+            "verdict": "ok"
+          }
+        }
+      ],
+      "merge": "归并到 dsh 侧（=真机）：kiro 改为任务、不再抛 invalid-format",
+      "evidence": "真机 p 为前缀测试，'- [ ] 1.1' 与 '- [ ] 1.' 均命中 → 无 error。dsh 已如此，且 plugins/dsh-spec/test/boundaries.test.mjs:659-679 已明文钉住该结论。kiro 现行把它判 invalid-format，比真机更严。",
+      "after": [
+        {
+          "kiro": {
+            "kind": "task",
+            "id": "1.1",
+            "state": " ",
+            "title": "",
+            "optional": false
+          }
+        },
+        {
+          "kiro": {
+            "kind": "task",
+            "id": "1",
+            "state": " ",
+            "title": "",
+            "optional": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "kind": "line",
+      "what": "顶层整数 id 无尾点（dsh 有意计入，真机报错且不计为任务）",
+      "specimens": [
+        {
+          "text": "- [ ] 1 foo",
+          "dsh": {
+            "index": "1",
+            "state": " ",
+            "text": "foo",
+            "valid": true
+          },
+          "kiro": {
+            "kind": "invalid-format"
+          },
+          "kiroBin": {
+            "verdict": "invalid-task-line"
+          }
+        }
+      ],
+      "merge": "归并到 dsh 侧（有意比真机宽）：kiro 改为任务、不再抛 invalid-format",
+      "evidence": "真机 d 需要 \\d+\\.，故报 tasks/invalid-task-line 并把它排除在任务之外。dsh 有意计入（plugins/dsh-spec/lib/index.js:525-535：漏算会让 phase 谎报 complete，宁可多算），真机的 error 由诊断层承载。",
+      "after": [
+        {
+          "kiro": {
+            "kind": "task",
+            "id": "1",
+            "state": " ",
+            "title": "foo",
+            "optional": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "D",
+      "kind": "line",
+      "what": "`]` 与可选标记 `*` 之间有空格",
+      "specimens": [
+        {
+          "text": "- [ ] * 1.1 x",
+          "dsh": null,
+          "kiro": {
+            "kind": "task",
+            "id": "1.1",
+            "state": " ",
+            "title": "x",
+            "optional": true
+          },
+          "kiroBin": {
+            "verdict": "invalid-task-line"
+          }
+        }
+      ],
+      "merge": "归并到 dsh 侧（=真机的「不计入 + 报码」）：kiro 不再收下该行",
+      "evidence": "真机 p/d 均不命中 → tasks/invalid-task-line。dsh 的 parseTask 返回 undefined（不计入），但诊断层已报同码——不是静默丢弃；kiro 现把它当 optional=true 的任务收下。",
+      "after": [
+        {
+          "kiro": null
+        }
+      ]
+    },
+    {
+      "id": "E",
+      "kind": "document",
+      "what": "缩进 >=4 的围栏（真机无围栏概念，故这是两宿主各自新增的行为）",
+      "specimens": [
+        {
+          "name": "fence-indent4-unclosed",
+          "text": "## Tasks\n    ```\n- [ ] 1. a\n",
+          "dsh": {
+            "taskLines": []
+          },
+          "kiro": {
+            "taskLines": [
+              3
+            ]
+          },
+          "kiroBin": {
+            "taskLines": [
+              3
+            ],
+            "errors": []
+          }
+        },
+        {
+          "name": "fence-indent4-closed",
+          "text": "## Tasks\n    ```\n- [ ] 1. a\n    ```\n- [ ] 1.1 b\n",
+          "dsh": {
+            "taskLines": [
+              5
+            ]
+          },
+          "kiro": {
+            "taskLines": [
+              3,
+              5
+            ]
+          },
+          "kiroBin": {
+            "taskLines": [
+              3,
+              5
+            ],
+            "errors": []
+          }
+        }
+      ],
+      "merge": "归并到 kiro 的缩进式围栏语义（2026-09-12 执行期订正）",
+      "evidence": "repo-convention：真机 tasks 校验循环没有任何围栏状态（bundle 该函数体内 fence/Fence 出现 0 次），故围栏感知不是真机行为，权威是本仓约定。方向订正的理由：plugins/kiro-spec/lib/core/revision.mjs 用同一套 nextFenceMarker/hasFenceClose 跑 semanticTokens，改这套语义会让 approval fingerprint 失效，且 kiro-spec/test/revision-state.test.mjs:127/162/171 正钉着这些形态；反向则几乎无成本——dsh 的围栏测试只覆盖缩进 0、等长闭合（pure.test.mjs:78/172/178），两种语义在那上面一致。归并后 E 与真机列 [3] / [3,5] 完全一致。",
+      "after": [
+        {
+          "dsh": {
+            "taskLines": [
+              3
+            ]
+          }
+        },
+        {
+          "dsh": {
+            "taskLines": [
+              3,
+              5
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "F",
+      "kind": "document",
+      "what": "4 个反引号被 3 个反引号闭合（闭合 run 长度）",
+      "specimens": [
+        {
+          "name": "fence-4ticks-closed-by-3",
+          "text": "## Tasks\n````\n- [ ] 1. a\n```\n- [ ] 1.1 b\n",
+          "dsh": {
+            "taskLines": [
+              5
+            ]
+          },
+          "kiro": {
+            "taskLines": []
+          },
+          "kiroBin": {
+            "taskLines": [
+              3,
+              5
+            ],
+            "errors": []
+          }
+        }
+      ],
+      "merge": "归并到 kiro 侧（闭合 run 长度须 >= 开 run；2026-09-12 执行期订正）",
+      "evidence": "repo-convention：真机无围栏概念，照判 [3,5]；归并后两宿主判 []，即比真机少判两行。成立条件是 hasUnterminatedFence 判该文档为未闭合、tasks/unterminated-fence warning 随之触发（少算必须可见，需求 3.5）。反向（取 dsh 的按首字符闭合）同样会改 revision 哈希。",
+      "after": [
+        {
+          "dsh": {
+            "taskLines": []
+          }
+        }
+      ]
+    }
+  ]
+}

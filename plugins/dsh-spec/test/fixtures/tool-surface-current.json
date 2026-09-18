@@ -1,0 +1,125 @@
+{
+  "note": "CURRENT tool surface: all 13 tools + 1 command, measured after the phase-2 extraction. This is NOT the historical invariant — that one lives in `tool-surface-baseline.json` and must keep recording only the 8 + 1 that existed BEFORE dsh-spec-advancement. Assertions read both files in two groups: (1) baseline 8 + 1 must be unchanged field by field; (2) these 13 must match field by field. `addedBy` in the baseline carries names only on purpose; its signatures belong here, not there.",
+  "tools": {
+    "spec_amend": {
+      "params": [
+        "anchor",
+        "body",
+        "file",
+        "from",
+        "heading",
+        "kind",
+        "pointer",
+        "spec",
+        "title",
+        "to"
+      ],
+      "required": [
+        "kind"
+      ]
+    },
+    "spec_archive": {
+      "params": [
+        "archiveRoot",
+        "spec"
+      ],
+      "required": []
+    },
+    "spec_checklist": {
+      "params": [
+        "spec"
+      ],
+      "required": []
+    },
+    "spec_diagnostics": {
+      "params": [],
+      "required": []
+    },
+    "spec_drift": {
+      "params": [
+        "spec"
+      ],
+      "required": []
+    },
+    "spec_init": {
+      "params": [
+        "detailLevel",
+        "feature",
+        "goal",
+        "kind",
+        "workflow"
+      ],
+      "required": [
+        "goal"
+      ]
+    },
+    "spec_meta": {
+      "params": [
+        "action",
+        "chatSessionId",
+        "executionId",
+        "spec",
+        "task",
+        "timestamp"
+      ],
+      "required": []
+    },
+    "spec_read": {
+      "params": [
+        "file",
+        "spec"
+      ],
+      "required": []
+    },
+    "spec_run": {
+      "params": [
+        "dryRun",
+        "wave"
+      ],
+      "required": []
+    },
+    "spec_sign": {
+      "params": [
+        "action",
+        "changedFiles",
+        "env",
+        "spec",
+        "summary"
+      ],
+      "required": []
+    },
+    "spec_status": {
+      "params": [
+        "spec"
+      ],
+      "required": []
+    },
+    "spec_task_set": {
+      "params": [
+        "done",
+        "expectedRawRevision",
+        "index",
+        "spec",
+        "state"
+      ],
+      "required": [
+        "index"
+      ]
+    },
+    "spec_write": {
+      "params": [
+        "content",
+        "expectedRawRevision",
+        "file",
+        "spec"
+      ],
+      "required": [
+        "content",
+        "file"
+      ]
+    }
+  },
+  "commands": [
+    "spec"
+  ]
+}

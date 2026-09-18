@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "codex-spec": {
+      "command": "node",
+      "args": ["./mcp-server.mjs"],
+      "cwd": "."
+    }
+  }
+}

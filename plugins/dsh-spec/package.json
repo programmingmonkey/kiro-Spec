@@ -1,0 +1,33 @@
+{
+  "name": "dsh-spec",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Kiro-style Spec mechanism (requirements → design → tasks, EARS, three-valued task states, waves dependency graph) as a DeepSeek Harness cordis plugin",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js"
+  },
+  "sideEffects": false,
+  "license": "MIT",
+  "dependencies": {
+    "@my-harness/kiro-rules": "workspace:*",
+    "@my-harness/spec-diagnose": "workspace:*",
+    "@my-harness/spec-analysis": "workspace:*",
+    "@my-harness/spec-parser": "workspace:*",
+    "@my-harness/spec-revision": "workspace:*"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-tools": ">=0.1.5-alpha.2"
+  },
+  "devDependencies": {
+    "@deepseek-ai/dsh-tools": "0.1.5-alpha.2",
+    "semver": "^7.8.5"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

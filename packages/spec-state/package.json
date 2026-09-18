@@ -1,0 +1,27 @@
+{
+  "name": "@my-harness/spec-state",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Host-agnostic Spec state layer (stateEpoch / journal / lease / recovery / CAS) shared by the three hosts. I/O, clock, randomness and process identity are injected; no node:fs, no node:path.",
+  "type": "module",
+  "exports": {
+    ".": "./lib/index.mjs",
+    "./storage": "./lib/storage.mjs",
+    "./ports": "./lib/ports.mjs",
+    "./paths": "./lib/paths.mjs",
+    "./adapter-context": "./lib/adapter-context.mjs",
+    "./core/*": "./lib/core/*.mjs"
+  },
+  "dependencies": {
+    "@my-harness/spec-analysis": "workspace:*",
+    "@my-harness/spec-diagnose": "workspace:*",
+    "@my-harness/spec-parser": "workspace:*",
+    "@my-harness/spec-revision": "workspace:*"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=20 <26"
+  }
+}

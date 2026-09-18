@@ -1,0 +1,23 @@
+{
+  "name": "@my-harness/spec-analysis",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Second-order spec analysis (checklist / drift / amendments / archive / signature) shared by the three hosts. I/O is injected; no node:fs, no node:path.",
+  "type": "module",
+  "exports": {
+    "./checklist": "./lib/checklist.js",
+    "./drift": "./lib/drift.js",
+    "./amendments": "./lib/amendments.js",
+    "./archive": "./lib/archive.js",
+    "./signature": "./lib/signature.js"
+  },
+  "dependencies": {
+    "@my-harness/spec-parser": "workspace:*"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

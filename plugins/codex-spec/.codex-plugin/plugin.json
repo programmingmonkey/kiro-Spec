@@ -1,0 +1,24 @@
+{
+  "name": "codex-spec",
+  "version": "1.0.0+codex.20260918",
+  "description": "Codex plugin for Kiro-compatible requirements-first Spec authoring and serial execution.",
+  "author": {
+    "name": "kiro-spec"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "codex-spec",
+    "shortDescription": "Kiro-compatible Spec authoring and serial execution for Codex.",
+    "longDescription": "A Hook-free, collaborative requirements-first Spec workflow with existing-Spec discovery, serial task execution, recovery, and pluggable validation-policy support.",
+    "developerName": "kiro-spec",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Show the codex-spec installation diagnostics."
+    ]
+  },
+  "mcpServers": "./.mcp.json"
+}

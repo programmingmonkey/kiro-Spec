@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "specsRoot": ".kiro/specs",
+  "writePolicy": {
+    "mode": "evaluation-only",
+    "allowedPrefixes": ["_eval-codex-20260827/"],
+    "authorityFile": ".kiro/steering/spec-conventions.md",
+    "authorityHash": "sha256:bfdf64735714c48d8add5385fbc49a0770283979b1075a65248c5d8893a32f97"
+  },
+  "rules": [
+    {
+      "match": [".kiro/specs/**/*.md"],
+      "contextFiles": [
+        ".kiro/steering/spec-conventions.md",
+        ".kiro/settings/templates/specs/requirements.md",
+        ".kiro/settings/templates/specs/design.md",
+        ".kiro/settings/templates/specs/tasks.md"
+      ]
+    }
+  ],
+  "validators": [
+    { "id": "spec-tasks-lint", "profile": "kiro-spec/spec-tasks-lint-v1" }
+  ]
+}

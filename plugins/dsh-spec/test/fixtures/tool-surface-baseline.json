@@ -1,0 +1,15 @@
+{
+  "note": "Baseline of the 8 tools + 1 command that existed BEFORE dsh-spec-advancement. Task 6.1 / Req 8.1 require these signatures to be unchanged by the work. This records the pre-change snapshot measured on 2026-09-11; the `addedBy` tools are new and must be present IN ADDITION to the baseline set.",
+  "tools": {
+    "spec_diagnostics": { "params": [], "required": [] },
+    "spec_init": { "params": ["detailLevel", "feature", "goal", "kind", "workflow"], "required": ["goal"] },
+    "spec_meta": { "params": ["action", "chatSessionId", "executionId", "task", "timestamp"], "required": [] },
+    "spec_read": { "params": ["file"], "required": [] },
+    "spec_run": { "params": ["dryRun", "wave"], "required": [] },
+    "spec_status": { "params": [], "required": [] },
+    "spec_task_set": { "params": ["done", "index", "state"], "required": ["index"] },
+    "spec_write": { "params": ["content", "file"], "required": ["content", "file"] }
+  },
+  "commands": ["spec"],
+  "addedBy": ["spec_amend", "spec_archive", "spec_checklist", "spec_drift", "spec_sign"]
+}

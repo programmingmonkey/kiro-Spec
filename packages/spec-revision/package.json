@@ -1,0 +1,20 @@
+{
+  "name": "@my-harness/spec-revision",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Dual-hash (rawRevision + approvalFingerprint) for Kiro-compatible Spec artifacts. Pure functions, zero I/O.",
+  "type": "module",
+  "main": "lib/revision.mjs",
+  "exports": {
+    ".": "./lib/revision.mjs"
+  },
+  "dependencies": {
+    "@my-harness/spec-parser": "workspace:*"
+  },
+  "engines": {
+    "node": ">=20 <26"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  }
+}

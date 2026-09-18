@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "about": [
+    "⚠️ 映射注记（2026-09-17 `codex-spec-rename` 期 Task 8）：本文件里的 `kiro-spec` 是 2026-09-17 **之前**的插件名，现名 `codex-spec`。`hosts` 的**键**已随改名更新（现为 `dsh-spec` / `codex-spec`），而描述历史事件的句子与历史文档路径按 Task 8「**键改、句留**」保留原文 —— 它们记的是当时的事实，改了就变成假话。",
+    "第 3 期有意保留的宿主间行为差异（白名单）。第 3.5 期据此做「实测差异集合 ⊆ 声明集合」的判据。",
+    "hosts 记的是**可观察行为**，不是内部返回值：kiro-spec 侧的可观察行为是 parseTasks 抛错。",
+    "row 是差异表（test/fixtures/difference-matrix.json）里对应的行号，供白名单测试直接比对。",
+    "第 3.5 期追加的第三条（fence-policy-coupling）没有对应的差异表行——它的形态是一整类属性化语料，不是一个定值样本。故该条以 mechanism 而非 row 标识；row 为 null 是有意的，不是漏填。",
+    "归属方唯一：本文件属于 packages/spec-parser；第 3.5 期经 exports 消费，不得另建第二份。"
+  ],
+  "differences": [
+    {
+      "id": "task-state-tilde",
+      "row": "A1",
+      "hosts": {
+        "dsh-spec": "解析为任务（valid=true）并由 repo-convention 报 tasks/invalid-task-state",
+        "codex-spec": "parseTasks 抛 Invalid task state"
+      },
+      "justification": "dsh 对齐真机四字符类 [ x~-] 并把处置交给诊断；kiro-spec 于 2026-09-08 显式收紧",
+      "evidence": "docs/superpowers/plans/2026-09-08-kiro-spec-strict-task-state.md（kiro 侧显式收紧的原文依据）；真机对 `~`：f 命中且 d 命中 → 无 error"
+    },
+    {
+      "id": "task-state-illegal",
+      "row": "A2",
+      "hosts": {
+        "dsh-spec": "解析为条目（valid=false）并计入 total，报 tasks/malformed-checkbox",
+        "codex-spec": "parseTasks 抛 Invalid task state"
+      },
+      "justification": "同上一条：dsh 保留条目以便诊断与计数自洽，kiro 在解析层拒绝",
+      "evidence": "真机 h&&!f 分支报 tasks/malformed-checkbox 且该行不计为任务；两边都不把它当任务，分歧仅在返回表示、计数口径与装配层处置"
+    },
+    {
+      "id": "fence-policy-coupling",
+      "row": null,
+      "mechanism": "fence-judgment-coupling",
+      "hosts": {
+        "dsh-spec": "把 `- [~] 1.1` / `- [/] 1.1` 计为任务，于是 taskIndents 非空；缩进 4 的围栏因「有更浅的任务行」而被认闭合，围栏内那一行不计为任务",
+        "codex-spec": "该行不是任务（strict 下第一态即 invalid-state），`parseTasks` 抛 Invalid task state；taskIndents 为空，同一个缩进 4 的围栏不被认作围栏，围栏内那一行（如 `2.1`）反被计为任务"
+      },
+      "justification": "这是既有的真实语义耦合，不是新缺陷：`lib/scan-lines.js` 的 taskIndents 由任务行累积，而「哪些行是任务」依 strictTaskState 而不同。不消除的理由与差异表 E/F 同源——消除它就要给围栏判定造一个不依赖策略的旁路，那会改变 plugins/kiro-spec/lib/core/revision.mjs 算 approval fingerprint 所用的原语（第 3 期已确立此约束）。故登记为第三条声明。",
+      "evidence": "属性化语料（test/fixtures/policy-coupling.json，288 份 state × subjectIndent × fenceIndent × openRun × closeRun × guard 笛卡尔积）实测：96 份有差异，其中 78 份是 A1/A2 形态、18 份是本条形态、0 份无法归类。复现件（[~] / [/]，主语缩进 2、围栏缩进 4、3/3 等长闭合、无防护行）：dsh 任务 {1.1,1.4}、kiro 任务 {2.1,1.4}，两策略 inFence 分别 01110 / 00000。"
+    }
+  ]
+}

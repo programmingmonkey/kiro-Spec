@@ -1,0 +1,34 @@
+{
+  "name": "codex-spec",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Codex plugin for Kiro-compatible requirements-first Spec authoring and serial execution",
+  "type": "module",
+  "dependencies": {
+    "@my-harness/spec-revision": "workspace:*",
+    "@my-harness/spec-state": "workspace:*"
+  },
+  "engines": {
+    "node": ">=20 <26"
+  },
+  "files": [
+    ".codex-plugin",
+    ".mcp.json",
+    "adapter.example.json",
+    "mcp-server.mjs",
+    "lib",
+    "fixtures",
+    "skills",
+    "README.md",
+    "INSTALL.md"
+  ],
+  "scripts": {
+    "build": "node --check mcp-server.mjs && node --check lib/core/index.mjs && node --check lib/core/task-format.mjs && node --check lib/core/analysis.mjs && node --check lib/core/artifact-schema.mjs && node --check lib/core/quality.mjs && node --check lib/core/templates.mjs && node --check lib/core/event-format.mjs && node --check lib/core/revision.mjs && node --check lib/core/task-events.mjs && node --check lib/core/task-execution.mjs && node --check lib/core/workflow.mjs && node --check lib/core/storage.mjs && node --check lib/core/workspace-snapshot.mjs && node --check lib/mcp/adapter.mjs && node --check lib/mcp/service.mjs && node --check lib/mcp/tools.mjs",
+    "check": "node --check mcp-server.mjs && node --check lib/core/index.mjs && node --check lib/core/task-format.mjs && node --check lib/core/analysis.mjs && node --check lib/core/artifact-schema.mjs && node --check lib/core/quality.mjs && node --check lib/core/templates.mjs && node --check lib/core/event-format.mjs && node --check lib/core/revision.mjs && node --check lib/core/task-events.mjs && node --check lib/core/task-execution.mjs && node --check lib/core/workflow.mjs && node --check lib/core/storage.mjs && node --check lib/core/workspace-snapshot.mjs && node --check lib/mcp/adapter.mjs && node --check lib/mcp/service.mjs && node --check lib/mcp/tools.mjs && node --check test/artifact-schema-adapter.test.mjs && node --check test/skeleton.test.mjs && node --check test/parser.test.mjs && node --check test/analysis.test.mjs && node --check test/quality.test.mjs && node --check test/revision-state.test.mjs && node --check test/storage.test.mjs && node --check test/workspace-snapshot.test.mjs && node --check test/mcp-requirements-first.test.mjs && node --check test/mcp-additional-workflows.test.mjs && node --check test/mcp-task-execution.test.mjs && node --check test/mcp-stdio.test.mjs && node --check test/adapter-profile.test.mjs && node --check test/admission-probe.test.mjs && node --check test/tool-schema.test.mjs && node --check test/task-execution.test.mjs && node --check test/legacy-private-dir.test.mjs",
+    "test": "node --test test/**/*.test.mjs",
+    "doctor": "npm run check && npm test"
+  },
+  "devDependencies": {
+    "@my-harness/spec-diagnose": "workspace:*"
+  }
+}
