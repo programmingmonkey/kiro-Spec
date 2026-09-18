@@ -1,0 +1,35 @@
+name: test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # engines 声明的是 ">=20 <26"。取两个 LTS 端点 —— 只跑一个版本
+        # 会让「哪个版本上会坏」这件事永远没人知道。
+        node: ['20', '22']
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # ⚠️ 若干用例在没有下游消费项目语料时会 skip —— 这是有意的设计，不是故障。
+      # 它们会 skip-with-loud-message 并把试过的每条路径打出来。
+      # **skip 不算通过**：本仓是什么、没有什么，见 TEST-SCOPE.md。
+      # 想跑全量就设 CONSUMER_REPO_ROOT 指向你自己的项目。
+      - run: npm test

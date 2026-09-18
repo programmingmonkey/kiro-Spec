@@ -1,0 +1,69 @@
+name: release
+
+# 打 tag 即发布：三个宿主各出一个可直接安装的包。
+#
+# 为什么放在 CI 而不是本机手工打：
+# `scripts/pack-plugin.mjs` 会验「产物与源码逐字节一致」（`--check`），
+# 但**没人会记得在打包之后跑它**。让 tag 触发构建，产物就永远是那次提交的产物。
+#
+# 🔴 `workflow_dispatch` 不是「顺便加的」：**只在 tag 上触发的流程永远没人验证过。**
+#    第一次真跑它，就是你真要发版的那一次 —— 而那是最不该出错的时刻。
+#    留一个手动入口，可以先拿一个已存在的 tag 空跑一遍。
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: '要构建并发布的 tag（手动验证时填，例如 v1.0.0；留空用当前 ref）'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      # 打包器自己会验「产物与源码逐字节一致」，但它依赖 zip。
+      # 不假设 runner 上一定有 —— 缺了就在这里装上，而不是让打包步骤报一个看不懂的错。
+      - name: 确保 zip 可用
+        run: command -v zip >/dev/null 2>&1 || sudo apt-get install -y zip
+
+      - run: pnpm install --frozen-lockfile
+
+      # 发布前必须绿。测试红着发出去的包，使用者会替我们发现 —— 那是最贵的发现方式。
+      - run: npm test
+
+      - name: 构建三个宿主的包
+        run: npm run pack:all
+
+      # `--clobber`：同一个 tag 重跑时覆盖资产，而不是失败。
+      # 先 `release view` 判存在性 —— `gh release create` 在已存在时是硬失败，
+      # 而「为了让 CI 过就改 tag」是很坏的习惯。
+      - name: 发布
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag || github.ref_name }}
+        run: |
+          set -euo pipefail
+          echo "发布 $TAG，产物："
+          ls -l dist/
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" dist/*.plugin --clobber
+          else
+            gh release create "$TAG" dist/*.plugin \
+              --title "$TAG" --generate-notes
+          fi
