@@ -191,9 +191,10 @@ plugins/                     thin adapters for the three hosts
 scripts/                     pack-plugin.mjs (packer), consumer-root.mjs, kiro-bundle-root.mjs
 ```
 
-The layering is a **hard constraint**, not a house style: `packages/` must not contain a single
-`node:fs` (all I/O goes through injected ports), so the decision core runs in any host and can be
-exhaustively unit-tested.
+The layering is not a house style: **across the six public packages, no file under `lib/` imports
+`node:fs` or `node:path`** (all I/O goes through injected ports), so the decision core runs in any
+host and can be exhaustively exercised on an in-memory port
+(`packages/spec-analysis/test/port-contract.test.mjs` does exactly that).
 
 ## Testing
 

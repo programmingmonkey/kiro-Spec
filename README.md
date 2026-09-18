@@ -167,8 +167,9 @@ plugins/                     三个宿主的薄适配层
 scripts/                     pack-plugin.mjs（打包器）、consumer-root.mjs、kiro-bundle-root.mjs
 ```
 
-分层是**硬约束**，不是组织习惯：`packages/` 里一个 `node:fs` 都不许出现（I/O 全走注入的 port），
-所以判定内核可以在任何宿主里跑，也可以被单测穷举。
+分层不是组织习惯：**公开的 6 个包里，`lib/` 下没有任何文件 import `node:fs` / `node:path`**
+（I/O 全走注入的 port），所以判定内核可以在任何宿主里跑，也能在内存 port 上被穷举
+（`packages/spec-analysis/test/port-contract.test.mjs` 正是这么测的）。
 
 ## 测试
 
