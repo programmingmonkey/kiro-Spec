@@ -2,39 +2,91 @@
 
 # kiro-spec
 
-**A Kiro-compatible Spec workflow — requirements → design → tasks — for three hosts.**
+**基于 Kiro 的 Spec 体系构建。一套内核，三个宿主同时运行，与 Kiro 协作同一份 spec。**
 
-把「先想清楚再写代码」变成**有强制结构的工程流程**：需求写成可验收的条目、设计写成可追踪的组件、
-任务写成带依赖图的清单、执行按依赖顺序推进、每一步都有诊断器盯着格式。
+在 **Codex**、**DeepSeek Harness**、**Claude** 三个宿主上跑同一套 Spec 能力；
+写出的 spec 与 Kiro 原生格式一致 —— 所以 **Kiro 与这三个宿主可以协作同一份 spec**：
+任何一方写的，其余各方都能接着改、接着执行。
 
-同一套内核，三个宿主：
+## 四个参与方
 
-| 宿主 | 插件 | 形态 | 工具面 |
-|---|---|---|---|
-| **DeepSeek Harness** | [`dsh-spec`](plugins/dsh-spec/) | cordis 插件 | 13 个工具 + `/spec` 命令 |
-| **Codex** | [`codex-spec`](plugins/codex-spec/) | MCP server | 25 个工具，25 个全部经 schema 校验 |
-| **Claude** | [`claude-spec`](plugins/claude-spec/) | MCP server + `PreToolUse` 门控 | 26 个工具 |
+| 参与方 | 形态 | 工具面 |
+|---|---|---|
+| **DeepSeek Harness** | [`dsh-spec`](plugins/dsh-spec/) —— cordis 插件 | 13 个工具 + `/spec` 命令 |
+| **Codex** | [`codex-spec`](plugins/codex-spec/) —— MCP server | 25 个工具，全部经 schema 校验 |
+| **Claude** | [`claude-spec`](plugins/claude-spec/) —— MCP server + `PreToolUse` 门控 | 26 个工具 |
+| **Kiro** | 原生 —— spec 布局与判定规则与它一致，可直接读写同一份 spec | —— |
 
-三个宿主**共用同一套** L0 判定内核（`packages/`），差异只在适配层。所以同一份 spec 在三个宿主上
-会得到一致的诊断结论 —— 这是这个项目最初要解决的问题。
+三个插件**共用同一个判定内核**（`packages/`），差异只在薄适配层。所以同一份 spec
+在三个宿主上得到一致的结论 —— 一份文档不会「在一个底座通过、在另一个底座不通过」。
 
 ---
+
+## Spec 是什么
+
+**需求驱动，所有功能落配套文档。**
+
+一个功能不是「先写代码」，而是先落成三份**互相约束**的文档：
+
+| 文档 | 回答什么 |
+|---|---|
+| `requirements.md` | **要什么** —— 每条需求带 `**User Story:**` 与 EARS 验收判据（`WHEN … THE SYSTEM SHALL …`） |
+| `design.md` | **怎么做** —— 架构、数据模型、组件接口、错误处理、测试策略 |
+| `tasks.md` | **怎么落地** —— 带依赖图的实现清单，每项回指 `_Requirements: x.y_` |
+
+另有三种形态：**bugfix** 走独立文档（`bugfix.md` 的 Current / Expected / Unchanged 三段，
+用 `SHALL CONTINUE TO` 写回归防护），**design-first** 先确认设计再推导需求，
+**quick** 一次性写齐三件套后整体确认。
+
+**「落配套文档」不是一句倡导 —— 它是可判定的。** 41 条规则会逐条报出章节缺失、
+验收判据写成散文、依赖图格式不符、任务状态用了第四种标记……**不合格的 spec 会被诊断器指出来**，
+而不是靠人自觉。这是这套体系与「写个设计文档」的区别。
 
 ## 为什么需要它
 
 编码代理写 spec 的常见失败模式不是「写不出」，而是：
 
 - **写了但不合格** —— 章节标题差一个字、验收条目写成散文、任务没有依赖图；
-- **不合格却没人报** —— 格式问题不报错，只是行为悄悄降级（最坏的一种）；
+- **不合格却没人报** —— 格式问题不报错，只是行为**悄悄降级**（最坏的一种：依赖图格式写歪，
+  宿主丢弃整张图并静默回退成完全串行，无报错、无提示）；
 - **报了但只在一个宿主上报** —— 换一个底座，同一份文档一个通过一个不通过。
 
-本项目的三条主张，正是对着这三点：
+本项目的三条主张正对着这三点：**格式是判据不是风格建议**、**降级必须出声**、
+**判定内核宿主无关**。展开在 [docs/philosophy.md](docs/philosophy.md)。
 
-1. **格式是判据，不是风格建议。** 41 条规则复刻自 Kiro 的出厂校验器，逐条带规则码与严重级。
-2. **降级必须出声。** 依赖图解析不了**不许**静默回退成串行 —— 见 [docs/philosophy.zh-CN.md](docs/philosophy.md)。
-3. **判定内核宿主无关。** 三个适配层都调同一个 `spec-diagnose`，结论必须一致。
+## 这个仓库的特点
 
-理念与设计取舍写在 **[docs/philosophy.zh-CN.md](docs/philosophy.md)**。
+**① 覆盖 Spec 的完整生命周期，不只是写作。**
+
+立项 → 写作 → 诊断 → 跨文档分析 → 审批 → 按依赖图执行。三个宿主各开放 13 / 25 / 26 个工具，
+`dsh-spec` 另有 `/spec` 命令。不是「帮你写个模板」，而是把整条流程收进工具面。
+
+**② 规则表逐条复刻，且有冻结测试守着。**
+
+41 条判定规则复刻自 Kiro 的出厂校验器，版本与 sha256 记在 `packages/kiro-rules`；
+Kiro 升版会让冻结测试变红，逼人重跑提取。
+**判定与 Kiro 不一致时以 Kiro 为准，改我们这边** —— 这条决定了每个 bug 该往哪边修。
+
+**③ 为「规范要求高」的工程模式做的。**
+
+写入走 CAS（`expectedRawRevision` + `stateEpoch`）、执行走 lease（`ownerToken` + 30 分钟有效期）、
+规则变更走短期凭证（`contextProof`）；任务三态、审批握手、连续失败三次门禁，都在**工具层**强制，
+不依赖「记得这样做」。并发与协作靠状态机，不靠自觉。
+
+**④ 判定内核与文件系统解耦。**
+
+公开的 6 个包里，`lib/` **没有任何文件 import `node:fs` / `node:path`** ——
+判定内核因此能在内存 port 上整体驱动（`packages/spec-analysis/test/port-contract.test.mjs`
+正是这么测的），也可以脱离文件系统被穷举。
+
+**⑤ 三个宿主是同一套语义，不是三份各自实现。**
+
+适配层很薄：`plugins/*/lib/core/*` 的 13 个文件逐字节相同。其中 12 个只是
+`export * from '@my-harness/spec-state/core/…'`；第 13 个 `storage.mjs` 是
+**唯一把真实 `node:fs` 接进纯实现的边界** —— 八行，把文件系统 port 接进去。
+判定、状态机、审批都来自同一份代码，而「I/O 从哪儿进来」是一个可以指出来的文件。
+
+> 就 Spec 工作流的**工具面完整度与规则覆盖**而言，这基本是**全网最完整的 Spec 插件之一**。
 
 ## 快速开始
 
@@ -86,8 +138,8 @@ spec_task_plan / spec_task_begin / spec_task_complete
 | [docs/tools/dsh-spec.md](docs/tools/dsh-spec.md) | 13 个工具 + `/spec` 命令 |
 | [docs/tools/codex-spec.md](docs/tools/codex-spec.md) | 25 个 MCP 工具 |
 | [docs/tools/claude-spec.md](docs/tools/claude-spec.md) | 26 个 MCP 工具 + 阶段门控 |
-| [docs/spec-conventions.zh-CN.md](docs/spec-conventions.md) | 怎么写：标题格式、EARS 句式、任务三态、依赖图 |
-| [docs/compat.zh-CN.md](docs/compat.md) | 与 Kiro 的差异（含**已知未建模**的部分） |
+| [docs/spec-conventions.md](docs/spec-conventions.md) | 怎么写：标题格式、EARS 句式、任务三态、依赖图 |
+| [docs/compat.md](docs/compat.md) | 与 Kiro 的差异（含**已知未建模**的部分） |
 
 ### 文档布局
 
@@ -145,14 +197,14 @@ CONSUMER_REPO_ROOT=/path/to/your/project npm test
 ```
 
 ⚠️ 本仓是从一个更大的开发仓库导出的公开子集。**哪些东西没在这里、为什么**，
-以及 `skip` 与「通过」的区别，都写在 [TEST-SCOPE.zh-CN.md](TEST-SCOPE.md) —— 那一篇是记账，不是免责。
+以及 `skip` 与「通过」的区别，都写在 [TEST-SCOPE.md](TEST-SCOPE.md) —— 那一篇是记账，不是免责。
 
 ## 与 Kiro 的关系
 
 规则表复刻自 Kiro 的出厂校验器（版本与 sha256 记在 `packages/kiro-rules`）。**判定不一致时，
 以 Kiro 为准，改我们这边** —— 这条写在这里是因为它决定了每一个 bug 该往哪边修。
 
-已知的未建模部分、以及刻意保留的差异，列在 [docs/compat.zh-CN.md](docs/compat.md)。
+已知的未建模部分、以及刻意保留的差异，列在 [docs/compat.md](docs/compat.md)。
 
 ## 许可
 

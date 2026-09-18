@@ -1,27 +1,48 @@
 > 🌐 [中文](README.md) · **English**
+
 # kiro-spec
 
-**A Kiro-compatible Spec workflow — requirements → design → tasks — for three hosts.**
+**Built on Kiro's Spec system. One core, running on three hosts at once, collaborating with Kiro
+on the same spec.**
 
-It turns "think it through before you code" into a **structured, enforced engineering process**:
-requirements become verifiable items, design becomes traceable components, tasks become a
-dependency-ordered checklist, execution follows that order, and a diagnoser watches the format
-at every step.
+The same Spec capability runs on **Codex**, **DeepSeek Harness** and **Claude** — and the specs it
+writes match Kiro's native format, so **Kiro and those three hosts can collaborate on one spec**:
+whatever any of them writes, the others can pick up, edit and execute.
 
-One shared core, three hosts:
+## The four participants
 
-| Host | Plugin | Form | Tool surface |
-|---|---|---|---|
-| **DeepSeek Harness** | [`dsh-spec`](plugins/dsh-spec/) | cordis plugin | 13 tools + a `/spec` command |
-| **Codex** | [`codex-spec`](plugins/codex-spec/) | MCP server | 25 tools, all schema-validated |
-| **Claude** | [`claude-spec`](plugins/claude-spec/) | MCP server + `PreToolUse` gate | 26 tools |
+| Participant | Form | Tool surface |
+|---|---|---|
+| **DeepSeek Harness** | [`dsh-spec`](plugins/dsh-spec/) — cordis plugin | 13 tools + a `/spec` command |
+| **Codex** | [`codex-spec`](plugins/codex-spec/) — MCP server | 25 tools, all schema-validated |
+| **Claude** | [`claude-spec`](plugins/claude-spec/) — MCP server + `PreToolUse` gate | 26 tools |
+| **Kiro** | native — the spec layout and the decision rules match, so it reads and writes the same specs | — |
 
-All three hosts share the **same L0 decision core** (`packages/`). Only the adapters differ.
-So the same spec gets the same diagnosis on all three — which is the problem this project
-set out to solve.
-
+The three plugins **share one decision core** (`packages/`); only thin adapters differ. So the same
+spec gets the same verdict on all three — a document cannot pass on one host and fail on another.
 
 ---
+
+## What a Spec is
+
+**Requirements-driven, with a matching document for every feature.**
+
+A feature does not start with code. It starts with three documents that **constrain each other**:
+
+| Document | Answers |
+|---|---|
+| `requirements.md` | **what** — each requirement carries a `**User Story:**` and EARS acceptance criteria (`WHEN … THE SYSTEM SHALL …`) |
+| `design.md` | **how** — architecture, data models, component interfaces, error handling, testing strategy |
+| `tasks.md` | **what it takes** — a dependency-ordered implementation checklist, each item pointing back at `_Requirements: x.y_` |
+
+Three more shapes exist: **bugfix** uses its own document (`bugfix.md`, with Current / Expected /
+Unchanged sections and `SHALL CONTINUE TO` for regression protection), **design-first** confirms the
+design before deriving requirements, and **quick** writes all three and confirms them in one batch.
+
+**"A matching document for every feature" is not an appeal — it is decidable.** 41 rules report
+missing sections, acceptance criteria written as prose, a malformed dependency graph, a fourth task
+state… **a non-compliant spec gets pointed out by the diagnoser**, not left to good intentions.
+That is the difference between this and "write a design doc".
 
 ## Why this exists
 
@@ -29,21 +50,55 @@ The common failure mode of specs written by coding agents is not "can't write" �
 
 - **Written but non-compliant** — a heading off by one word, acceptance criteria written as prose,
   a task list with no dependency graph;
-- **Non-compliant but silent** — a format problem that raises no error, only silently degrades
-  behavior (the worst kind);
-- **Reported, but on one host only** — swap the host and the same document passes on one and
-  fails on the other.
+- **Non-compliant but silent** — no error, just a behaviour that **quietly degrades** (the worst
+  kind: a malformed dependency graph makes the host discard the whole graph and silently fall back
+  to fully serial execution, with no error and no warning);
+- **Reported, but on one host only** — swap the host and the same document passes on one and fails
+  on the other.
 
-This project's three claims are aimed exactly at those:
+This project's three claims are aimed exactly at those: **format is a verdict, not a style
+suggestion**; **degradation must be loud**; **the decision core is host-agnostic**. Expanded in
+[docs/philosophy.md](docs/philosophy.en.md).
 
-1. **Format is a verdict, not a style suggestion.** 41 rules, replicated from Kiro's factory
-   validator, each with a rule code and severity.
-2. **Degradation must be loud.** An unparseable dependency graph is **not allowed** to silently
-   fall back to fully serial execution — see [docs/philosophy.md](docs/philosophy.en.md).
-3. **The decision core is host-agnostic.** All three adapters call the same `spec-diagnose`;
-   the verdict must agree.
+## What this repository is good at
 
-Design rationale and trade-offs live in **[docs/philosophy.md](docs/philosophy.en.md)**.
+**① It covers the whole Spec lifecycle, not just authoring.**
+
+Init → authoring → diagnosis → cross-document analysis → approval → dependency-ordered execution.
+The three hosts expose 13 / 25 / 26 tools, and `dsh-spec` adds a `/spec` command. This is not
+"a template generator" — the entire flow is inside the tool surface.
+
+**② The rule table is replicated rule by rule, guarded by a frozen test.**
+
+41 decision rules replicated from Kiro's factory validator; the version and sha256 are recorded in
+`packages/kiro-rules`, and a frozen test goes red when Kiro upgrades, forcing a re-extraction.
+**When our verdict disagrees with Kiro's, we change — not Kiro.** That decides which side every
+bug gets fixed on.
+
+**③ Built for engineering modes with high process requirements.**
+
+Writes go through CAS (`expectedRawRevision` + `stateEpoch`), execution through a lease (`ownerToken`
+with a 30-minute validity), rule changes through a short-lived credential (`contextProof`). The three
+task states, the approval handshake and the three-consecutive-failures gate are all enforced **at the
+tool layer**, not left to "remember to do it". Concurrency rests on a state machine, not on good
+intentions.
+
+**④ The decision core is decoupled from the filesystem.**
+
+Across the six public packages, **no file under `lib/` imports `node:fs` or `node:path`** — so the
+core can be driven entirely on an in-memory port (`packages/spec-analysis/test/port-contract.test.mjs`
+does exactly that), and exercised without a filesystem.
+
+**⑤ The three hosts are one semantic, not three implementations.**
+
+The adapters are thin: the 13 files under `plugins/*/lib/core/*` are byte-identical across hosts.
+Twelve of them are nothing but `export * from '@my-harness/spec-state/core/…'`; the thirteenth,
+`storage.mjs`, is the **only boundary where real `node:fs` enters the pure implementation** —
+eight lines wiring a filesystem port in. Diagnosis, state machine and approval all come from one
+body of code, and the place where I/O enters is a single file you can point at.
+
+> In terms of **tool-surface completeness and rule coverage** for Spec workflows, this is
+> **among the most complete Spec plugins available anywhere**.
 
 ## Quick start
 
