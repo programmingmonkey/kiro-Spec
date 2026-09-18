@@ -100,6 +100,13 @@ test('③ peer 范围必须真的匹配实际安装的版本', () => {
 //     `EUNSUPPORTEDPROTOCOL Unsupported URL Type "workspace:"`。
 //     所以把 private 去掉、或把只服务于打包的字段加回来，等于让这个装不上的
 //     形态重新看起来是可发布的。决定与理由见 INSTALL.md 的安装一节。
+//
+//     ⚠️ 2026-09-18 订正前提（**结论不变**）：INSTALL.md 此前写「本包不发布」，
+//     那句已被更正 —— `scripts/pack-plugin.mjs` 会把 workspace 依赖 vendor 进归档，
+//     所以**有**一条可分发路径（方式 A）。但这**不改变本条断言的理由**：
+//     那条路走的是打包器，不是 `npm pack`；`workspace:` 协议的报错依然成立，
+//     而打包器**不读 `files`** —— 于是 `files` 仍是一个**没有任何东西会校验的声称**，
+//     正是本仓在别处反复拒绝的形态。分发的真实形状由打包器与它的测试定义。
 test('④ 发布形态：不发布 —— private 为 true，且无发布态字段', () => {
   assert.equal(
     pkg.private,
