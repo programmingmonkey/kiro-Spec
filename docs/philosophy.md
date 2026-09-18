@@ -1,133 +1,124 @@
-> 🌐 **English** · [中文](philosophy.zh-CN.md)
+> 🌐 **中文** · [English](philosophy.en.md)
 
-# Philosophy
+# 理念
 
-This project is not "Kiro's prompts, copied". It is a **decision core** with three thin adapters.
-The six principles below are why it looks the way it does — each one cost at least one real mistake.
-
----
-
-## 1. Format is a verdict, not a style suggestion
-
-The usual failure when a coding agent writes a spec is not "can't write it" — it is
-"wrote it, but non-compliant": a heading off by one word, acceptance criteria written as prose,
-a task list with no dependency graph.
-
-So this project does not **guide** or **suggest**. It **adjudicates**: 41 rules, each with a rule
-code and a severity (error / warning), reported by `spec_diagnostics`.
-
-The rules are **replicated**, not invented — see principle 6.
+这个项目不是「把 Kiro 的 prompt 抄一遍」。它是一个**判定内核**加上三个薄适配层。
+下面六条是它为什么长成现在这样 —— 每一条都对应过至少一次真实的错误。
 
 ---
 
-## 2. Degradation must be loud
+## 一、格式是判据，不是风格建议
 
-This is the single most important principle here, and the one that has cost the most.
+写 spec 最常见的失败不是「写不出来」，而是「写了但不合格」：章节标题差一个字、
+验收条目写成散文、任务没有依赖图。
 
-**The same mistake can end three ways. The worst is not the one that errors:**
+所以这里**不引导、不建议**，而是**判定**：41 条规则，逐条带规则码与严重级
+（error / warning），由 `spec_diagnostics` 报出来。
 
-| Outcome | Example | Damage |
+规则的来源是**复刻**，不是发明 —— 见第六条。
+
+---
+
+## 二、降级必须出声
+
+这是整个项目最重要的一条，也是吃过最多亏的一条。
+
+**同一个错误有三种下场，最坏的不是报错：**
+
+| 下场 | 例子 | 危害 |
 |---|---|---|
-| Errors | A missing `## Requirements` section | Small — you'll fix it |
-| **Silent degradation** | A malformed dependency graph → the host discards the whole graph and falls back to fully serial execution, **with no warning** | **Large** — you think nothing happened |
-| **Silent zeroing** | A corpus path fails to resolve → `return []` → the check "passes" as usual | **Largest** — the corpus vanished and the tests went *greener* |
+| 报错 | 缺 `## Requirements` 章节 | 小 —— 你会去修 |
+| 静默降级 | 依赖图格式写歪 → 宿主丢弃整张图、**无 warning** 地退化成完全串行 | **大** —— 你以为什么都没发生 |
+| 静默归零 | 语料路径解析不到 → `return []` → 判据照常「通过」 | **最大** —— 语料没了，测试反而全绿 |
 
-Hence the hard rule:
+所以本项目的硬规定是：
 
-> When resolution fails, **silent degradation is not allowed**. The caller must either
-> skip-with-a-loud-message or fail explicitly, embedding the list of every path it tried.
+> 解析不到时**不许静默降级**。调用方必须 skip-with-loud-message 或显式报错，
+> 把「试过的每一条路径」原样嵌进消息里。
 
-And the companion accounting discipline:
+以及一条配套的记账纪律：
 
-> **A skip is not a pass.** The delivery notes must say it didn't run.
+> **skip 不算通过。** 交付说明里要写明它没跑过。
 
-[TEST-SCOPE.md](../TEST-SCOPE.md) is that discipline's output: it documents what this repository
-does **not** contain, rather than "654 tests pass". Those are two different sentences.
+[../TEST-SCOPE.md](../TEST-SCOPE.md) 就是这条纪律的产物：它写的是「这个仓库里**没有**什么」，
+而不是「这个仓库有 654 个测试通过」。两句话不能混。
 
-### The three hard requirements on the dependency graph are worth memorising
+### 依赖图那三处硬要求值得单独记住
 
-`## Task Dependency Graph` must be `{"waves":[{"id":0,"tasks":["1"]}]}`:
+`## Task Dependency Graph` 必须是 `{"waves":[{"id":0,"tasks":["1"]}]}`：
 
-1. Not a bare array `[[1,2],[3]]`;
-2. Every wave must carry a **numeric** `id` (a string `"0"` is rejected — the check is
-   `typeof === "number"`);
-3. Task ids must be written as **strings** — `["1","2"]`, not `[1,2]`.
+① 不要写成裸数组 `[[1,2],[3]]`；
+② 每个 wave 必须带**数字** `id`（写字符串 `"0"` 不行 —— 校验的是 `typeof === "number"`）；
+③ 任务 id 必须写成**字符串** `["1","2"]`。
 
-Violate any one and the host **discards the entire graph and silently falls back to fully serial
-execution** (no error, no warning). The numeric `id` carries no meaning, but it must exist and be
-a number.
+违反任意一处，宿主**丢弃整张图并静默回退成完全串行**（无报错、无提示）。
+`id` 的数值不承载语义，但必须存在且是数字。
 
-⚠️ Worse: the real linter **cannot detect (2) or (3)** (it only asserts that `waves` is a non-empty
-array). So the only symptom of getting it wrong is that **parallelism disappears** — a performance
-problem that never reports itself.
+⚠️ 更坏的是：真机的 linter **查不出 ② ③**（它只断言 `waves` 是非空数组）。
+所以写错了的唯一症状是**并行度消失** —— 一个不会报错的性能问题。
 
 ---
 
-## 3. The decision core must be host-agnostic
+## 三、判定内核必须宿主无关
 
-All three hosts (DSH / Codex / Claude) share **one** `packages/spec-diagnose`. So the same spec
-must get the same verdict on all three — which is the problem this project set out to solve
-(the same document passing on one host and failing on another).
+三个宿主（DSH / Codex / Claude）的适配层**共用同一个** `packages/spec-diagnose`。
+所以同一份 spec 在三个宿主上必须得到一致的结论 —— 这是这个项目最初要解决的问题
+（同一份文档，一个底座通过、另一个不通过）。
 
-This is enforced by a **hard architectural constraint**, not a house style:
+为此有一条**硬架构约束**，不是组织习惯：
 
-> **Not a single `node:fs` may appear in `packages/`.** All I/O goes through injected ports.
+> `packages/` 里**一个 `node:fs` 都不许出现**。I/O 全部走注入的 port。
 
-The result: the decision core runs in any host, can be exhaustively unit-tested, and can be
-verified without a filesystem. The layering is not decorative — the dependency direction between
-`packages/` (adjudication) and `plugins/` (adapters) is a real constraint, guarded by tests.
+结果是判定内核可以在任何宿主里跑、可以被单测穷举、可以脱离文件系统验证。
+分层不是画着好看的：`packages/`（判定）→ `plugins/`（适配）之间有真实的依赖方向约束，
+由测试守着。
 
 ---
 
-## 4. Concurrency and collaboration rest on a state machine, not on good intentions
+## 四、并发与协作靠状态机，不靠自觉
 
-A spec gets touched by multiple sessions and multiple agents. So the write path carries three locks:
+spec 会被多个会话、多个代理同时碰。所以写入路径上有三道锁：
 
-| Mechanism | What it prevents |
+| 机制 | 防的是什么 |
 |---|---|
-| **CAS** (`expectedRawRevision` + `stateEpoch`) | Overwriting someone else's change with a stale copy |
-| **lease** (`ownerToken` + `planRevision`) | Two sessions doing the same task at once |
-| **contextProof** (short-lived credential) | A rule changed but the agent is still working from its old understanding |
+| **CAS**（`expectedRawRevision` + `stateEpoch`） | 拿旧版本覆盖别人的改动 |
+| **lease**（`ownerToken` + `planRevision`） | 两个会话同时做同一个任务 |
+| **contextProof**（短期凭证） | 规则变了但代理还用着旧理解 |
 
-Plus one rule about not leaving intermediate states behind:
+以及一条**不留中间态**的规矩：
 
-> Task markers have exactly three states — `- [ ]` / `- [-]` / `- [x]` — and **`[-]` must never
-> survive across sessions**.
+> 任务标记只有三态 `- [ ]` / `- [-]` / `- [x]`，**不许跨会话留 `[-]`**。
 
-`[-]` is written at the moment work actually starts, and before finishing it must converge to
-`[x]` or revert to `[ ]`. A task parked at `[-]` makes the next session believe someone is
-working on it — a quiet deadlock.
+`[-]` 只在真正开工那一刻打，收工前必须收敛成 `[x]` 或退回 `[ ]`。
+停在 `[-]` 的任务会让下一个会话以为有人正在做 —— 一个安静的死锁。
 
-Failure is the same: `spec_task_fail` reverts `[-]` to `[ ]` rather than leaving it.
+失败时也一样：`spec_task_fail` 把 `[-]` 恢复成 `[ ]`，而不是留着。
 
 ---
 
-## 5. State the boundaries honestly instead of pretending they don't exist
+## 五、诚实地标注边界，而不是假装它不存在
 
-This plugin's tier is **`collaborative`**, not hard security. That sentence appears in the README
-and in the gate documentation because **describing a collaboration convention as a security
-boundary is the most dangerous mistake available** — it leads people to rely, in a place where they
-genuinely need protection, on something that will not stop anyone determined to go around it.
+本插件的档位是 **`collaborative`**，不是 hard security。这句话写在 README 里、
+写在门控文档里，是因为**把协作约定说成安全边界是最危险的错误** ——
+它会让使用者在真正需要防护的地方依赖一个拦不住决意绕过者的东西。
 
-What these checks stop is the normal flow of "didn't realise I was crossing a line".
+它们拦住的是「没意识到自己在越界」的正常流程。
 
-Concretely, for the Claude host's stage gate, the documentation states explicitly when it **may be
-dormant**, how to read each of the three `gate.status` values, and **which path the gate does not
-cover at all**. "The gate exists" and "the gate is alive right now" are two different sentences.
+具体到 Claude 宿主的阶段门控：文档里明确写了它在什么情况下**可能处于停摆状态**、
+`gate.status` 的三种取值各该怎么读、以及**不被门控覆盖的那条路径是哪一个**。
+「有这道门」和「这道门现在活着」是两句话。
 
 ---
 
-## 6. When we disagree with Kiro, Kiro is right and we change
+## 六、不一致时以 Kiro 为准，改我们这边
 
-The rule table is replicated from Kiro's factory validator; its version and sha256 are recorded in
-`packages/kiro-rules`, guarded by a **frozen test**: a Kiro upgrade turns it red and forces a
-re-extraction.
+规则表是逆自 Kiro 出厂校验器的，版本与 sha256 记在 `packages/kiro-rules`，
+并有**冻结测试**：Kiro 升版会让它变红，逼人重跑提取。
 
-That decides which side every bug gets fixed on:
+这条决定了一个 bug 该往哪边修：
 
-> **When our verdict disagrees with Kiro's, we change — not Kiro.**
+> **我们的判定与 Kiro 不一致时，修的是我们，不是 Kiro。**
 
-At the same time, **deliberate differences must be registered explicitly** rather than blended into
-"we replicated it inaccurately". Which differences are intentional and which are simply not done
-yet are listed in [compat.md](compat.md). "Not done" and "done wrong" are two different things;
-mix them and nobody can tell whether something should be fixed.
+同时，**刻意的差异要显式登记**，不能混在「我们复刻得不准」里 ——
+哪些是有意不同、哪些是还没做，见 [compat.md](compat.md)。
+「没做」和「做错了」是两件事，混在一起就没人能判断该不该修。

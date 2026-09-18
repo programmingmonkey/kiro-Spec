@@ -1,128 +1,117 @@
-> 🌐 **English** · [中文](dsh-spec.zh-CN.md)
+> 🌐 **中文** · [English](dsh-spec.en.md)
 
-# `dsh-spec` tool reference
+# `dsh-spec` 工具参考
 
-The DeepSeek Harness (cordis plugin) host. **13 tools + 1 `/spec` command.**
+DeepSeek Harness（corgis 插件）宿主。**13 个工具 + 1 个 `/spec` 命令**。
 
-- Form: a cordis plugin mounted into a DSH profile (see
-  [../../plugins/dsh-spec/INSTALL.md](../../plugins/dsh-spec/INSTALL.md))
-- How it differs from the other two hosts: the smallest tool surface, and it has a command
-  surface (`/spec`); no MCP schema-validation layer
+- 形态：cordis 插件，挂进一个 DSH profile（见 [../../plugins/dsh-spec/INSTALL.md](../../plugins/dsh-spec/INSTALL.md)）
+- 与另外两个宿主的差别：工具面最小、且有一个命令面（`/spec`）；没有 MCP schema 校验层
 
 ---
 
-## 1. Starting and adopting
+## 一、立项与接管
 
 ### `spec_init`
 
-Start a Kiro-style spec.
+启动一个 Kiro 风格 spec。
 
-> Start a Kiro-style spec. kind: `'feature'` (requirements-first by default), `'bugfix'`
-> (bugfix.md), or `'quick'` (no approval gates). feature supports the `'design-first'` workflow
-> and detailLevel.
+> Start a Kiro-style spec. kind: `'feature'`（默认 requirements-first）、`'bugfix'`（bugfix.md）、
+> 或 `'quick'`（无审批门）。feature 支持 workflow `'design-first'` 与 detailLevel。
 
-| Parameter | Required | Meaning |
+| 参数 | 必填 | 说明 |
 |---|---|---|
-| `goal` | ✅ | High-level goal, seeded into the requirements introduction |
-| `kind` | | `feature` (default) \| `bugfix` \| `quick` |
-| `workflow` | | feature only: `requirements-first` (default) \| `design-first` |
-| `detailLevel` | | design-first only: `high` (default) \| `low` |
-| `feature` | | explicitly name the spec directory |
+| `goal` | ✅ | 高层目标，会写进 requirements 的 Introduction |
+| `kind` | | `feature`（默认）\| `bugfix` \| `quick` |
+| `workflow` | | feature 专用：`requirements-first`（默认）\| `design-first` |
+| `detailLevel` | | design-first 专用：`high`（默认）\| `low` |
+| `feature` | | 显式指定 spec 目录名 |
 
-**The four shapes and their ordering:**
+**四种形态与它们的顺序**：
 
-| Shape | Order | First artifact | Approval gate |
+| 形态 | 顺序 | 首个工件 | 审批门 |
 |---|---|---|---|
-| `feature` (requirements-first) | requirements → design → tasks | `requirements.md` | yes |
-| `feature` (design-first) | design → requirements (derived) → tasks | `design.md` | yes |
-| `bugfix` | analysis → design → tasks | `bugfix.md` (current/expected/unchanged) | yes |
-| `quick` | all three at once | all three | no |
+| `feature`（requirements-first） | requirements → design → tasks | `requirements.md` | 有 |
+| `feature`（design-first） | design → requirements（推导）→ tasks | `design.md` | 有 |
+| `bugfix` | analysis → design → tasks | `bugfix.md`（current/expected/unchanged 三段） | 有 |
+| `quick` | 一次性三件套 | 三件全生成 | 无 |
 
 ---
 
-## 2. Writing
+## 二、写作
 
 ### `spec_write`
 
-Write (create or overwrite) one spec file. **Enforces workflow-aware stage order**:
-bugfix goes `bugfix.md → design → tasks`; feature goes `requirements → design → tasks`.
+写（创建或覆盖）一个 spec 文件。**强制工作流感知的阶段顺序**：
+bugfix 走 `bugfix.md→design→tasks`，feature 走 `requirements→design→tasks`。
 
 ### `spec_read`
 
-Read one spec file; when `file` is `'status'` (the default), read the overall status.
+读一个 spec 文件；`file` 为 `'status'`（默认）时读整体状态。
 
 ### `spec_amend`
 
-The **incremental correction channel** for a frozen spec — change one thing without resending the
-whole body.
+已冻结 spec 的**增量修正通道**，改一处不必重发整份正文。
 
-| `kind` | Semantics |
+| `kind` | 语义 |
 |---|---|
-| `param` | edit a parameter value **in place** via `from`/`to` (`from` must match exactly once) |
-| `requirement` | append a requirement, numbered after the current maximum |
-| `design` | append a `## Amendments` entry and insert a pointer after the anchor line |
-| `archive` | archive-related operations |
+| `param` | 用 `from`/`to` **就地**改一个参数值（`from` 必须恰好命中一次） |
+| `requirement` | 追加需求，编号接在现有最大值之后 |
+| `design` | 追加 `## Amendments` 条目并在 anchor 行后插 pointer |
+| `archive` | 归档相关操作 |
 
 ### `spec_task_set`
 
-Mark a task in `tasks.md` by id. State mapping: `pending` → `[ ]`, `active`/`in-progress` → `[-]`,
-`done` → `[x]`.
+按 id 标记 `tasks.md` 里的任务。状态映射：`pending`→`[ ]`、`active`/`in-progress`→`[-]`、`done`→`[x]`。
 
 ### `spec_sign`
 
-Append a signature line to `tasks.md`'s `## Notes` (format
-`- YYYY-MM-DD · DSH · <what changed>`).
+往 `tasks.md` 的 `## Notes` 追加一行署名（格式 `- YYYY-MM-DD · DSH · <改了什么>`）。
 
 ### `spec_meta`
 
-Read or write `tasks.meta.json` (the `{pbtResults, executionHistory}` shape).
+读写 `tasks.meta.json`（`{pbtResults, executionHistory}` 形状）。
 
 ### `spec_archive`
 
-Move one spec directory into `.kiro/specs/_archive/<feature>/`. **Refuses to overwrite an existing
-archive.**
+把一个 spec 目录移进 `.kiro/specs/_archive/<feature>/`。**拒绝覆盖已存在的归档**。
 
 ---
 
-## 3. Diagnosis and quality (all read-only)
+## 三、诊断与质量（全部只读）
 
 ### `spec_diagnostics`
 
-Lint the active spec against Kiro's heading/format conventions: `##` headings matched by
-**strict prefix**, task states, dependency graph JSON shape, and so on.
+Lint 当前 spec 对照 Kiro 的标题/格式约定：`##` 标题**严格前缀匹配**，
+任务三态、依赖图 JSON 形状等。
 
 ### `spec_checklist`
 
-A **read-only** requirements-quality check for one spec: missing acceptance criteria / missing
-user story / criteria that aren't testable…
+对单个 spec 做**只读**的需求质量检查：缺验收条目 / 缺 user story / 条目不可测……
 
 ### `spec_drift`
 
-A **read-only** drift report: which requirements have no landing point — based on task state and
-the design's traceability.
+**只读**漂移报告：哪些需求没有落地点 —— 依据任务状态与 design 的追踪关系。
 
 ### `spec_status`
 
-Report the workflow phase, task completion, and **the next required step**.
+报告工作流阶段、任务完成度、以及**下一步该做什么**。
 
 ---
 
-## 4. Execution
+## 四、执行
 
 ### `spec_run`
 
-Execute `tasks.md` in the order given by `## Task Dependency Graph`:
-**waves run serially, tasks within a wave may run in parallel**.
+按 `## Task Dependency Graph` 的 wave 顺序执行 `tasks.md`：
+**wave 之间串行，wave 内部可并行**。
 
-> ⚠️ The graph must be written as `{"waves":[{"id":0,"tasks":["1"]}]}` — waves carry a **numeric
-> `id`**, task ids are **strings**. Violate any of the three requirements and the host **discards
-> the entire graph and silently falls back to fully serial execution** (no error, no warning).
-> See [../spec-conventions.md](../spec-conventions.md).
+> ⚠️ 依赖图必须写成 `{"waves":[{"id":0,"tasks":["1"]}]}` —— wave 带**数字 `id`**、
+> 任务 id 写**字符串**。三处硬要求任意一处违反，宿主会**丢弃整张图并静默回退成完全串行**
+> （无报错、无提示）。详见 [../spec-conventions.md](../spec-conventions.md)。
 
 ---
 
-## 5. The `/spec` command
+## 五、`/spec` 命令
 
-The command surface is unique to this host (the other two are pure MCP). Its subcommands map
-one-to-one onto the tool surface, for driving progress directly in an interactive session instead
-of having the agent call tools one at a time.
+命令面是本宿主独有的（另外两个宿主纯 MCP）。子命令与工具面一一对应，
+用于在交互式会话里直接推进而不用让代理逐次调用工具。

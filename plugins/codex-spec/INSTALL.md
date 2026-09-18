@@ -1,145 +1,112 @@
-> 🌐 **English** · [中文](../../docs/zh-CN/codex-spec/INSTALL.md)
+> 🌐 **中文** · [English](../../docs/en/codex-spec/INSTALL.md)
 
-# Installation and operations
+> ⚠️ **本文件是开发期的原版，不是英文版的翻译。**
+> 英文版是**面向公开读者的改写**：它去掉了带日期的事故记录，并移除了指向内部资料的引用。
+> 两者实质有差异处，**以英文版为准**。
 
-## Single supported install path
 
-The Codex marketplace must point at the repository's already-vendored `plugins/codex-spec-dist/`,
-**not** at the development source directory `plugins/codex-spec/`. The source directory depends on
-workspace packages, so installing it directly leaves `@my-harness/spec-state` missing at startup.
+# 安装与运维
 
-Before publishing, run
-`node scripts/pack-plugin.mjs codex-spec --out /tmp/codex-spec.plugin` and unpack the archive into
-`plugins/codex-spec-dist/`; this repository's marketplace already points at that directory. Then:
+## 单一路径安装
+
+Codex marketplace 必须指向仓库内已经 vendor 的 `plugins/codex-spec-dist/`，而不是开发源码目录
+`plugins/codex-spec/`。源码目录依赖 workspace 包，直接安装会在启动时缺少 `@my-harness/spec-state`。
+发布前执行 `node scripts/pack-plugin.mjs codex-spec --out /private/tmp/codex-spec.plugin`，再将归档解包到
+`plugins/codex-spec-dist/`；本仓库的 marketplace 已指向该目录。随后执行：
 
 ```bash
 codex plugin marketplace add /absolute/path/to/marketplace-root
 codex plugin add codex-spec@your-marketplace
 ```
 
-This repository commits a **project-level** marketplace registry; it does not rewrite the user-level
-Codex configuration. Deployers should point the marketplace entry's `source.path` at
-`./plugins/codex-spec-dist`.
+本仓库提交了项目级 marketplace 注册表；它不改写用户级 Codex 配置。部署方应使 marketplace entry 的 `source.path` 指向 `./plugins/codex-spec-dist`。
 
-## Enabling, disabling and uninstalling
+## 启用、禁用与卸载
 
 ```bash
-# inspect install and enablement status
+# 查看安装和启用状态
 codex plugin list
 
-# uninstall (removes from both Codex's local config and its cache)
+# 卸载（同时从 Codex 本地配置和缓存中移除）
 codex plugin remove codex-spec@your-marketplace
 
-# remove the local marketplace registration
+# 移除本地 marketplace 注册
 codex plugin marketplace remove your-marketplace
 ```
 
-Codex currently manages enablement through install state; where there is no separate disable
-command, uninstalling is the deterministic way to disable and roll back. Re-adding the same
-marketplace and installing again restores it.
+Codex 当前通过安装状态管理启用/禁用；没有单独的 disable 命令时，卸载是确定的禁用与回滚路径。重新添加相同 marketplace 并执行安装即可恢复。
 
-## Configuration merging and rollback
+## 配置合并与回滚
 
-Installation does not rewrite the project's `.codex/config.toml`. At runtime it creates or updates
-the Markdown allowed by the write policy under `.kiro/specs/`, and creates
-`.codex-spec-private/` at the project root for rebuildable state; projects should add
-`.codex-spec-private/` to `.gitignore`.
+安装过程不会改写项目 `.codex/config.toml`。运行时会按工具调用创建或更新 `.kiro/specs/` 下 write policy 允许的 Markdown，并在项目根创建 `.codex-spec-private/` 保存可重建状态；项目应把 `.codex-spec-private/` 加入 `.gitignore`。
 
-Codex registers the plugin's `.mcp.json` as a local stdio server named `codex-spec`. If you have a
-same-named user-level MCP entry, remove or rename the conflicting entry before installing this
-plugin.
+Codex 将插件内 `.mcp.json` 注册为一个名为 `codex-spec` 的本地 stdio server；如有同名用户 MCP 配置，先移除或改名冲突项，再安装本插件。
 
-Rollback: uninstall the plugin, remove the marketplace you added only for it, then restart the
-Codex session. Uninstalling does **not** delete the project's `.kiro/specs/` or
-`.codex-spec-private/`; once you are sure the workflow state need not be recovered, the latter may
-be deleted by hand. Shared spec Markdown is not installation residue and should not be removed
-along with an uninstall.
+回滚步骤：卸载插件、移除仅为它新增的 marketplace，再重启 Codex 会话。卸载不会删除项目里的 `.kiro/specs/` 或 `.codex-spec-private/`；确认不再需要恢复 workflow state 后，可以手工删除后者。共享 Spec Markdown 不属于插件安装残留，不应随卸载自动删除。
 
-## Project adapter
+## 项目 adapter
 
-The service requires the target project to have `.codex/codex-spec.json`. Copy
-`adapter.example.json` from the plugin directory, replace the date, authority file and rules with
-the project's real values, and save it into the target project:
+服务要求目标项目存在 `.codex/codex-spec.json`。从插件目录复制 `adapter.example.json`，把日期、权威文件和规则改成项目真实值，再保存到目标项目：
 
 ```bash
 mkdir -p .codex
 cp /absolute/path/to/codex-spec/adapter.example.json .codex/codex-spec.json
 ```
 
-The example's `authorityHash` **must not be copied**. It has to be the SHA-256 of the raw bytes of
-`authorityFile`, computable at the target project's root:
+示例中的 `authorityHash` 不能照抄。它必须是 `authorityFile` 原始字节的 SHA-256，可在目标项目根计算：
 
 ```bash
 node --input-type=module -e "import { createHash } from 'node:crypto'; import { readFileSync } from 'node:fs'; const raw = readFileSync('.kiro/steering/spec-conventions.md'); console.log('sha256:' + createHash('sha256').update(raw).digest('hex'));"
 ```
 
-Write the whole output into `authorityHash`. With no adapter the service returns `ADAPTER_MISSING`;
-with invalid JSON, paths or policy it returns `ADAPTER_INVALID`; on an authority-file hash mismatch
-it returns `ADAPTER_UNTRUSTED`.
+把输出完整写入 `authorityHash`。缺少 adapter 时服务返回 `ADAPTER_MISSING`；JSON、路径或 policy 无效时返回 `ADAPTER_INVALID`；权威文件 hash 不匹配时返回 `ADAPTER_UNTRUSTED`。
 
-## Project root and host smoke test
+## 项目根与宿主 smoke
 
-The plugin's MCP starts from the installed plugin root using `cwd: "."` in `.mcp.json`. Every call
-must pass the target project's normalised absolute path as the `projectRoot` argument; only legacy
-calls that omit it fall back, in order, to `KIRO_SPEC_PROJECT_ROOT` and then the process cwd. After
-a first install, or after a Codex upgrade, you must run the host smoke test:
+插件 MCP 以 `.mcp.json` 中的 `cwd: "."` 从已安装插件根启动。每次调用必须把目标项目的规范化绝对路径作为 `projectRoot` 参数传入；仅对不传该参数的旧调用，服务才依次回退到 `KIRO_SPEC_PROJECT_ROOT` 和进程 cwd。首次安装或 Codex 升级后必须做宿主 smoke：
 
-1. Start a new Codex session in the target project.
-2. Call `spec_health({ projectRoot })` with the target project's absolute path, and confirm the
-   return value matches.
-3. Check `cwd` and `configuredProjectRoot` in the startup diagnostics on stderr.
-4. Do not call `spec_init`, `spec_adopt` or `spec_write` before the project root is confirmed.
+1. 在目标项目启动新的 Codex 会话。
+2. 以目标项目绝对路径调用 `spec_health({ projectRoot })`，确认返回值一致。
+3. 检查 stderr 启动诊断中的 `cwd` 与 `configuredProjectRoot`。
+4. 未确认项目根之前，不调用 `spec_init`、`spec_adopt` 或 `spec_write`。
 
-Before executing an existing `tasks.md`, use `spec_list` to confirm whether the target is `managed`
-or `external`. An `external` spec must be explicitly `spec_adopt`ed first; then follow the Skill's
-`spec_task_plan` → `spec_task_begin` → `spec_task_record_check` → `spec_task_complete` /
-`spec_task_fail` order, passing a `workspaceSnapshot` collected under the same policy to
-plan/begin/complete. Do not bypass the plugin to modify checkboxes mid-execution.
+执行存量 `tasks.md` 前，再用 `spec_list` 确认目标是 `managed` 还是 `external`。`external` Spec 必须先显式 `spec_adopt`；随后按 Skill 的 `spec_task_plan` → `spec_task_begin` → `spec_task_record_check` → `spec_task_complete`/`spec_task_fail` 顺序执行，并在 plan/begin/complete 传入同一采集策略的结构化 `workspaceSnapshot`。不要绕过插件直接修改执行中的 checkbox。
 
-Only if a legacy client cannot pass `projectRoot`, set `KIRO_SPEC_PROJECT_ROOT` to an absolute path
-and restart the session. `codex mcp get codex-spec` helps inspect the registered configuration, but
-does not replace an actual `spec_health` host smoke test.
+旧客户端无法传 `projectRoot` 时，才以绝对路径设置 `KIRO_SPEC_PROJECT_ROOT` 后重启会话。`codex mcp get codex-spec` 可辅助检查已注册配置，但不能替代实际的 `spec_health` 宿主 smoke。
 
-## Offline verification
+## 离线验证
 
-No network or npm registry required:
+无需网络或 npm registry：
 
 ```bash
 cd plugins/codex-spec
 npm run doctor
-npm_config_cache=/tmp/codex-spec-npm-cache npm pack --dry-run --json
+npm_config_cache=/private/tmp/codex-spec-npm-cache npm pack --dry-run --json
 ```
 
-⚠️ That is verification **in the source repository**. **The installed plugin
-(`plugins/codex-spec-dist/`) has no `doctor` / `check` / `test`** — they all name files under
-`test/`, and `test/` is not shipped, so the packer prunes them. What remains in the archive is
-`npm run build` (running `node --check` over the runtime files).
+⚠️ 这段是**源码仓库**里的验证。**装好的插件（`plugins/codex-spec-dist/`）里没有
+`doctor` / `check` / `test`** —— 它们都点名了 `test/`，而 `test/` 不进产物，打包时已剔。
+产物里剩下的是 `npm run build`（对运行时文件过一遍 `node --check`）。
+（剔之前：产物里 `npm run check` 直接 `MODULE_NOT_FOUND`，`npm test` 跑 0 个测试然后 exit 0。）
 
-(The reason for pruning: before it, `npm run check` inside the archive hit `MODULE_NOT_FOUND`
-outright, and `npm test` ran zero tests and exited 0.)
+预期：语法检查和测试通过，dry-run 文件列表包含 `mcp-server.mjs`、运行时 `lib/`、Skill、文档与 `adapter.example.json`。
 
-Expected: syntax checks and tests pass, and the dry-run file list includes `mcp-server.mjs`, the
-runtime `lib/`, the Skill, the docs and `adapter.example.json`.
+## 无 Hook 降级
 
-## No-hook baseline
+任务 01 不安装 `/hooks`，也不要求 Hook trust 或 security bootstrap。启动诊断中的 `fileGuardrail=false` 是预期结果，而不是启动失败。直接文件写的 guardrail 只会在后续可选任务 07 引入。
 
-This plugin installs no hooks and requires no hook trust or security bootstrap. `fileGuardrail=false`
-in the startup diagnostics is the expected result, not a startup failure. A guardrail for direct
-file writes is not introduced here.
+## evaluation-only probe
 
-## Evaluation-only probe
+`plugins/codex-spec/fixtures/adapter.example.json` 是当前消费项目权威 steering 文件的原始字节哈希样本。它只能安装到消费项目的 `.codex/kiro-spec.json` 后使用，且该写入需要用户明确授权；不要复制到其他仓库，也不要将 hash 当作可长期复用的默认值。
 
-`plugins/codex-spec/fixtures/admission-probe.mjs` is a repeatable probe for the evaluation-only
-admission mode described in [README.md](README.md). It writes requirements, design and tasks
-through the service, reads tasks back to verify byte stability, and reports the exit status of a
-fixed-argv validator. It never modifies steering files, templates or validators.
+在获得授权且确认消费项目工作树干净后执行：
 
-The adapter sample shipped alongside it binds an **authority hash to a specific project's steering
-file's raw bytes** — it is not a general-purpose default. Before use, re-derive the hash from the
-project you actually intend to probe (see "Project adapter" above).
+```bash
+node plugins/codex-spec/fixtures/admission-probe.mjs \
+  --project-root /absolute/path/to/the consumer repo \
+  --adapter .codex/kiro-spec.json \
+  --spec _eval-codex-20260827 \
+  --output /tmp/probe-result.json
+```
 
-> 🔴 Probing a **real downstream project** is a cross-repository write: it requires the user's
-> explicit authorisation, and that project's working tree must be confirmed clean first. With either
-> precondition unmet, run only the plugin's isolated tests — and do not describe their result as a
-> real-host admission pass. After any real run, independently re-check the authority hash and
-> `git diff -- .kiro/steering`.
+probe 仅会请求 evaluation-only 目录写入；它会记录两次被拒绝的越界写入、tasks 读写字节稳定性及固定 validator 的退出状态。它不会修改 steering、模板或 validator。真实运行完成后仍要独立检查 authority hash 与 `git diff -- .kiro/steering scripts/spec-tasks-lint.py`。

@@ -1,51 +1,42 @@
+> 🌐 **中文** · [English](README.en.md)
+
 # kiro-spec
 
 **A Kiro-compatible Spec workflow — requirements → design → tasks — for three hosts.**
 
-It turns "think it through before you code" into a **structured, enforced engineering process**:
-requirements become verifiable items, design becomes traceable components, tasks become a
-dependency-ordered checklist, execution follows that order, and a diagnoser watches the format
-at every step.
+把「先想清楚再写代码」变成**有强制结构的工程流程**：需求写成可验收的条目、设计写成可追踪的组件、
+任务写成带依赖图的清单、执行按依赖顺序推进、每一步都有诊断器盯着格式。
 
-One shared core, three hosts:
+同一套内核，三个宿主：
 
-| Host | Plugin | Form | Tool surface |
+| 宿主 | 插件 | 形态 | 工具面 |
 |---|---|---|---|
-| **DeepSeek Harness** | [`dsh-spec`](plugins/dsh-spec/) | cordis plugin | 13 tools + a `/spec` command |
-| **Codex** | [`codex-spec`](plugins/codex-spec/) | MCP server | 25 tools, all schema-validated |
-| **Claude** | [`claude-spec`](plugins/claude-spec/) | MCP server + `PreToolUse` gate | 26 tools |
+| **DeepSeek Harness** | [`dsh-spec`](plugins/dsh-spec/) | cordis 插件 | 13 个工具 + `/spec` 命令 |
+| **Codex** | [`codex-spec`](plugins/codex-spec/) | MCP server | 25 个工具，25 个全部经 schema 校验 |
+| **Claude** | [`claude-spec`](plugins/claude-spec/) | MCP server + `PreToolUse` 门控 | 26 个工具 |
 
-All three hosts share the **same L0 decision core** (`packages/`). Only the adapters differ.
-So the same spec gets the same diagnosis on all three — which is the problem this project
-set out to solve.
-
-> 🌐 **English** · [中文 README](README.zh-CN.md)
+三个宿主**共用同一套** L0 判定内核（`packages/`），差异只在适配层。所以同一份 spec 在三个宿主上
+会得到一致的诊断结论 —— 这是这个项目最初要解决的问题。
 
 ---
 
-## Why this exists
+## 为什么需要它
 
-The common failure mode of specs written by coding agents is not "can't write" — it is:
+编码代理写 spec 的常见失败模式不是「写不出」，而是：
 
-- **Written but non-compliant** — a heading off by one word, acceptance criteria written as prose,
-  a task list with no dependency graph;
-- **Non-compliant but silent** — a format problem that raises no error, only silently degrades
-  behavior (the worst kind);
-- **Reported, but on one host only** — swap the host and the same document passes on one and
-  fails on the other.
+- **写了但不合格** —— 章节标题差一个字、验收条目写成散文、任务没有依赖图；
+- **不合格却没人报** —— 格式问题不报错，只是行为悄悄降级（最坏的一种）；
+- **报了但只在一个宿主上报** —— 换一个底座，同一份文档一个通过一个不通过。
 
-This project's three claims are aimed exactly at those:
+本项目的三条主张，正是对着这三点：
 
-1. **Format is a verdict, not a style suggestion.** 41 rules, replicated from Kiro's factory
-   validator, each with a rule code and severity.
-2. **Degradation must be loud.** An unparseable dependency graph is **not allowed** to silently
-   fall back to fully serial execution — see [docs/philosophy.md](docs/philosophy.md).
-3. **The decision core is host-agnostic.** All three adapters call the same `spec-diagnose`;
-   the verdict must agree.
+1. **格式是判据，不是风格建议。** 41 条规则复刻自 Kiro 的出厂校验器，逐条带规则码与严重级。
+2. **降级必须出声。** 依赖图解析不了**不许**静默回退成串行 —— 见 [docs/philosophy.zh-CN.md](docs/philosophy.md)。
+3. **判定内核宿主无关。** 三个适配层都调同一个 `spec-diagnose`，结论必须一致。
 
-Design rationale and trade-offs live in **[docs/philosophy.md](docs/philosophy.md)**.
+理念与设计取舍写在 **[docs/philosophy.zh-CN.md](docs/philosophy.md)**。
 
-## Quick start
+## 快速开始
 
 ```bash
 git clone <this-repo> && cd kiro-spec
@@ -53,157 +44,116 @@ pnpm install
 npm test
 ```
 
-### Install into a host
+### 装到宿主
 
-Each plugin ships its own `INSTALL.md`:
+每个插件目录下有自己的 `INSTALL.md`：
 
 - [`plugins/dsh-spec/INSTALL.md`](plugins/dsh-spec/INSTALL.md)
 - [`plugins/codex-spec/INSTALL.md`](plugins/codex-spec/INSTALL.md)
 - [`plugins/claude-spec/INSTALL.md`](plugins/claude-spec/INSTALL.md)
 
-Or build distributable archives yourself:
+或者自己打一个可分发的包：
 
 ```bash
-npm run pack:all          # archives for all three hosts → dist/
+npm run pack:all          # 三个宿主的 .plugin 归档 → dist/
 ```
 
-The packer **vendors the `@my-harness/*` dependencies into the archive**, so the resulting
-package does not rely on the `workspace:` protocol and installs on a machine without this repo.
+打包器会把 `@my-harness/*` 依赖 **vendor 进归档**，所以打出来的包不依赖 workspace 协议，
+可以直接装到没有本仓的机器上。
 
-> ⚠️ **The profile namespace is `kiro-spec/`.** The adapter's `profile` values are checked
-> against a **hard whitelist** — a mismatched value is refused at load time, not ignored:
->
-> ```json
-> "validators": [
->   { "id": "spec-tasks-lint", "profile": "kiro-spec/spec-tasks-lint-v1" },
->   { "id": "spec-validator",   "profile": "kiro-spec/kiro-rules-v1" }
-> ]
-> ```
+### 用起来
 
-### Using it
-
-Ask the agent to call `spec_init` in your project, or use `/spec` in DSH:
+在目标项目里让代理调用 `spec_init`，或在 DSH 里用 `/spec`：
 
 ```
 spec_init(projectRoot, spec="user-login", workflow="requirements-first")
-→ creates .kiro/specs/user-login/requirements.md
+→ 生成 .kiro/specs/user-login/requirements.md
 
 spec_write(projectRoot, spec="user-login", artifact="requirements", content=..., ...)
-→ writes, then diagnoses the format
+→ 写入并做格式诊断
 
 spec_diagnostics(projectRoot, spec="user-login")
-→ reports each format problem with its rule code and severity
+→ 逐条报出格式问题（带规则码与严重级）
 
 spec_task_plan / spec_task_begin / spec_task_complete
-→ serial execution with lease and recovery
+→ 按依赖图串行执行任务，带 lease 与恢复
 ```
 
-## Reference
+## 工具参考
 
-| Document | Contents |
+| 文档 | 内容 |
 |---|---|
-| [docs/tools/dsh-spec.md](docs/tools/dsh-spec.md) | 13 tools + the `/spec` command |
-| [docs/tools/codex-spec.md](docs/tools/codex-spec.md) | 25 MCP tools |
-| [docs/tools/claude-spec.md](docs/tools/claude-spec.md) | 26 MCP tools + the stage gate |
-| [docs/spec-conventions.md](docs/spec-conventions.md) | How to write: headings, EARS, task states, dependency graph |
-| [docs/compat.md](docs/compat.md) | Differences from Kiro — including what is **deliberately not modelled** |
+| [docs/tools/dsh-spec.md](docs/tools/dsh-spec.md) | 13 个工具 + `/spec` 命令 |
+| [docs/tools/codex-spec.md](docs/tools/codex-spec.md) | 25 个 MCP 工具 |
+| [docs/tools/claude-spec.md](docs/tools/claude-spec.md) | 26 个 MCP 工具 + 阶段门控 |
+| [docs/spec-conventions.zh-CN.md](docs/spec-conventions.md) | 怎么写：标题格式、EARS 句式、任务三态、依赖图 |
+| [docs/compat.zh-CN.md](docs/compat.md) | 与 Kiro 的差异（含**已知未建模**的部分） |
 
-### Documentation layout
+### 文档布局
 
-Core documents are **bilingual side by side**: `X.md` (English, the default filename) and
-`X.zh-CN.md` (Chinese), cross-linked at the top of each.
+核心文档**中英并排**：`X.md`（**中文**，默认文件名）与 `X.en.md`（英文），两篇顶部互相链接。
 
-The plugin-level documents (`plugins/<name>/README.md` and `INSTALL.md`) keep their Chinese
-versions under [`docs/zh-CN/<name>/`](docs/zh-CN/) instead — same information, different location.
+插件自带的文档（`plugins/<名字>/README.md` 与 `INSTALL.md`）的英文版放在
+[`docs/en/<名字>/`](docs/en/) 下 —— 同样的信息，换个位置。
 
-⚠️ Those plugin-level Chinese documents are the **original development version**, not a
-translation of the English. The English ones are a **public-audience rewrite**: they drop a dated
-incident record and remove references to internal-only material. Where the two differ in
-substance, follow the English.
+⚠️ 两者**不是互相翻译**。中文那批是**开发期的原记录**；英文那批是**面向公开读者的改写**，
+去掉了带日期的事故记录、移除了指向内部资料的引用。两者描述的行为一致 ——
+想知道「当初是怎么得出这个结论的」，看中文那批。
 
-## Repository layout
+## 仓库结构
 
 ```
-packages/                    host-agnostic decision core (zero external dependencies)
-  kiro-rules/                the 41-rule table — single source of truth
-  spec-parser/               recognizer + scanner (which line is a task / which is in a fence)
+packages/                    宿主无关的判定内核（零外部依赖）
+  kiro-rules/                41 条规则表 —— 唯一事实源
+  spec-parser/               识别层 + 扫描层（哪一行是任务 / 哪一行在围栏里）
   spec-analysis/             checklist / drift / amendments / archive / signature
-  spec-revision/             rawRevision (dual hash)
-  spec-state/                state machine, lease, approval, recovery
-  spec-diagnose/             adjudication: assembles the above into unified findings
-plugins/                     thin adapters for the three hosts
+  spec-revision/             rawRevision（dual-hash）
+  spec-state/                状态机、lease、审批、恢复
+  spec-diagnose/             裁决层：把上面这些组装成统一 findings
+plugins/                     三个宿主的薄适配层
   dsh-spec/  codex-spec/  claude-spec/
-scripts/                     pack-plugin.mjs (packer), consumer-root.mjs, kiro-bundle-root.mjs
+scripts/                     pack-plugin.mjs（打包器）、consumer-root.mjs、kiro-bundle-root.mjs
 ```
 
-The layering is a **hard constraint**, not a house style: `packages/` must not contain a single
-`node:fs` (all I/O goes through injected ports), so the decision core runs in any host and can be
-exhaustively unit-tested.
+分层是**硬约束**，不是组织习惯：`packages/` 里一个 `node:fs` 都不许出现（I/O 全走注入的 port），
+所以判定内核可以在任何宿主里跑，也可以被单测穷举。
 
-## Testing
+## 测试
 
 ```bash
 npm test
 ```
 
-### Two Node version claims — they are not the same thing
+### 两个 Node 版本声称，不是一回事
 
-| | Requirement | Why |
+| | 要求 | 为什么 |
 |---|---|---|
-| **Plugin runtime**<br>(`plugins/*/package.json`) | `>=20 <26` | All three plugins declare this. Node 18 is EOL, so declaring `>=18` would invite installs on an unsupported runtime |
-| **This repo's toolchain**<br>(root `package.json`) | `>=22 <26` | pnpm 11 depends on `node:sqlite` (Node 22.5+), so it **cannot start on Node 20** |
+| **插件运行时**<br>（`plugins/*/package.json`） | `>=20 <26` | 代码只用到 `import.meta.dirname`（Node 20.11+）。宿主给什么版本就能跑什么版本 |
+| **本仓的工具链**<br>（根 `package.json`） | `>=22 <26` | pnpm 11 依赖 `node:sqlite`（Node 22.5+），**它在 Node 20 上起不来** |
 
-CI runs **22 and 24** only — consistent with the toolchain claim. Putting Node 20 in the matrix
-would fail, and the failure would have nothing to do with the plugins (the package manager won't
-start), which would point people at the wrong conclusion.
+CI 只跑 **22 与 24** —— 与工具链声称一致。把 Node 20 放进矩阵会红，
+而红的原因与插件无关（是包管理器起不来），那会让人误以为兼容性坏了。
 
-> This distinction was added on 2026-09-18. Previously the root `package.json` said `>=20`,
-> and that number **could never be verified in CI**. An unverifiable compatibility claim is worse
-> than no claim: it packages "untested" as "supported".
->
-> ⚠️ An earlier version of this table justified the plugin range with "the code only uses
-> `import.meta.dirname`". That was **inaccurate** — `import.meta.dirname` appears in the **tests**,
-> not in the runtime code. The range is a support-policy statement, not a derived minimum.
+> 这条区分是 2026-09-18 加的。此前根 `package.json` 写的是 `>=20`，
+> 而那个数字**在 CI 里从来无法被验证** —— 一个永远不会被验证的兼容性声称，
+> 比不声称更坏：它把「没测过」包装成了「支持」。
 
-**Some tests skip when no downstream corpus is present** — that is by design. For a full run:
+**若干用例在没有下游语料时会 skip**，这是有意的设计。想跑全量：
 
 ```bash
 CONSUMER_REPO_ROOT=/path/to/your/project npm test
 ```
 
-⚠️ This repo is a public subset exported from a larger development repository. **What is not here,
-and why**, plus the difference between a `skip` and a pass, is documented in
-[TEST-SCOPE.md](TEST-SCOPE.md) — that file is bookkeeping, not a disclaimer.
+⚠️ 本仓是从一个更大的开发仓库导出的公开子集。**哪些东西没在这里、为什么**，
+以及 `skip` 与「通过」的区别，都写在 [TEST-SCOPE.zh-CN.md](TEST-SCOPE.md) —— 那一篇是记账，不是免责。
 
-## Relationship to Kiro
+## 与 Kiro 的关系
 
-The rule table is replicated from Kiro's factory validator (version and sha256 are recorded in
-`packages/kiro-rules`). **When our verdict disagrees with Kiro's, Kiro is right and we change** —
-this is written down because it decides which side every bug gets fixed on.
+规则表复刻自 Kiro 的出厂校验器（版本与 sha256 记在 `packages/kiro-rules`）。**判定不一致时，
+以 Kiro 为准，改我们这边** —— 这条写在这里是因为它决定了每一个 bug 该往哪边修。
 
-Known un-modelled parts and deliberate differences are listed in [docs/compat.md](docs/compat.md).
+已知的未建模部分、以及刻意保留的差异，列在 [docs/compat.zh-CN.md](docs/compat.md)。
 
-## Versioning
+## 许可
 
-**Repo tags and plugin versions are two different things, and they are meant to be.**
-
-| | Value |
-|---|---|
-| latest repo tag | `v1.0.1` |
-| root `package.json` | `1.0.1` |
-| `claude-spec` | `1.0.0` |
-| `codex-spec` | `1.0.0` |
-| `dsh-spec` | `0.2.0` |
-
-A repo tag (`vX.Y.Z`) labels a **release of the set** — "this is the state of the three plugins
-together". Each plugin also carries **its own version** in its manifest, and that is the version
-that shows after installing.
-
-The two are independent on purpose: the three plugins evolve at different rates, and forcing one
-shared number would either overstate a small change or bury a large one. So a `claude-spec.plugin`
-downloaded from release `v1.0.1` reports `1.0.0` — that is the plugin's own version, not a
-mismatch.
-
-## License
-
-MIT — see [LICENSE](LICENSE).
+MIT —— 见 [LICENSE](LICENSE)。

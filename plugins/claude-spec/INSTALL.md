@@ -1,285 +1,411 @@
-> 🌐 **English** · [中文](../../docs/zh-CN/claude-spec/INSTALL.md)
+> 🌐 **中文** · [English](../../docs/en/claude-spec/INSTALL.md)
 
-# Installation and operations
+> ⚠️ **本文件是开发期的原版，不是英文版的翻译。**
+> 英文版是**面向公开读者的改写**：它去掉了带日期的事故记录，并移除了指向内部资料的引用。
+> 两者实质有差异处，**以英文版为准**。
 
-> 📖 This is the public-facing version. The Chinese
-> [original](../../docs/zh-CN/claude-spec/INSTALL.md) additionally preserves the dated
-> troubleshooting record.
 
-## Single supported install path
+# 安装与运维
 
-Install the plugin as a Claude plugin: `hooks/hooks.json` registers the `PreToolUse` stage gate,
-`.mcp.json` registers the `claude-spec` MCP server, and `skills/claude-spec/SKILL.md` carries the
-workflow instructions.
+> ⚠️ **本文件里有若干 `⟨待测⟩` 槽位，它们是刻意留白的。** 计划 Task 7（安装与冒烟）标了
+> 🔴 **必须在真实宿主里测**：安装面的真实行为只能在那个宿主里测，不许按 Codex 侧或本机的情况推断。
+> ⚠️ **2026-09-17 订正**：本节原文写的是「**必须 Claude Cowork**」。消费项目同日**退役了 Cowork 通道**
+> （改走本地 Claude Code CLI，它才是现在的日常路径），本插件也已把默认拓扑定成 `local`。下面那些
+> 按 Cowork 拓扑写的段落**保留**（显式切过去时仍然适用，且它们记的是当时实测到的事实），
+> **但别再把它读成「唯一合规宿主」**。
+> 凡是没测过的，这里写 `⟨待测⟩` 并说清怎么测，不编一个看起来像真的命令。
 
-```bash
-claude plugin marketplace add /absolute/path/to/marketplace-root
-claude plugin add claude-spec@your-marketplace
+## 单一路径安装
+
+插件源目录在仓库的 `plugins/claude-spec/`。Cowork 侧走 **Customize → 添加插件**，指向该目录
+（或上传打包后的压缩文件）：
+
+**没有 CLI —— 走界面上传归档**【实测 2026-09-13/14】：Customize → 添加插件 → 上传
+`node scripts/pack-plugin.mjs claude-spec` 产出的 `.plugin`。marketplace 在**服务端**
+（本机装出来的名字是 `My Uploads`），本机磁盘上**没有** marketplace.json，只有一份安装台账：
+
+```
+~/Library/Application Support/Claude/local-agent-mode-sessions/<account>/<session>/rpm/
+  manifest.json          # {id: plugin_<id>, name: claude-spec, marketplaceId, marketplaceName, updatedAt}
+  plugin_<id>/           # 归档解包后的普通目录树（每次安装生成**新** id，旧目录不改写）
 ```
 
-Every `spec_*` MCP tool requires the target project's normalised absolute `projectRoot`, so the
-server's own working directory does not affect correctness — it only decides what is *guessed* when
-a caller omits the argument. The MCP-side project-root resolution order is: the tool argument
-`projectRoot` → `CLAUDE_SPEC_PROJECT_ROOT` → `CLAUDE_PROJECT_DIR` → `process.cwd()`, and the startup
-diagnostics report which one was used.
+⚠️ **同一台机器上每个账号各有一份安装**。排查「重装了为什么没生效」时**先问是哪个账号** ——
+2026-09-14 实测本机两个账号各装着一份，版本不同。
 
-## Enabling, disabling and uninstalling
+- 本仓库不提交 marketplace 注册表，避免安装步骤去改用户级配置。部署方应让 marketplace entry
+  的 `source.path` 指向 `./plugins/claude-spec`。
+- ⚠️ **可执行脚本目录必须叫 `scripts/`，不能有顶层 `bin/`**（2026-09-13 实测）：claude.ai 托管的
+  插件不允许顶层 `bin/` —— 它会被加进 PATH 但审批界面不显示，表现是「本地看着好好的、上传就装不上」。
+  `test/skeleton.test.mjs` 有一条断言钉住这一点。
+- 清单文件是 `.claude-plugin/plugin.json`。它显式写了 `skills` / `hooks` / `mcpServers` 三个字段，
+  **同时** hooks 也放在约定路径 `hooks/hooks.json`。
+  【实测 2026-09-13/14】`skills` 与 `mcpServers` **被认可**：装上后会话里出现
+  `claude-spec:claude-spec` skill 与 25 个 `spec_*` MCP 工具，且调用成功。
+  `hooks` 字段的认可状态**现在是开着的问题** —— 见下方「阶段门控」小节的 🔴。
 
-```bash
-# inspect install and enablement status
-claude plugin list
+## 启用、禁用与卸载
 
-# uninstall
-claude plugin remove claude-spec@your-marketplace
+- **查看安装状态**：上面那份 `rpm/manifest.json` 就是本机唯一的台账（含 `updatedAt`）。
+  界面侧走 Customize 的插件列表。
+- **卸载 / 移除 marketplace 注册**：`⟨待测⟩` —— 本次只观察到「重装会生成**新的** `plugin_<id>`
+  目录、旧目录原样留着」，**不足以证明卸载是重装的前置步骤**，所以不写成命令。
+- 🔴 **重装后必须完全退出并重启桌面应用**【实测 2026-09-14】：MCP server 是桌面应用的子进程，
+  在应用启动时拉起，Node 启动时装载模块 —— **运行中的 server 只认它启动那一刻磁盘上的那份**。
+  只新开一个会话不够。实测时间线：23:59:22 装新版 → 00:08:48 重启应用 → 00:08:56 新 server 起来。
 
-# remove the marketplace registration
-claude plugin marketplace remove your-marketplace
-```
+Cowork 当前通过安装状态管理启用/禁用；没有单独 disable 命令时，**卸载是确定的禁用与回滚路径**。
+重新添加相同 marketplace 并安装即可恢复。
 
-Where there is no separate disable command, uninstalling is the deterministic way to disable and
-roll back. Re-adding the same marketplace and installing again restores it.
+回滚步骤：卸载插件 → 移除仅为它新增的 marketplace → 重启 Cowork 会话。卸载**不会**删除项目里的
+`.kiro/specs/` 或 `.kiro-spec-private/`；确认不再需要恢复 workflow state 后可以手工删除后者。
+共享的 Spec Markdown 不属于安装残留，不应随卸载自动删除。
 
-## Configuration merging and rollback
+## 配置合并与回滚
 
-Installation does not rewrite your project's settings. At runtime it creates or updates the Markdown
-allowed by the write policy under `.kiro/specs/`, and creates `.kiro-spec-private/` at the project
-root for rebuildable state; projects should add `.kiro-spec-private/` to `.gitignore`.
+安装过程**不改写**项目的任何既有配置。运行时会：
 
-Rollback: uninstall the plugin, remove the marketplace you added only for it, then restart the
-session. Uninstalling does **not** delete the project's `.kiro/specs/` or `.kiro-spec-private/`;
-once you are sure the workflow state need not be recovered, the latter may be deleted by hand.
-Shared spec Markdown is not installation residue and should not be removed along with an uninstall.
+- 在 `.kiro/specs/` 下按 `writePolicy` 允许的范围创建/更新 Markdown；
+- 在项目根创建 `.kiro-spec-private/` 保存可重建状态与协作确认摘要 —— 项目应把它加入 `.gitignore`。
 
-## Project adapter
+Cowork 把插件内 `.mcp.json` 注册为一个名为 `claude-spec` 的本地 stdio server。若已有同名用户级 MCP
+配置，先移除或改名再安装。
 
-The service requires the target project to have `.codex/codex-spec.json` — a **cross-host shared
-project file**, not this plugin's identity (see [README.md](README.md)). Copy
-`adapter.example.json` from the plugin directory, replace the date, authority file and rules with
-the project's real values, and save it into the target project:
+## 项目 adapter
+
+服务要求目标项目存在 **`.codex/codex-spec.json`**。从插件目录复制 `adapter.example.json`，
+把项目真实值填进去：
 
 ```bash
 mkdir -p .codex
 cp /absolute/path/to/claude-spec/adapter.example.json .codex/codex-spec.json
 ```
 
-The example's `authorityHash` **must not be copied**. It has to be the SHA-256 of the raw bytes of
-`authorityFile`, computable at the target project's root:
+🔴 **路径就叫 `.codex/codex-spec.json`，不要改成 `.claude/...`。** 它是**跨宿主共享的项目档案**：
+`plugins/dsh-spec/lib/index.js` 与 `plugins/codex-spec/lib/mcp/adapter.mjs` 里同样读这个路径
+（注释原文「the same adapter config the Codex CLI side uses」），消费项目里也已部署了一份真的。
+改名会让同一个项目出现两份内容相同的档案。名字里的 `codex` 是 2026-09-17 跟随既有 `<宿主>-spec`
+约定的结果 —— `claude-spec` 因此会去读一个以 codex 命名的文件，这是已知代价。
 
-```bash
-node --input-type=module -e "import { createHash } from 'node:crypto'; import { readFileSync } from 'node:fs'; const raw = readFileSync('.kiro/steering/spec-conventions.md'); console.log('sha256:' + createHash('sha256').update(raw).digest('hex'));"
+🔴 **改名前的旧路径由兼容读继续接住**（Req 3.2）：新路径不存在而旧路径存在时读旧路径，并在健康
+回报里报 `adapterSource: legacy`；两者都在则以新路径为准并报冲突。所以已经部署过的项目不会因为
+这次改名变成 `ADAPTER_MISSING`。旧路径的字面量只住在三份 adapter 的 `LEGACY_CODEX_SPEC_CONFIG`
+里，本文档刻意不重写它（替换面里出现旧名会被 Req 8 的棘轮判红）。
+详见 [README.md](README.md) 的同名小节。
+
+`adapter.example.json` 的形状是**已授权直写**：
+
+```json
+{
+  "schemaVersion": 1,
+  "specsRoot": ".kiro/specs",
+  "writePolicy": { "mode": "authorized", "authorityFile": ".kiro/steering/spec-conventions.md", "authorityHash": "sha256:..." },
+  "rules": [ { "match": [".kiro/specs/**/*.md"], "contextFiles": [".kiro/steering/spec-conventions.md"] } ],
+  "validators": [ { "id": "spec-tasks-lint", "profile": "kiro-spec/spec-tasks-lint-v1" } ]
+}
 ```
 
-Write the whole output into `authorityHash`. With no adapter the service returns `ADAPTER_MISSING`;
-with invalid JSON, paths or policy it returns `ADAPTER_INVALID`; on an authority-file hash mismatch
-it returns `ADAPTER_UNTRUSTED`.
+- **省略 `allowedPrefixes`** 的含义是「`specsRoot` 本身」，即任何正式的 `.kiro/specs/<feature>/`。
+  要逐目录登记时写 `"allowedPrefixes": ["<feature>/"]`，那就仍然是一张 allowlist。
+- `authorityHash` 的语义是**「上次核对过的版本」**，不参与放行判定。它可以在目标项目根这样算：
 
-## Project root and host smoke test
+  ```bash
+  node --input-type=module -e "import { createHash } from 'node:crypto'; import { readFileSync } from 'node:fs'; const raw = readFileSync('.kiro/steering/spec-conventions.md'); console.log('sha256:' + createHash('sha256').update(raw).digest('hex'));"
+  ```
 
-After a first install, or after a host upgrade, you must run the host smoke test:
+  对不上**不会**拒绝写入（`authorized` 下它是台账）—— 漂移与否在 `spec_health` 的 `authority.status`
+  里看（`matches` / `drifted` / `unreadable` / `unrecorded`）。
+  ⚠️ 想恢复到「hash 对不上就拒绝」的旧语义，那是 `evaluation-only` 模式的行为，而它只适用于
+  **未解锁**宿主；已解锁宿主走 `authorized` 是消费项目 §0 现行原文定的。
+- 错误码：缺 adapter → `ADAPTER_MISSING`；JSON / 路径 / policy 无效 → `ADAPTER_INVALID`；
+  **`evaluation-only` 模式下** authority hash 不匹配 → `ADAPTER_UNTRUSTED`。
 
-1. Start a new session in the target project.
-2. Call `spec_health({ projectRoot })` with the target project's absolute path, and confirm the
-   returned `projectRoot` matches.
-3. Check `cwd` and `configuredProjectRoot` in the startup diagnostics on stderr.
-4. Do not call `spec_init`, `spec_adopt` or `spec_write` before the project root is confirmed.
+## 项目根与宿主 smoke
 
-Before executing an existing `tasks.md`, use `spec_list` to confirm whether the target is `managed`
-or `external`. An `external` spec must be explicitly `spec_adopt`ed first; then follow
-`spec_task_plan` → `spec_task_begin` → `spec_task_record_check` → `spec_task_complete` /
-`spec_task_fail`, passing a `workspaceSnapshot` collected under the same policy to
-plan/begin/complete. Do not bypass the plugin to modify checkboxes mid-execution.
+插件 MCP 以 `.mcp.json` 中的 `cwd: "${CLAUDE_PLUGIN_ROOT}"` 启动
+（⚠️ 本文件旧版写的是 `cwd: "."`，与实际文件不符，2026-09-14 订正）。每次调用都必须把目标项目的规范化绝对路径作为
+`projectRoot` 传入；没有传时，服务按 `CLAUDE_SPEC_PROJECT_ROOT` → `CLAUDE_PROJECT_DIR` →
+`process.cwd()` 依次回退。首次安装或 Cowork 升级后必须做宿主 smoke：
 
-## The stage gate: installation and verification
+1. 在目标项目启动新的 Cowork 会话。
+2. 以目标项目绝对路径调用 `spec_health({ projectRoot })`，确认回显一致。
+3. 检查 stderr 启动诊断里的 `cwd`、`configuredProjectRoot` 与 `configuredProjectRootSource`。
+4. 未确认项目根之前，不调用 `spec_init`、`spec_adopt` 或 `spec_write`。
+5. 旧客户端无法传 `projectRoot` 时，才以绝对路径设置 `CLAUDE_SPEC_PROJECT_ROOT` 后重启会话。
 
-`hooks/hooks.json` registers one `PreToolUse` (`matcher: "Write|Edit|MultiEdit"`) running
-`${CLAUDE_PLUGIN_ROOT}/scripts/spec-stage-gate.sh`. That shell layer does exactly one thing: when
-`node` is missing inside the container it **allows the write and says so**, rather than ending in a
-hook failure of unclear meaning.
+✅ **已实测（2026-09-14），这个槽位可以关掉。** `.mcp.json` 用的就是 `${CLAUDE_PLUGIN_ROOT}`，
+它解析到 `…/rpm/plugin_<id>/`，即**插件根**，不是项目根。
+所以「`.` 落在哪」这个问题在当前配置下**不成立** —— 当初担心的坑（`.` 落插件根 →
+`process.cwd()` 当项目根 → 每次调用都静默对着错误目录干活）已经被这份配置绕开了。
+🔴 **但结论仍然是「必须显式传 `projectRoot`」**：`process.cwd()` 现在铁定是插件目录，
+回退到它一定是错的。上面第 3 步的可观测点保留。
 
-### Gate liveness probe (run after install / upgrade)
+🔴 **MCP 与 hook 是两条执行路径，不要合成一条结论**【实测 2026-09-14】：
 
-⚠️ **This section follows the Cowork topology** (`CLAUDE_SPEC_TOPOLOGY=cowork`): the hook is in the
-session container while the MCP server is on the user's machine, so the two need not share a
-filesystem, and judging liveness requires reading the audit log **inside the container**.
-**The default local Claude Code CLI topology does not need this section** — hook and MCP are on the
-same machine and filesystem, so calling `spec_health` and reading `gate.status` is enough
-(`"observed"` is live evidence; `"unobserved"` is more suspicious, so check first whether
-`hooks.json` was claimed by this install). `spec_health` returns a `gate.topology` field so you can
-confirm which topology the verdict used.
-
-🔴 **The audit log is on by default.** Its location prefers somewhere a human can actually read:
-
-| Condition | Location | `logSource` |
+| 层 | 跑在哪 | 证据 |
 |---|---|---|
-| a project root is available in the environment | `<projectRoot>/.claude/claude-spec-gate.log` | `project` |
-| otherwise | `os.tmpdir()/claude-spec-gate.log` | `tmpdir` |
+| **MCP server** | **用户本机** | `ps` 实测 pid 12306 = `/usr/local/bin/node …/rpm/plugin_<id>/mcp-server.mjs`；工具名带 `mcp__remote-devices__` 前缀（经桥接）。本机 Node `v24.20.0`，在 `engines` 区间内 |
+| **PreToolUse hook** | **会话容器** | 插件在容器里有同步副本 `/root/.claude/plugins/synced/<orgUuid>_<accountUuid>/claude-spec~g2/`；门控要 `existsSync` 同目录的前一阶段文件，被写的 `.kiro/specs/**` 也在容器里 |
+
+⚠️ **旧版本文把两者合成「MCP 跑在会话容器」再整体推翻成「跑在本机」，两次都不准。**
+另：「`spec_health` 读到本机项目」**不是**判别执行位置的判别式 —— 容器把本机仓库挂在
+`mnt/` 下，容器里读到本机文件说明不了执行位置。真正的判别式是 `ps`。
+
+所以「会话容器的 node 版本」这个槽位**问的是 hook 侧**，而 hook 确实在容器里 ——
+容器有 node：**`v22.22.2`（`/opt/node22/bin/node`）【实测 2026-09-14】**，在 `engines: ">=20 <26"` 区间内。
+
+## 阶段门控的安装与验证
+
+`hooks/hooks.json` 挂一个 `PreToolUse`（`matcher: "Write|Edit|MultiEdit"`），命令是
+`${CLAUDE_PLUGIN_ROOT}/scripts/spec-stage-gate.sh` —— 这一层 sh 只做一件事：容器里找不到 `node`
+时**放行并出声**，而不是以一个含义不明的 hook 失败告终。
+
+### 阶段门控存活探针（装完 / 升级后**必跑**）
+
+⚠️ **本节走的是 Cowork 拓扑的路**（`CLAUDE_SPEC_TOPOLOGY=cowork`）：hook 在会话容器、MCP 在用户
+本机，两条路径未必共享文件系统，所以要专门读**容器内**的审计日志才能判定死活。**默认的本地 Claude
+Code CLI 拓扑（`CLAUDE_SPEC_TOPOLOGY` 省略或 `local`）不需要走这一节**——hook 与 MCP 同机同文件系统，
+直接调 `spec_health` 看 `gate.status` 就够了：`"observed"` 是活证据，`"unobserved"` 更值得怀疑（先查
+`hooks.json` 有没有被这次安装认领），不必读容器审计日志。`spec_health` 的返回值里带一个 `gate.topology`
+字段，可以确认这次判定用的是哪一种拓扑。见 README「运行拓扑：本地 / Cowork」一节。
+
+🔴 **审计日志 2026-09-14 起默认开**，不用设任何东西。默认落点**优先能被人读到的地方**：
+
+| 条件 | 落点 | `logSource` |
+|---|---|---|
+| 环境里有项目根（`CLAUDE_PROJECT_DIR` / `CLAUDE_SPEC_PROJECT_ROOT`） | `<项目根>/.claude/claude-spec-gate.log` | `project` |
+| 没有 | `os.tmpdir()/claude-spec-gate.log` | `tmpdir` |
 
 ```bash
-CLAUDE_SPEC_GATE_LOG=/path/to/log   # relocate (absolute path; a relative path always lands in tmpdir)
-CLAUDE_SPEC_GATE_LOG=off            # disable the audit log (**does not affect the heartbeat**)
+CLAUDE_SPEC_GATE_LOG=/path/to/log   # 换地方（绝对路径；相对路径一律落 tmpdir，不落 cwd）
+CLAUDE_SPEC_GATE_LOG=off            # 关掉审计日志（**心跳不受这个开关影响**）
 ```
 
-**Why it is on by default**: in the incident that motivated it, that log was the *only* thing that
-could answer "did the host call this script at all", and it was opt-in — turning it on required
-changing the environment of the host's hook launch, a position nobody in Cowork could reach, so
-troubleshooting stalled completely. **An observer you can only switch on once you can already
-observe is not an observer.**
+**为什么改成默认开**：这次事故里，判断「宿主到底调没调这个脚本」**只有这份日志能回答**，
+而它当时是 opt-in —— 要打开就得改**宿主启动 hook 时的环境变量**，
+那个位置在 Cowork 里没有任何一方够得到，排查因此彻底卡死。
+**一个只有在你已经能观测时才打得开的观测器，等于没有。**
 
-Each invocation appends **two lines**, each carrying `logPath` / `logSource` so a reader need not
-guess whether it is in the container or the project directory:
+每次调用往该文件追加**两行**，每行自带 `logPath` / `logSource`（读的人不必猜它在容器还是项目目录）：
 
-| Line | Written when | Answers |
+| 行 | 何时写 | 回答什么 |
 |---|---|---|
-| `phase: "entry"` | process start, **before any parsing** | was this process **launched** by the host at all |
-| `phase: "decision"` | after the verdict is reached | what was decided, why, plus `tool_name` / `target` / `agent_id` |
+| `phase: "entry"` | 进程启动，**先于任何解析** | 这个进程被宿主**拉起过**吗 |
+| `phase: "decision"` | 走完判定 | 判成了什么、为什么、`tool_name` / `target` / `agent_id` |
 
-**Both allow and deny are logged** — logging only denials makes "the host didn't call it" and
-"it was called but took an allow branch" look identical. There is a 1 MiB cap; past it, writing
-**stops** (answering "was it called" depends on the earliest lines, not the latest).
+**allow 与 deny 两支都记** —— 只记 deny 的话，「宿主没调用」和「调用了但走了放行分支」长得一模一样。
+有 1 MiB 上限，超了**停写**（回答「调没调」靠的是最早那几行，不是最新的）。
 
-#### How to read it — **run this with the Bash tool inside the session, don't go looking on the Mac**
+#### 怎么读（**在 Cowork 会话里用 Bash 工具跑，不要去 Mac 上找文件**）
 
-The hook runs in the session container, and **the Bash tool is in that same container** — so reading
-the log is a single in-session command:
+hook 跑在会话容器里，而** Bash 工具和 hook 在同一个容器** —— 所以日志的读法就是一条会话内命令：
 
 ```bash
-# 1) look at the current state
+# 1) 先看现状
 cat "${CLAUDE_PROJECT_DIR:-.}/.claude/claude-spec-gate.log" 2>/dev/null || cat /tmp/claude-spec-gate.log
-# 2) in .kiro/specs/<feature>/, write design.md out of stage (no requirements.md in the same directory)
-# 3) cat again and look at the new lines
+# 2) 在 .kiro/specs/<feature>/ 里越阶段写一次 design.md（同目录无 requirements.md）
+# 3) 再 cat 一次，看多出来的行
 ```
 
-**Do a normal write first (one that takes the allow path) before interpreting "there is no deny
-line"** — otherwise you cannot distinguish "the log is unreadable" from "the gate wasn't called".
+**先做过一次普通写（会走 allow）再解释「没有 deny 行」** —— 否则你分不清「日志读不到」和「门没被调用」。
 
-#### The verdict table (four mutually exclusive outcomes)
+#### 判据表（四种互斥结果）
 
-| Log | Meaning |
+| 日志 | 含义 |
 |---|---|
-| has `entry`, last line `decision: "deny"` | the host called it and the gate decided correctly → the problem is that the **host did not enforce the denial** |
-| has `entry`, last line `decision: "allow"` | the host called it and took an allow branch → `reason` says **which** branch |
-| has `entry`, **no decision line** | the host called it but the process never reached a verdict (malformed payload / stdin never EOF'd) → see the `problem` field |
-| **not a single line** | the host **never launched the process** |
+| 有 `entry` · 末行 `decision: "deny"` | 宿主调了、门判对了 → 问题在**宿主没执行这个拒绝** |
+| 有 `entry` · 末行 `decision: "allow"` | 宿主调了、走了放行分支 → `reason` 直接写明是**哪一支** |
+| 有 `entry` · **没有判定行** | 宿主调了、进程没走到判定（畸形 payload / stdin 不 EOF）→ 看 `problem` 字段 |
+| **一行都没有** | 宿主**根本没拉起这个进程** |
 
-🔴 **The table's premise**: "not a single line" only means something if **the path this probe reads
-is the same filesystem the gate writes to**. That is a premise to be tested, not an established
-fact — so do step 1 above first, confirming the probe *can* read a log that already has content,
-before concluding anything from a missing deny line.
-**An observer's failure must not be read as a phenomenon.**
+🔴 **这张表的前提**：「一行都没有」只有在**这个探针读的路径与门控写的是同一个文件系统**时才成立。
+这条是待测前提，不是既成事实 —— 所以先做上面第 1 步、确认探针**读得到**已经有内容的那份日志，
+再拿「没有 deny 行」去下结论。**观测器的故障不许被读成现象。**
 
-#### The easier route: `spec_health`'s `gate` field
+#### 更省事的一条：`spec_health` 的 `gate` 字段
 
-Each invocation also overwrites a heartbeat (`<projectRoot>/.claude/claude-spec-gate.heartbeat`),
-which `spec_health` reads back. **Look at `status` first; only `"observed"` is live evidence:**
+每次调用还会覆盖写一个心跳（`<项目根>/.claude/claude-spec-gate.heartbeat`），
+`spec_health` 把它读出来。**先看 `status`，只有 `"observed"` 是活证据：**
 
-| `status` | Meaning | Can you conclude? |
+| `status` | 含义 | 能不能下结论 |
 |---|---|---|
-| `"observed"` | a valid heartbeat was read | ✅ **yes** — the gate was called at least once; `lastSeen` / `ageMs` / `decision` are the evidence |
-| `"unobserved"` | the path exists but holds no valid heartbeat (absent / empty / truncated JSON / illegal `ts`) | ❌ **no** — it is **neutral**; read the accompanying `caveat` |
-| `"unavailable"` | the heartbeat path cannot be resolved at all (no `projectRoot`) | ❌ no |
+| `"observed"` | 读到了合法心跳 | ✅ **能** —— 门至少被调用过一次，`lastSeen` / `ageMs` / `decision` 就是它的证据 |
+| `"unobserved"` | 路径在，但那里没有合法心跳（不存在 / 空 / 半截 JSON / `ts` 非法） | ❌ **不能** —— 它是**中性**的，必须连着读 `caveat` |
+| `"unavailable"` | 连心跳路径都解析不出来（没有 `projectRoot`） | ❌ 不能 |
 
 ```json
 {"gate":{"status":"observed","heartbeatPath":"…","lastSeen":"2026-09-14T01:01:19.000Z",
-         "ageMs":4200,"decision":"deny","event":"PreToolUse","reason":"out-of-stage write: …"}}
+         "ageMs":4200,"decision":"deny","event":"PreToolUse","reason":"越阶段写：…"}}
 {"gate":{"status":"unobserved","heartbeatPath":"…","lastSeen":null,"ageMs":null,
          "decision":null,"event":null,"reason":null,
-         "caveat":"this machine cannot read that hook's heartbeat, which is not evidence that the gate wasn't called: …"}}
+         "caveat":"本机读不到这台 hook 的心跳，不构成「门没被调用」的判据：…"}}
 ```
 
-`status: "unobserved"` is **not** the same as "was not called": it says "**I did not see it**", not
-"it did not happen". The `caveat` exists for exactly that sentence — writing it only in the docs
-and waiting for someone to read it would be equivalent to not writing it.
+`status: "unobserved"` 与「没被调用」**不是一回事**：它说的是「**我没看见**」，不是「它没发生」。
+`caveat` 就是为这句话而存在的 —— 只写在文档里等人去读，等于没写。
 
-It deliberately does **not** provide `alive: true/false` or any time threshold: how often the gate is
-called depends on writing pace, and any "no heartbeat for N minutes ⇒ dead" would misfire in normal
-use. **`status` describes whether this read worked, not whether the gate is alive.**
+它刻意**不**给 `alive: true/false`，也不给任何时间阈值：门控的调用频率由写作节奏决定，
+任何「N 分钟没心跳就算死」都会在正常使用中误报。**`status` 描述的是「这条读通不通」，不是门活不活。**
 
-🔴🔴 **Under the Cowork topology this read is *always* `unobserved`. Do not use it as a liveness
-verdict.**
+🔴🔴 **但在 Cowork 拓扑下这条读恒为 `unobserved`。别拿它当死活判据。**【读码 2026-09-14】
 
-The heartbeat lands at `<projectDir>/.claude/…`, and the two sides' `projectDir` **cannot** be the
-same directory:
+心跳落点是 `<projectDir>/.claude/…`，而两侧的 `projectDir` **不可能是同一个目录**：
 
-| | who supplies `projectDir` | lands on |
+| | 谁给的 `projectDir` | 落在哪 |
 |---|---|---|
-| **writing** the heartbeat (hook) | the payload's `cwd` — a path inside the session container | the **container** filesystem |
-| **reading** the heartbeat (`spec_health`) | the caller's `projectRoot` — a path on the user's machine | the **Mac** filesystem |
+| **写心跳**（hook） | payload 的 `cwd` —— 会话容器里的路径（如 `/home/claude`） | **容器**文件系统 |
+| **读心跳**（`spec_health`） | 调用方传的 `projectRoot` —— 用户本机路径（如 `/Users/…/kiro-spec`） | **Mac** 文件系统 |
 
-That is this plugin's own "hook in the container, MCP on the machine" two-path conclusion —
-**the gap the heartbeat tries to cross is precisely the gap it was invented to explain.**
+这正是本插件那条「hook 在容器、MCP 在本机」的两路径结论本身 ——
+**心跳想跨的那道缝，恰恰就是它被造出来要解释的那道缝。**
 
-⚠️ So a `status` other than `"observed"` does **not** mean "never called": a live gate is also
-`unobserved`. Reading it as "the gate is dead" yields a **false death signal** — worse than no
-signal. From the MCP side there is **no way** to tell "not called" from "the two paths don't share
-a filesystem", so the code does not pretend to have solved it: it writes the situation as
-`status` + `caveat`.
+⚠️ 所以 `status` 非 `"observed"` **不等于**「从没被调用过」：门活着它也是 `unobserved`。
+把它读成「门死了」会得到一个**假的死亡信号** —— 比没有信号更糟。
+从 MCP 这一侧**没有办法**判定「读不到」是「没被调用」还是「两条路径不共享」——
+所以代码不去假装解决了它，只把这件事写成 `status` + `caveat`。
 
-**When it does work**: when hook and MCP are on the same machine and filesystem (for example the
-local Claude Code CLI, rather than Cowork's container + bridge topology). In Cowork, liveness can
-only be judged by the probe above, reading the audit log **inside the container**.
+**它在什么场景下有效**：hook 与 MCP **同机同文件系统**时（例如本地 Claude Code CLI，
+而不是 Cowork 的容器 + 桥接拓扑）。在 Cowork 里，死活只能靠下面那个探针读**容器内**的审计日志。
 
-### If the probe produces no lines at all
+✅ **2026-09-14 02:54：门控已恢复，STOP 门 ② 关闭。**
 
-- That the host supports `PreToolUse` remains a **measured fact** (and it covers subagents).
-  **Do not write the conclusion as "Cowork does not support hooks"**, and do not downgrade to
-  "rely on SKILL.md reminders".
-- But equally, **do not** default to "I checked thoroughly, therefore I must have misconfigured it".
-  The correct shape is: **exhaust your own side first** (the matcher, the location of
-  `hooks/hooks.json`, the manifest's `hooks` field, the verdict table above) — and **after**
-  exhausting it, pointing at the environment is allowed.
-- Whichever way it points, **first confirm the probe can read a log that already has content** (by
-  doing one write that takes the allow path). Otherwise "no deny line" cannot distinguish "the gate
-  wasn't called" from "the log is unreadable" — **an observer's failure must not be read as a
-  phenomenon.**
+原因是下面这张排查表里被我**一度排除掉**的那一行 —— `spec-stage-gate.sh` 没有可执行位。
+排除它的理由是「所有归档都一样，是常量不是变量」，**那个推理是错的**：
+常量只能排除它作为**变化的那个量**，排除不了它作为**一直就错、而现在才致命的前提**。
 
-## Offline verification
+修法：git `100755` + `pack-plugin.mjs` 写成 `0755` + 一条从产物 `hooks.json` 反查
+`type:command` 路径模式位的用例。真机三段全通（`entry` → `allow` → `deny` 且真被拒）。
 
-No network or npm registry required:
+⚠️ **「为什么 09-13 那次会响」仍开着**：那次那个归档里同一个文件也是 `0644`。
+两种假设（宿主改了拉起方式 / 那条记录有误）无法判定，不选。见事故记录 §9.12。
+
+以下是停摆期间的排查记录，保留备查：
+
+🔴 ~~**2026-09-14 现状：门控当前不响，STOP 门 ② 重新打开。**~~
+在换账号 + 重装 `086066f` 之后，用与第 6 期实测**完全相同的形状**复现两次
+（会话容器里 `.kiro/specs/<feature>/design.md`、同目录无 `requirements.md`）——
+**写入成功，没有任何拒绝**。已排除的：
+
+| 查过的 | 结果 |
+|---|---|
+| matcher 写法 | `"Write|Edit|MultiEdit"`，对 |
+| `hooks/hooks.json` 位置 | 在约定路径，对 |
+| manifest 的 `hooks` 字段 | `"./hooks/hooks.json"`，在 |
+| **门控脚本本身** | **没坏** —— 直接喂 payload：越阶段写 → `permissionDecision: "deny"` + `exit=2`；域外写 → 静默 `exit=0` |
+| `.sh` 的可执行位 | 🔴 **本行结论已订正 —— 它就是根因（见上）**：产物里是 `0644`，且**自 `d011932`（插件第一笔提交）起一直是**，所有归档都一样。旧理由「所有归档都一样 ⇒ 是常量不是变量」**不成立**：常量只能排除它作为**变化的那个量**，排除不了它作为**一直就错、而现在才致命的前提**。留档不删 —— 下一个人最容易重走的就是这条推理 |
+
+**这三处都查过，都没问题；脚本本身喂 payload 也会 deny。但「所以是宿主没有调用它」这一步
+在 2026-09-14 那天证据不足**，口径已按 2026-09-14 的复盘收窄（细节见下面「A/B 的因变量」）：
+
+- 当天的因变量是「**Write 没被拒**」，它是四个因子的乘积：宿主有没有调 × 门是否适用 ×
+  门判没判 deny × 宿主执不执行 deny。实验只钉死了「配置字节没变」这一个因子。
+- 两个被测 build（`086066f` / `78b16cf`）的审计日志**都还是 opt-in**（默认开是 `cae84cd`，
+  只进了 HEAD），所以整个 A/B 里「宿主调没调」**零直接证据**。
+- 门自己还有**六条静默放行分支**（tool 不在 `GATED_TOOLS`、取不到目标路径、目标不在
+  `.kiro/specs/**`……），命中任一条都 `exit 0` 且不写 stderr —— 与「没被调用」逐字同症状。
+
+✅ **A/B 对照已做**（2026-09-14）：在**旧账号**（`31deeb1f`）的会话里跑同一探针 —— 装的
+就是 2026-09-13 实测**会拒**的那一版 `78b16cf` **本体，未重装**（`spec_health` 无 `stateLayer`，
+已确认确实是旧 build）—— 结果 **Write 同样没有被拒**。**它证伪的是「换了账号」这个变量，
+不是「我们的配置错了」这个可能性。**
+
+**宿主版本这一侧我查过，在窗口里是平的**：`claude-code-vm` SDK 全程 `2.1.266`
+（最后一次切换 09-13 12:45，比那次成功早 8 小时）、VM bundle 全程 `2a762adf`（09-12 起）。
+所以「宿主侧发生了变更」目前**没有任何指纹**——可能是没留痕的服务端改动，但也可能不是宿主。
+
+**准确措辞**：宿主**停止调用**插件贡献的 `PreToolUse`，目前是一个**尚未被证据支持的假设**，
+不是结论。能给它定论的只有上面那条探针（同会话 `cat`）。
+
+⚠️ 原先写的「最可能的剩余变量是换了账号」**已被此实验证伪**，保留这句备查。
+
+⚠️ **在这条恢复之前，本插件的阶段门控这一层不能算可用** —— README 的 collaborative 档位措辞
+本来就没承诺硬护栏，但「约定 + 一个会响的提醒」和「约定 + 一个不响的提醒」不是一回事。
+
+---
+
+🔴 **若装好后探针一行都不出现**，按 STOP 门 ② 的**修正口径**处理：
+
+- 宿主支持 `PreToolUse` 仍是**已实测事实**（第 5 期探针 13/33，且覆盖子代理）。
+  **不要把结论写成「Cowork 不支持 hook」**，也不要降级成「靠 SKILL.md 提醒」——
+  后者正是母计划点名不接受的方案。
+- 但也**不要**把「我查干净了 ⇒ 一定是自己配错了」当默认。正确形状是：**先穷尽自己这一侧**
+  （matcher 写法、`hooks/hooks.json` 的位置、manifest 的 `hooks` 字段、上面那张判据表），
+  **穷尽之后允许指向环境** —— 2026-09-13/14 那次就是「查干净了、仍然不响」。
+- 无论指向哪边，**先确认探针读得到一份已经有内容的日志**（先做一次会走 allow 的写）。
+  否则「没有 deny 行」分不清「门没被调用」与「日志读不到」—— 观测器的故障不许被读成现象。
+
+## 离线验证
+
+无需网络或 npm registry：
 
 ```bash
 cd plugins/claude-spec
 npm run doctor                                        # = npm run check && npm test
-npm_config_cache=/tmp/claude-spec-npm-cache npm pack --dry-run --json
+npm_config_cache=/private/tmp/claude-spec-npm-cache npm pack --dry-run --json
 ```
 
-## Rules derivation (`.claude/rules/`)
+⚠️ 上面这段是**源码仓库**里的验证。**装好的插件里没有 `doctor` 也没有 `test`** ——
+它们依赖 `test/`，而 `test/` 不进产物（`pack-plugin.mjs` 的 `EXCLUDE`），所以打包时连同
+这两条 script 一起剔掉了。在装好的插件目录里能跑的是 `npm run check`。
+（为什么要剔：剔之前，产物里的 `npm test` 跑 **0 个测试然后 exit 0** ——
+一个假绿，比报「没有这条 script」更难查。）
 
-`scripts/gen-rules.mjs` derives five `.claude/rules/*.md` files from
-`packages/kiro-rules/lib/kiro-rules.js` (**the single source of truth**): `spec-core.md` (no
-`paths:`, always loaded) plus one each for requirements / design / tasks / bugfix.
+`npm run check` 遍历插件里每个 `.mjs` / `.sh` 过语法、每份受约束的 JSON 过 `JSON.parse`。
+预期：检查与测试通过；dry-run 文件列表包含 `.claude-plugin/`、`hooks/`、`scripts/`、
+`mcp-server.mjs`、运行时 `lib/`、Skill、文档与 `adapter.example.json`。
 
-⚠️ **The output directory must be passed explicitly** (`--out <dir>`); the generator does not guess
-any downstream project's path. To check freshness, run it with `--check` against a directory you
-have already generated into.
+## 规则派生（`.claude/rules/`）
 
-⚠️ **Change the source of truth and you must re-generate.** The consuming project's pre-commit
-freshness check is error-level: changing `packages/kiro-rules` without re-running the generator will
-have your next commit in that project refused.
+```bash
+node scripts/gen-rules.mjs              # 写进 <消费项目>/.claude/rules/
+node scripts/gen-rules.mjs --check      # 逐字节比对，不一致即 exit 1
+node scripts/gen-rules.mjs --out <dir>  # 写到别处
+```
 
-## What has not been tested
+真源是 `packages/kiro-rules/lib/kiro-rules.js` 的**唯一事实源**；产物是派生物，**不要手改**。
+消费项目解析不到时会**大声失败**，不会静默产出零个文件。
 
-This file marks untested slots with `⟨待测⟩` where a claim rests on inference rather than
-measurement. Two are worth calling out explicitly, because both are places where a reasonable reader
-would otherwise assume the opposite:
+⚠️ 产物当前**入不了消费项目的库**：那边 `.gitignore` 忽略 `.claude/`，并明文写着不要再加
+`!.claude/...` 例外。本轮**没有**改它的 `.gitignore`，也**没有**提交那 5 份文件 ——
+它们以未跟踪状态存在，功能上仍会被加载，但换机器/新 clone 就归零。
+细节与三条可选路线的记录在开发仓，不在本仓。
 
-- **The MCP server and the hook are not on the same machine** in the Cowork topology. Anything that
-  assumes a shared filesystem between them (including the heartbeat above) does not hold there.
-- **`fileGuardrail` is `false`.** There is no guardrail on direct file writes. That is the expected
-  value, not a startup failure.
+## 本文件里哪些是**没测过**的
 
-## Evaluation-only probe
+如实列出，免得读者以为都验过了：
 
-`plugins/claude-spec/fixtures/admission-probe.mjs` is a repeatable probe for the evaluation-only
-admission mode. It writes requirements, design and tasks through the service, reads tasks back to
-verify byte stability, and reports the exit status of a fixed-argv validator. It never modifies
-steering files, templates or validators.
+> 2026-09-14 逐行复核。**填掉四行、订正两行、剩两行仍开着、新增一行。**
 
-The adapter sample shipped alongside it binds an authority hash to a **specific project's** steering
-file's raw bytes — not a general-purpose default. Re-derive the hash from the project you actually
-intend to probe before use.
+| 项 | 状态 |
+|---|---|
+| Cowork 的安装路径 | ✅ **已测**：无 CLI，Customize 上传归档；marketplace 在服务端；本机台账见上文 |
+| Cowork 的卸载 / 移除 marketplace 注册 | `⟨待测⟩` —— 只观察到「重装生成新 `plugin_<id>`、旧目录留着」，**不足以**推出卸载是前置步骤 |
+| `.mcp.json` 的 `cwd` 解析结果 | ✅ **已测**：用的是 `${CLAUDE_PLUGIN_ROOT}` → `…/rpm/plugin_<id>/`（插件根）。旧版本文写「`cwd: "."`」是**文档与自己的文件不符**，已订正 |
+| 本机 node 版本（**MCP 侧**） | ✅ **已测**：`/usr/local/bin/node`，`v24.20.0`，在 `engines` 区间内 |
+| 会话容器里的 node 版本（**hook 侧**） | ✅ **已测**：`v22.22.2`（`/opt/node22/bin/node`），在 `engines` 区间内。⚠️ 这两行是两条路径，旧版把它们混成一行 |
+| manifest 的 `skills` / `mcpServers` 是否被认可 | ✅ **已测**：skill 与 25 个 MCP 工具都加载且可调用 |
+| manifest 的 `hooks` 是否被认可 | 🔴 **开着** —— 门控不响，但「不响」的**成因仍未定论**（见上面的判据表）。已定位到 hook 在**容器**侧，容器副本的 `hooks.json` / `.sh` 都完整。⚠️ 曾把容器 `installationPreference: "available"` 当成头号嫌疑，**已被自己的实测推翻**（同一份副本里的 skill 确实加载了 ⇒ 这份副本是活的）|
+| `PreToolUse` 门控在真机上真的响、真的拦得住 | ✅ **已测**（2026-09-14，桌面客户端本地模式，消费项目真实 `.kiro/specs/`）：`Write` 工具对 `.kiro/specs/_gate-liveness-probe-20260914/design.md`（同目录无 requirements.md）返回 `entry` 行 + `decision: "deny"`，写操作被真实拒绝（宿主报错，文件/目录均未落盘）。之前「2026-09-14 起不响」那条是**容器侧**的观察 —— 门控活着，但当时判定对象是容器临时目录（`/home/claude/...`），与消费项目仓库无关；本地模式下 hook 与文件同机，`Write` 直接命中，问题不复现。此前的普通写（`.kiro/specs/` 之外）也如预期拿到 `decision: "allow"`，排除了「日志读不到」与「门没被调用」混淆的可能 |
+| 拒绝走哪个通道生效（`permissionDecision` JSON / `exit 2`） | `⟨待测⟩` —— 本地探针的日志同样显示两个通道都发（`channels: ["hookSpecificOutput.permissionDecision", "exit 2"]`），且宿主确实执行了拒绝，但日志本身不区分是哪个通道生效；仍需改 hook 脚本让两个通道分开触发（各自单独测一次）才能判定宿主实际认哪个 |
+| 本地 marketplace 安装 | 🔁 **实际走的不是这条** —— 走的是服务端 `My Uploads` 上传。本地 marketplace 这条路径仍 `⟨待测⟩` |
+| **多账号** | 🆕 **已测**：同机每账号各一份安装，版本可不同。任何「装了没生效」的排查都要先确定账号 |
 
-> 🔴 Probing a **real downstream project** is a cross-repository write: it requires the user's
-> explicit authorisation, and that project's working tree must be confirmed clean first. With either
-> precondition unmet, run only the plugin's isolated tests — and do not describe their result as a
-> real-host admission pass. After any real run, independently re-check the authority hash and
-> `git diff -- .kiro/steering`.
+## evaluation-only probe（历史通道，仍受支持但已不是本轮默认）
+
+插件内的 `fixtures/admission-probe.mjs` 是那次准入的证据生成器，用于**评估目录**
+`_eval-codex-YYYYMMDD/`，并拒绝正式 Spec 的写入。它是 `evaluation-only` 模式的回归夹具 ——
+**已解锁宿主不走这条路**（见上面的 adapter 小节）。
+
+在获得用户明确授权、且确认消费项目工作树干净之后：
+
+```bash
+node fixtures/admission-probe.mjs \
+  --project-root /absolute/path/to/the consumer repo \
+  --adapter .codex/kiro-spec.json \
+  --spec _eval-codex-20260827 \
+  --output /tmp/probe-result.json
+```
+
+它只请求 evaluation-only 目录的写入，并记录越界写入被拒、tasks 读写字节稳定性与固定 validator 的
+退出状态。它不会修改 steering、模板或 validator。真实运行后仍要独立检查
+`git diff -- .kiro/steering scripts/spec-tasks-lint.py`。

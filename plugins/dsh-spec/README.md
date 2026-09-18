@@ -1,182 +1,147 @@
-> 🌐 **English** · [中文](../../docs/zh-CN/dsh-spec/README.md)
+> 🌐 **中文** · [English](../../docs/en/dsh-spec/README.md)
+
+> ⚠️ **本文件是开发期的原版，不是英文版的翻译。**
+> 英文版是**面向公开读者的改写**：它去掉了带日期的事故记录，并移除了指向内部资料的引用。
+> 两者实质有差异处，**以英文版为准**。
+
 
 # dsh-spec
 
-A DeepSeek Harness cordis plugin replicating Kiro's Spec mechanism. It turns a feature or a fix
-into formal spec documents and enforces staged, ordered progress through them.
+复刻 Kiro Spec 机制的 DeepSeek Harness cordis 插件。把一个功能/修复规范化为正式 spec 文档，并强制分阶段顺序推进。
 
-## The four spec shapes
+## 四种 spec 形态
 
-| Shape | Order | First artifact | Approval gate |
+| 形态 | 顺序 | 首个工件 | 审批门 |
 |---|---|---|---|
-| **feature (requirements-first)** | requirements → design → tasks | `requirements.md` | yes |
-| **feature (design-first)** | design → requirements (derived) → tasks | `design.md` (High / Low Level) | yes |
-| **bugfix** | analysis → design → tasks | `bugfix.md` (current / expected / unchanged) | yes |
-| **quick** | all three at once | all three | no |
+| **feature（requirements-first）** | requirements → design → tasks | `requirements.md` | 有 |
+| **feature（design-first）** | design → requirements（推导）→ tasks | `design.md`（High/Low Level 两档） | 有 |
+| **bugfix** | analysis → design → tasks | `bugfix.md`（current/expected/unchanged 三段） | 有 |
+| **quick** | 一次性三件套 | 三件全生成 | 无 |
 
-### Two workflow types the real host has that this plugin does **not** model
+### 真机有、本仓**未建模**的两档 workflow
 
-`spec_init` accepts only the shapes above. The real `WorkflowType` enum has two more, which this
-plugin **knows about but does not implement**:
+`spec_init` 只接受上面那几档。真机的 `WorkflowType` 枚举里还有两个，本仓**已知但不实现**：
 
-| Real `workflowType` | Status here |
+| 真机 `workflowType` | 本仓现状 |
 |---|---|
-| `fast-task` | **not modelled.** The document set matches requirements-first (`​.config.kiro` + requirements/design/tasks), but the **flow and presentation order** differ (the real one is a tasks-first checklist). Five instances were observed running in the wild |
-| `verify-first` | **not modelled**, and **zero** instances across 77 real `​.config.kiro` files on disk — which does not mean it doesn't exist, only that the corpus doesn't cover it |
+| `fast-task` | **未建模**。文档集与 requirements-first 相同（`.config.kiro` + requirements/design/tasks），但**流程与呈现顺序**不同（真机是 tasks 优先的清单）。盘上实测 5 例在跑 |
+| `verify-first` | **未建模**，且盘上 77 个真实 `.config.kiro` 里 **0 例** —— 不能说它不存在，只能说语料未覆盖 |
 
-### One difference that **still needs a real-machine sample** to settle
+### 一处**仍待真机样本**才能裁定的差异
 
-The **document set** for `quick` disagrees three ways: Kiro's `quick` produces **no `design.md`**,
-while this plugin's `quick` produces **all three**.
-⚠️ **This cannot be settled right now**: the real-machine `specType: "quick-spec"` has **zero**
-instances across 77 real `​.config.kiro` files, so no real sample is available.
-**Do not treat it as resolved** — when a `quick-spec` instance shows up in the corpus, the real
-machine wins.
-(The real enum and the `specType` → this plugin's `kind` mapping are implemented and asserted — see
-`specTypeToKind` in `packages/spec-parser/lib/config-kiro.js`. **Only the document set is in doubt.**)
+`quick` 这一档的**文档集**三方不一致：KiroCrew 的 quick **不产 `design.md`**，本仓的 quick
+**产三件套**。⚠️ **目前无法裁定**：真机 `specType: "quick-spec"` 在 77 个真实 `.config.kiro`
+里 **0 例**，拿不到真机样本。**别当成已解决** ——
+等语料里出现 `quick-spec` 实例再以真机为准。
+（真机的枚举与「`specType` → 本仓 kind」的映射已落地并断言，见 `packages/spec-parser/lib/config-kiro.js`
+的 `specTypeToKind`；**分子歧的只是文档集**。）
 
-When it reads one of those two workflow types from `.config.kiro`, `spec_status` **states plainly in
-`workflowNotes` that "this plugin does not model it and will follow the existing flow"**. Silently
-applying a different flow is exactly the kind of degradation this project refuses elsewhere.
-Implementing them is its own piece of work, not a spare enum value.
+读到 `.config.kiro` 里是这两档时，`spec_status` 会在 `workflowNotes` 里**明说「本仓未建模，
+本次按既有流程走」**（见 §T3 的 `deriveWorkflow`）—— 静默套用另一套流程是本仓在别处反复拒绝的
+那种降级。要做的话是独立一期，不是顺手加个枚举值。
 
-## Directory layout (Kiro's layout)
+## 目录对齐（Kiro 布局）
 
-Specs are written to `.kiro/specs/<feature>/` (Kiro's multi-spec subdirectory layout), one directory
-per feature:
+spec 默认写入 `.kiro/specs/<feature>/`（Kiro 的多 spec 子目录布局），每个功能一个目录：
 
 ```
 <projectRoot>/.kiro/specs/<feature>/
 ├── requirements.md    # feature / quick
-├── bugfix.md          # bugfix (the Analysis artifact, in place of requirements.md)
+├── bugfix.md          # bugfix（Analysis 阶段产物，代替 requirements.md）
 ├── design.md
 ├── tasks.md
-└── tasks.meta.json    # execution history + the _workflow marker
+└── tasks.meta.json    # 执行历史 + _workflow 标记
 ```
 
-- **Active spec pointer**: `.kiro/specs/_active` records the current feature name, so later
-  `spec_write/read/status/task_set` calls need not pass a feature name.
-- **Single-spec compatibility**: older specs written directly under the configured `specDir`
-  (e.g. `.spec/`) can still be read.
-- **Non-destructive migration**: if the old location already holds a spec on the first `spec_init`,
-  the files are **copied** into the `<feature>/` subdirectory and the old location is left alone
-  (Kiro's zero-migration rule).
-- The `specsRoot` config can point the root at any parent directory.
+- **活跃 spec 指针**：`.kiro/specs/_active` 记录当前 feature 名，后续 `spec_write/read/status/task_set` 免传 feature 名自动定位。
+- **单 spec 兼容**：旧版直接写在配置 `specDir`（如 `.spec/`）下的 spec 仍可被读取。
+- **非破坏迁移**：首次 `spec_init` 时若旧位置已有 spec，文件会被**复制**进
+  `<feature>/` 子目录，旧位置保留（沿用 Kiro 的零迁移铁律）。
+- 也可用 `specsRoot` 配置把根指向任意父目录。
 
-## The three stages (feature, requirements-first)
+## 三阶段（feature requirements-first）
 
-| Stage | File | Contents |
+| 阶段 | 文件 | 内容 |
 |---|---|---|
-| Requirements | `requirements.md` | User stories + EARS acceptance criteria (`WHEN … THE SYSTEM SHALL …`) |
-| Design | `design.md` | Architecture, data flow, error handling, testing strategy |
-| Tasks | `tasks.md` | A checkbox implementation plan, each item referencing `_Requirements: x.y_` |
+| Requirements | `requirements.md` | 用户故事 + EARS 验收标准（`WHEN … THE SYSTEM SHALL …`） |
+| Design | `design.md` | 架构、数据流、错误处理、测试策略 |
+| Tasks | `tasks.md` | 复选框实现计划，每项引用 `_Requirements: x.y_` |
 
-> For bugfix, the Analysis stage produces `bugfix.md` (Current / Expected / Unchanged Behavior,
-> with EARS using lowercase `the system` and `SHALL CONTINUE TO` for regression protection), and the
-> design stage adds root-cause analysis and the properties that need testing.
+> bugfix 的 Analysis 阶段产物是 `bugfix.md`（Current / Expected / Unchanged Behavior
+> 三段，EARS 用小写 `the system` + `SHALL CONTINUE TO` 做回归防护），design 阶段补
+> 根因分析与「需测试属性」。
 
-## Capabilities
+## 能力
 
-- **System prompt section** (`spec:workflow`, order 120): injects the spec-first workflow into every
-  request as a standing behavioural constraint.
-- **Three task states** (Kiro's): `- [ ]` pending / `- [-]` in progress / `- [x]` done. A fourth
-  state is rejected.
-- **Task dependency graph**: the `## Task Dependency Graph` section of `tasks.md`; waves run
-  serially, tasks within a wave concurrently. The shape is
-  `{"waves":[{"id":0,"tasks":["1","2"]},{"id":1,"tasks":["3"]}]}` — an array of **objects** (not a
-  bare array), each wave carrying a **numeric `id`** (0-based, consecutive), with task ids as
-  **strings**. DSH itself does not enforce the last two (it normalises them), but the real Kiro
-  host discards the whole graph and falls back to serial execution if either is missing — so
-  `spec_diagnostics` raises a warning. Based on a real-machine measurement of `kiro-agent` 1.0.794.
-- **The waves executor** (`spec_run` tool + `/spec run`): parses the dependency graph and executes
-  in wave order; waves serially, tasks within a wave concurrently via subagents (4 by default, see
-  `maxConcurrency`). Only tasks that are both incomplete (not `[x]`) and declared in the graph are
-  run; a failed task reverts to `[ ]`, a successful one is marked `[x]`. `/spec plan` previews the
-  plan without dispatching.
-  - **Task state is written exclusively by the executor.** Dispatched subagents are explicitly told
-    **not** to edit `tasks.md` and not to call `spec_task_set` — several subagents in the same wave
-    doing read-modify-write on the whole file concurrently would overwrite each other. State is
-    marked by the runner once subagents settle.
-  - A failed state write is **listed explicitly in the returned result** (it is never lost
-    silently), and on an abnormal interruption the current wave's `[-]` markers fall back to `[ ]`.
-  - **No dependency graph ⇒ strictly serial** (one task at a time), with a warning explaining why
-    and how to fix it. The real host's `getReadyTasksSequential()` returns **only the first** ready
-    leaf when there is no graph. There is a harder reason than parity for going serial:
-    `tasks/missing-dependency-graph` is `severity: "error"` in **both** the real table and this
-    plugin's — that is, **the diagnoser calls it an error while the runner treated it as eligible
-    for concurrency**, which is self-contradictory. And "no dependencies declared" is not the same
-    as "declared safe to parallelise": concurrent subagents would edit the same files at once
-    (task state is already closed off by "executor owns the write", but source files are still
-    exposed). The affected surface is 3.1% (7 of 224 `tasks.md` files in one real corpus); wanting
-    concurrency just means writing a graph.
-  - An **empty** graph `{"waves":[]}` still differs in meaning from **no** graph: the former
-    dispatches **nothing** (with a warning); the latter runs **everything serially** as above.
-  - Task `_Requirements:` references are resolved, and only the referenced requirement blocks are
-    injected into the subagent's prompt; the remaining context (such as `design.md`) is capped by
-    the `maxContextBytes` budget and truncated past it.
-- **Tools** (`spec_*`):
-  - `spec_init(goal, kind?, workflow?, detailLevel?, feature?)` — start a spec; `kind` =
-    feature (default) / bugfix / quick; `workflow` = requirements-first (default) / design-first;
-    `detailLevel` = high (default) / low
-  - `spec_write(file, content)` — write a spec file (`requirements` / `design` / `tasks` /
-    `bugfix`); workflow-aware stage gating; returns a non-blocking diagnostic summary after writing
-    (it does not block the write)
-  - `spec_read(file?)` — read a file, `meta` (tasks.meta.json), or the overall status
-  - `spec_status()` — stage + task completion + the next step
-  - `spec_task_set(index, {done?|state?})` — set a task's state (`pending` / `active` / `done`)
-  - `spec_meta(action?, task?, ...)` — read/write `tasks.meta.json` in the spec directory.
+- **系统提示段**（`spec:workflow`, order 120）：把 spec-first 工作流注入每次请求，作为常驻行为约束。
+- **任务三态**（Kiro）：`- [ ]` 待办 / `- [-]` 进行中 / `- [x]` 完成，拒绝第四态。
+- **任务依赖图**：`tasks.md` 的 `## Task Dependency Graph`，wave 间串行、wave 内并发。形态为
+  `{"waves":[{"id":0,"tasks":["1","2"]},{"id":1,"tasks":["3"]}]}` —— 对象数组（非裸数组）、
+  wave 带**数字 `id`**（0 起连续）、任务 id 为**字符串**。后两项 DSH 自己不强制（会归一化），
+  但 Kiro 真机缺任一项就丢弃整图回退串行，故 `spec_diagnostics` 会发 warning。
+  依据是 kiro-agent 1.0.794 的真机实测。
+- **waves 执行器**（`spec_run` 工具 + `/spec run`）：解析依赖图，按 wave 顺序执行；wave 间串行、wave 内通过 subagent 并发（默认最多 4 个，见 `maxConcurrency`）。只跑未完成（非 `[x]`）且在图中声明的任务；失败任务回退 `[ ]`，成功标 `[x]`。`/spec plan` 预览执行计划（不派发）。
+  - **任务状态由执行器独占写入。** 派发出去的子代理被明确告知**不要**改 `tasks.md`、不要调 `spec_task_set` —— 同 wave 内多个子代理并发整文件读-改-写会互相覆盖。状态一律由 runner 在子代理结算后标记。
+  - 状态写入失败会**显式列在返回结果里**（不会静默丢失），异常中断时本 wave 的 `[-]` 会回落到 `[ ]`。
+  - **没有依赖图 ⇒ 严格串行**（一次一个任务），并给出 warning 说明原因与改法。
+    2026-09-16 真机裁决：真机无图时 `getReadyTasksSequential()` 只返回
+    **第一个** ready 叶子，一次一个；而本仓此前把它当成"一个 wave 装下全部任务"在
+    `maxConcurrency` 内并发 —— 与真机相反。改向串行还有一条更硬的理由：
+    `tasks/missing-dependency-graph` 在真机与本仓表里**都是 `severity: "error"`**，
+    也就是**诊断器判它是错，runner 却把它当并发跑**，两者自相矛盾。而且"没声明依赖"
+    ≠"声明了可以并行"：并发子代理会同时改同一批文件（`tasks.md` 已用"执行器独占写入"
+    收口，但代码文件仍裸露）。影响面 3.1%（消费项目 224 份 `tasks.md` 里 7 份无图），
+    想要并发只需补一张图。
+  - 空依赖图 `{"waves":[]}` 表示"什么都不调度"，与"没有依赖图"**语义仍不同**：
+    前者**一条都不派发**（给出 warning），后者按上面那样**逐条串行跑完**。
+  - 任务的 `_Requirements:` 引用会被解析，只向子代理注入被引用的需求块；`design.md` 等其余上下文受 `maxContextBytes` 总预算约束，超出即截断。
+- **工具**（`spec_*`）：
+  - `spec_init(goal, kind?, workflow?, detailLevel?, feature?)` — 启动 spec；`kind` = feature(默认)/bugfix/quick；`workflow` = requirements-first(默认)/design-first；`detailLevel` = high(默认)/low
+  - `spec_write(file, content)` — 写 spec 文件（`requirements`/`design`/`tasks`/`bugfix`）；工作流感知的阶段门控；写后返回非阻塞诊断摘要（不阻止写入）
+  - `spec_read(file?)` — 读某文件、`meta`（tasks.meta.json）、或整体状态
+  - `spec_status()` — 阶段 + 任务完成度 + 下一步
+  - `spec_task_set(index, {done?|state?})` — 设置任务状态（`pending`/`active`/`done`）
+  - `spec_meta(action?, task?, ...)` — 读写 spec 目录下的 `tasks.meta.json`。
 
-    ⚠️ **This is the pre-1.1.28 execution-history shape** (`{pbtResults, executionHistory}`, capped
-    at **10 entries** per task, byte-identical to the real host). The real host has since moved that
-    data to `~/.kiro/tasks/<workspace-hash>/<feature>.meta.json` (with a different shape), and
-    **this plugin does not write that store**: it belongs to Kiro, Kiro is still writing it today,
-    and it holds its own file lock and applies `slice(-10)` on **its** write path — records we
-    inserted would be truncated away. Writing outside the workspace would also mean bypassing
-    `ctx.fs`, which is the `port.move` path the repository specifically guards with
-    `assertInsideProject`.
+    ⚠️ **它是真机 1.1.28 之前**的执行历史形状（`{pbtResults, executionHistory}`，每条任务上限
+    **10 条**，与真机逐字一致）。真机已把这份数据挪到
+    `~/.kiro/tasks/<workspace-hash>/<feature>.meta.json`（形状也不同），**本插件不写那个 store**：
+    它是 Kiro 自己的、它今天还在写、且它持自己的文件锁并会在**它的**写入路径上 `slice(-10)`
+    —— 我们插进去的记录会被它截掉。而且写到工作区外要绕过 `ctx.fs`，正是 `port.move` 那条路，
+    仓库在那条路上专门加了 `assertInsideProject` 把它拦住。
 
-    Keeping the old location is deliberate: **96 of 211** specs in one real corpus carry this file,
-    and the repository's standing principle is that `tasks.meta.json` "is NOT ours to reconstruct".
-    **So: be precise about what it is, and don't move it.** Anyone reading it must know they are
-    **not** looking at the current Kiro execution history.
-  - `spec_run(wave?, dryRun?)` — the waves executor; `wave` runs one wave only, `dryRun` previews
-    the plan
-  - `spec_diagnostics()` — the diagnoser (Kiro's `getDiagnostics` equivalent): validates strict
-    `##` heading prefix matching, the H1 title, dependency graph JSON shape, a fourth task state;
-    raises soft warnings for a missing `**User Story:**` / `#### Acceptance Criteria`. Reports only;
-    never blocks a write
-- **Command** `/spec [status|diagnose|new <name>|view [name] [file]|run|plan|analyze_requirements [name]|init <goal>]`
-  - `new <name>` — create a spec and switch to its feature directory
-  - `view [name] [file]` — open a spec document (defaults to requirements.md and the active spec)
-  - `run` / `plan` — execute per the dependency graph / preview the plan
-  - `diagnose` / `diag` / `lint` — run the diagnoser against the active spec (the command face of
-    `spec_diagnostics`)
-  - `analyze_requirements [name]` — guide the current agent through a consistency analysis across
-    the whole requirement set (logical contradictions, ambiguities, conflicting constraints,
-    undeclared assumptions, missing boundaries)
+    保留旧位置是有意的：仓库语料里 **96/211** 个 spec 就带着这份文件，而仓库的既有原则是
+    `tasks.meta.json`「is NOT ours to reconstruct」。**所以：说的口径要准，位置不动。**
+    读它的人要知道自己读到的**不是**当前 Kiro 的执行历史。
+  - `spec_run(wave?, dryRun?)` — waves 执行器；`wave` 只跑某波，`dryRun` 仅预览计划
+  - `spec_diagnostics()` — 诊断器（getDiagnostics 等价物）：校验 `##` 标题严格前缀匹配、H1 标题、依赖图 JSON 形状、任务第四态，缺 `**User Story:**`/`#### Acceptance Criteria` 给软警告；只报告、不阻塞写入
+- **命令** `/spec [status|diagnose|new <name>|view [name] [file]|run|plan|analyze_requirements [name]|init <goal>]`
+  - `new <name>` — 新建 spec 并切到其 feature 目录
+  - `view [name] [file]` — 打开指定 spec 文档（缺省 requirements.md 与当前活跃 spec）
+  - `run` / `plan` — 按依赖图执行 / 预览计划
+  - `diagnose` / `diag` / `lint` — 对活跃 spec 跑诊断器（`spec_diagnostics` 的命令面）
+  - `analyze_requirements [name]` — 引导当前 agent 跨全量需求做一致性分析（逻辑矛盾/歧义/冲突约束/未声明假设/缺失边界）
 
-## Configuration
+## 配置
 
-Override in your profile's `cordis.patch.yml`:
+在 profile 的 `cordis.patch.yml` 行里可覆盖：
 
 ```yaml
 - insert:
     - id: dsh-spec
       name: ../dsh-spec/lib/index.js
       config:
-        specDir: .spec               # default; the single-spec compatibility location
-        projectRootMarkers: ['.git'] # markers used to identify the project root
-        specsRoot: null              # explicit spec parent directory (optional)
-        useFeatureDirs: true         # use the .kiro/specs/<feature>/ layout
-        subagentProvider: null       # subagent provider name used by /spec run; required to run
-        maxConcurrency: 4            # max concurrent subagents within one wave (default 4)
-        maxContextBytes: 32000       # spec-context byte budget per task prompt (default 32000)
+        specDir: .spec               # 默认；单 spec 兼容位置
+        projectRootMarkers: ['.git'] # 项目根识别标记
+        specsRoot: null              # 显式 spec 父目录（可选）
+        useFeatureDirs: true         # 使用 .kiro/specs/<feature>/ 布局
+        subagentProvider: null       # /spec run 派发任务用的 subagent provider 名（必填才能 run）
+        maxConcurrency: 4            # 单 wave 内最大并发子代理数（默认 4）
+        maxContextBytes: 32000       # 注入单个任务提示词的 spec 上下文总预算字节（默认 32000）
 ```
 
-> Set `subagentProvider` to `spawn`: `dsh-base` already mounts
-> `@deepseek-ai/dsh-subagent-spawn-in-process`, whose registered name is `spawn` by default.
-> When it is not configured, `spec_run` / `/spec run` fail with an explicit error (the core
-> three-document workflow is unaffected, and `/spec plan` still previews).
+> `subagentProvider` 填 `spawn` 即可：`dsh-base` 已挂载 `@deepseek-ai/dsh-subagent-spawn-in-process`，
+> 其注册名默认就是 `spawn`。未配置时 `spec_run` / `/spec run` 会明确报错（核心三文档工作流不受影响，
+> `/spec plan` 仍可预览）。
 
-Spec files are written to `<projectRoot>/.kiro/specs/<feature>/`, where the project root is the
-nearest ancestor of the session cwd containing `.git` (falling back to cwd).
+spec 文件写入 `<projectRoot>/.kiro/specs/<feature>/`，项目根 = 从会话 cwd 向上找最近含 `.git` 的目录（无则回退 cwd）。

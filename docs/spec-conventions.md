@@ -1,101 +1,95 @@
-> 🌐 **English** · [中文](spec-conventions.zh-CN.md)
+> 🌐 **中文** · [English](spec-conventions.en.md)
 
-# Spec writing conventions
+# Spec 写作约定
 
-The hard constraints the diagnoser **will** report. Read this before you write — it is cheaper
-than fixing afterwards.
+诊断器**会**报出来的硬约束。写之前先看这一篇，比写完再改便宜。
 
 ---
 
-## 1. Headings must be pure English
+## 1. 标题必须是纯英文
 
-Every top-level `##` section keeps a **pure English** primary heading, with the Chinese subtitle on
-the following line in a blockquote:
+每个 `##` 顶层 section 的英文主标题**保持纯英文**，中文副标题写在下一行的引用块里：
 
 ```
 ## Overview
 
 > 概述
 
-Body text starts here...
+正文从这里开始...
 ```
 
-`### N.X` subheadings may be entirely in Chinese.
+`### N.X` 子标题允许全中文。
 
-### The headings that must be English
+### 必须英文的标题清单
 
-**`requirements.md`**: `# Requirements Document` / `## Introduction` /
-`## Glossary` (suggested) / `## Requirements`
+**`requirements.md`**：`# Requirements Document` / `## Introduction` /
+`## Glossary`（建议） / `## Requirements`
 
-**`design.md`**: `# Design Document` / `## Overview` / `## Architecture` /
+**`design.md`**：`# Design Document` / `## Overview` / `## Architecture` /
 `## Data Models` / `## Components and Interfaces` /
-`## Error Handling` (suggested) / `## Testing Strategy` (suggested) /
-`## Correctness Properties` (suggested)
+`## Error Handling`（建议） / `## Testing Strategy`（建议） / `## Correctness Properties`（建议）
 
-**`tasks.md`**: `# Implementation Plan` / `## Overview` (suggested) /
-`## Task Dependency Graph` (**required**) / `## Tasks` (suggested) / `## Notes` (suggested)
+**`tasks.md`**：`# Implementation Plan` / `## Overview`（建议） /
+`## Task Dependency Graph`（**必须**） / `## Tasks`（建议） / `## Notes`（建议）
 
-⚠️ Matching is by **strict prefix**. `## Requirement` is not `## Requirements`.
+⚠️ 匹配是**严格前缀**。`## Requirement` 不是 `## Requirements`。
 
 ---
 
-## 2. The structure of each requirement
+## 2. 每条需求的结构
 
 ```
-### 1. <requirement name>
+### 1. <需求名>
 
-**User Story:** As a <role>, I want <capability>, so that <value>.
+**User Story:** As a <角色>, I want <能力>, so that <价值>.
 
 #### Acceptance Criteria
 
-1. WHEN <trigger> THEN THE SYSTEM SHALL <behaviour>.
-2. IF <condition> THEN THE SYSTEM SHALL <behaviour>.
+1. WHEN <触发> THEN THE SYSTEM SHALL <行为>.
+2. IF <条件> THEN THE SYSTEM SHALL <行为>.
 ```
 
-- The requirement heading **starts with a numeric id** (`### 1. xxx`). Do not write `### R1 -`.
-- Acceptance criteria use **EARS** phrasing: `WHEN` / `WHILE` / `WHERE` / `IF...THEN` /
-  `THE...SHALL`. EARS keywords are **uppercase**.
-- Every requirement must have both `**User Story:**` and `#### Acceptance Criteria`.
+- 需求标题**以数字 ID 开头**（`### 1. xxx`）。不要写 `### R1 -`。
+- 验收条目用 **EARS 句式**：`WHEN` / `WHILE` / `WHERE` / `IF...THEN` / `THE...SHALL`。
+  EARS 是**大写**的。
+- 每条 Requirement 必须同时有 `**User Story:**` 与 `#### Acceptance Criteria` 两个子结构。
 
 ---
 
-## 3. Correctness Properties (suggested)
+## 3. Correctness Properties（建议）
 
 ```
-*For any* <input domain>, <property> holds.
+*For any* <输入域>, <性质> 成立.
 
 **Validates: Requirements 1.2, 2.1**
 ```
 
-- Each property **begins the line** with `*For any*` — literally, with italic asterisks,
-  **not** `- **For any**`.
-- Each carries a `**Validates: Requirements X.Y**` annotation.
+- 每条属性**行首**是 `*For any*`（是的，用斜体星号，**不是** `- **For any**`）。
+- 带 `**Validates: Requirements X.Y**` 标注。
 
 ---
 
-## 4. Task states — there are only three
+## 4. 任务三态 —— 只有三个
 
-| Marker | Meaning |
+| 标记 | 含义 |
 |---|---|
-| `- [ ] N.` | not started |
-| `- [-] N.` | in progress |
-| `- [x] N.` | done |
+| `- [ ] N.` | 未开始 |
+| `- [-] N.` | 进行中 |
+| `- [x] N.` | 已完成 |
 
-**Do not invent a fourth.**
+**不要发明第四种。**
 
-> ⚠️ The reason is **not** "the host doesn't recognise it". In fact the real host *does* recognise
-> `[~]` — it is the first-class `queued` state, and Kiro writes it itself. This is **this
-> project's convention**: three states only.
-> **Don't use "the host doesn't recognise it" as the reason** — that claim is simply false.
+> ⚠️ 理由**不是**「宿主不认」—— 事实上真机**认** `[~]`，它是 `queued` 的一等状态，
+> Kiro 自己会写它。这是**本项目的约定**：只认三态。
+> **别拿「宿主不认」当理由** —— 那是个不成立的说法。
 
-**Never leave `[-]` across sessions.** Write it at the moment work truly starts; before finishing,
-converge to `[x]` or revert to `- [ ]`.
+**不许跨会话留 `[-]`。** 只在真正开工那一刻打，收工前必须收敛成 `[x]` 或退回 `- [ ]`。
 
 ---
 
-## 5. The task dependency graph (required)
+## 5. 任务依赖图（必须）
 
-It must be a **valid JSON code block**:
+必须是**合法 JSON 代码块**：
 
 ```json
 {
@@ -106,37 +100,34 @@ It must be a **valid JSON code block**:
 }
 ```
 
-**Three hard requirements. Violate any one and the host discards the entire graph and silently
-falls back to fully serial execution** (no error, no warning):
+**三处硬要求，违反任意一处宿主会丢弃整张图并静默回退成完全串行**
+（无报错、无提示）：
 
-1. `waves` is an **array of objects**, not a bare array `[[1,2],[3]]`;
-2. Every wave carries a **numeric** `id` (0-based, consecutive) — a string `"0"` is rejected
-   by the check (`typeof === "number"`);
-3. Task ids are written as **strings** — `["1","2"]`, not `[1,2]`.
+1. `waves` 是**对象数组**，不是裸数组 `[[1,2],[3]]`；
+2. 每个 wave 带**数字** `id`（0 起连续）——写字符串 `"0"` 会被校验拒绝（`typeof === "number"`）；
+3. 任务 id 写成**字符串** —— `["1","2"]`，不是 `[1,2]`。
 
-The numeric `id` carries no meaning (the host renumbers by array index), but it must exist and be
-a number.
+`id` 的数值不承载语义（真机按数组下标重编号），但必须存在且是数字。
 
-⚠️ The real linter **cannot detect (2) or (3)** (it only asserts that `waves` is a non-empty array).
-So the only symptom of getting it wrong is that **parallelism disappears** — a performance problem
-that never reports itself.
+⚠️ 真机 linter **查不出 ② ③**（它只断言 `waves` 是非空数组）。
+所以写错的唯一症状是**并行度消失** —— 一个不会报错的性能问题。
 
 ---
 
-## 6. Verify the spec's stated premises before acting
+## 6. 执行前核实 spec 的既有前提
 
-Specs routinely take "reuse the existing X" as an established fact.
+spec 经常以「沿用现有 X / 复用已有 Y」作为前提并当成既成事实。
 
-> **Before starting, verify that X actually exists and is in use at the call site.**
+> **动手前必须核实那个 X 在调用端真实存在且在用。**
 
-Confirming only the *callee* (that a function/type/constant is defined) **does not count** —
-"defined but with no callers anywhere" is the most typical shape of this bug.
+只确认被调用方（函数/类型/常量有定义）**不算** —— 定义在那儿而没有任何调用者，
+是这类 bug 最典型的形态。
 
 ---
 
-## 7. Lifecycle: a spec is a change snapshot, not a living document
+## 7. 生命周期：spec 是变更快照，不是活文档
 
-Shipped with no follow-up iteration, superseded by a newer version, or an incomplete skeleton
-untouched for more than 30 days — move it to `.kiro/specs/_archive/`.
+已发版且无后续迭代的、被新版取代的、或残缺骨架超 30 天未动的 ——
+移进 `.kiro/specs/_archive/`。
 
-**Archive by default, do not delete.**
+**默认归档，不删除。**
