@@ -1,59 +1,127 @@
+> 🌐 **English** · [中文](../../docs/zh-CN/codex-spec/README.md)
+
 # codex-spec
 
-`codex-spec` 是面向 Codex 的 Kiro-compatible Spec 插件。它提供四种协作级工作流的写作闭环、存量 Spec 发现、跨 artifact 分析与同步、串行任务执行，以及消费项目 evaluation-only 准入；不提供并行执行、Hook 或 Hard-security。
+`codex-spec` is a Kiro-compatible Spec plugin for Codex. It provides the authoring loop for four
+collaborative workflows, existing-Spec discovery, cross-artifact analysis and sync, serial task
+execution, and an **evaluation-only admission** mode for a downstream project. It does not provide
+parallel execution, hooks, or hard security.
 
-## 支持矩阵
+## Support matrix
 
-| 组件 | 当前锁定范围 |
+| Component | Currently pinned range |
 |---|---|
-| Codex | `0.150.0-alpha.8` 或后续兼容版本；版本变化需重跑宿主 smoke |
-| Node | `>=20 <26`；Node 20、22、24 LTS 为支持基线，00A-base 在 Node `v25.8.0` 验证 |
-| macOS | Apple Silicon 与 Intel 的本地 stdio 运行时 |
-| Linux | x86_64 与 arm64 的本地 stdio 运行时 |
+| Codex | `0.150.0-alpha.8` or a later compatible version; a version change requires re-running the host smoke test |
+| Node | `>=20 <26`; Node 20, 22 and 24 LTS are the support baseline |
+| macOS | local stdio runtime on Apple Silicon and Intel |
+| Linux | local stdio runtime on x86_64 and arm64 |
 
-## 当前能力与边界
+## Current capabilities and boundaries
 
-MCP 提供 `spec_health/list/template/validate_artifacts/init/adopt/read/context/write/status/diagnostics/analyze/quality_preview/sync_preview/sync_apply/record_analysis/request_approval/record_approval`，以及 `spec_task_set` 手动三态更新、`spec_task_plan/begin/record_check/complete/fail/reset_failures` 串行执行工具。
+MCP exposes `spec_health/list/template/validate_artifacts/init/adopt/read/context/write/status/diagnostics/analyze/quality_preview/sync_preview/sync_apply/record_analysis/request_approval/record_approval`, plus `spec_task_set` for manual three-state updates and `spec_task_plan/begin/record_check/complete/fail/reset_failures` for serial execution.
 
-⚠️ **与 claude-spec 的一处未评估差异**（2026-09-17 记）：共享层 `packages/spec-state` 已实现
-`spec_amend`、`spec_read` 的 `outline`/`section` 部分读、`spec_context` 的 `knownRevisions`，
-但**本宿主的工具清单没有开放它们**（`lib/mcp/tools.mjs`）。这不是一个经过评估的决定 —— 那三条是在
-claude-spec 的 token 实测（`research/16`）里做的，没有对本宿主重做。要开放，须同步本目录的
-`tool-schema.test.mjs` 与 `SKILL.md`，并补跑 `pack-plugin` 与 `codex-spec-dist` 的漂移网。
+⚠️ **One unevaluated difference from `claude-spec`**: the shared layer `packages/spec-state` already
+implements `spec_amend`, partial reads for `spec_read` (`outline`/`section`), and `knownRevisions`
+for `spec_context` — but **this host's tool list does not expose them** (`lib/mcp/tools.mjs`). That
+was not a considered decision: those three were done during token measurements on `claude-spec` and
+never re-evaluated for this host. Exposing them means updating this directory's
+`tool-schema.test.mjs` and `SKILL.md`, plus re-running the `pack-plugin` and `codex-spec-dist` drift
+checks.
 
-它支持 requirements-first、design-first、bugfix 与 quick：design-first 先确认设计，bugfix 使用独立 `bugfix.md`，quick 必须写齐三份 artifact 后以 `批准全部 artifacts` 作一次整体确认。`spec_template` 提供 workflow 专属模板；`spec_diagnostics` 直接读盘上的 spec 与 `.config.kiro` 做格式诊断（对标 Kiro `getDiagnostics` 的 spec 分支），`spec_validate_artifacts` 只用于尚未落盘的草稿。`spec_analyze`、`spec_quality_preview` 和 `spec_sync_preview` 都只读比较 requirements/design/tasks；`spec_sync_apply` 只应用无歧义的设计追踪追加，并要求三份源 revision、design context proof 和明确确认，随后使受影响确认失效。
+It supports requirements-first, design-first, bugfix and quick: design-first confirms the design
+first, bugfix uses a separate `bugfix.md`, and quick must produce all three artifacts and then pass
+a single whole-batch confirmation with `批准全部 artifacts`. `spec_template` provides
+workflow-specific templates; `spec_diagnostics` reads the spec and `.config.kiro` straight off disk
+for format diagnosis (the counterpart of Kiro's `getDiagnostics` spec branch), while
+`spec_validate_artifacts` is only for drafts not yet on disk. `spec_analyze`,
+`spec_quality_preview` and `spec_sync_preview` are all read-only comparisons of
+requirements/design/tasks; `spec_sync_apply` applies only unambiguous design-traceability
+appenditions, requiring the three source revisions, the design context proof and an explicit
+confirmation, after which it invalidates the affected confirmations.
 
-插件调用时，每个工具都必须传入当前项目的规范化绝对 `projectRoot`；写入还要求与该项目 `.codex/codex-spec.json` 的 `writePolicy` 相符、拥有未过期的 `spec_context` proof，并提交匹配的 `rawRevision`。确认、工作区快照和执行检查记录始终显示 `assurance=collaborative`。
+When the plugin is called, every tool requires the target project's normalised absolute
+`projectRoot`; writes additionally require conformance with that project's
+`.codex/codex-spec.json` `writePolicy`, an unexpired `spec_context` proof, and a matching
+`rawRevision`. Confirmations, workspace snapshots and execution check records always report
+`assurance=collaborative`.
 
-消费项目适配器必须保持 `evaluation-only`：只允许 `.kiro/specs/_eval-codex-YYYYMMDD/` 这一份规范命名的评估 Spec，不允许在其下再嵌套子 Spec，并以权威 steering 文件的 SHA-256 绑定策略。适配器 hash 不匹配、Spec 名称不匹配或 context proof 失效时，服务端拒绝写入。MCP 仅返回内建 allowlist 的 validator argv，绝不自行执行项目命令。
+The downstream adapter must stay `evaluation-only`: it permits only a single canonically-named
+evaluation spec under `.kiro/specs/_eval-codex-YYYYMMDD/`, forbids nested sub-specs beneath it, and
+binds the policy to the SHA-256 of the authoritative steering file. On an adapter hash mismatch, a
+spec-name mismatch, or an invalid context proof, the server refuses the write. MCP only returns
+validator argv from a built-in allowlist and never executes project commands itself.
 
-当前不包含 converge、并行执行、Hook、自动清理或 Hard-security。同步只覆盖无歧义的 design requirements trace 追加，不会自动改写已批准内容。`tasks.meta.json` 始终只读。项目命令由宿主 agent 运行；`spec_task_record_check` 只保存明确标记为 `agent-reported` 的命令、退出码和摘要。
+Not currently included: converge, parallel execution, hooks, automatic cleanup, hard security. Sync
+covers only unambiguous design-requirement trace appenditions; it will not automatically rewrite
+approved content. `tasks.meta.json` is always read-only. Project commands are run by the host agent;
+`spec_task_record_check` merely stores commands, exit codes and summaries explicitly marked
+`agent-reported`.
 
-`spec_list` 会发现没有私有状态的存量 Spec，并以 `lifecycle=external` 返回。执行前必须显式 `spec_adopt`。执行顺序是 plan → begin → record_check → complete/fail；跨进程锁、owner token、30 分钟 lease、state epoch、task raw revision 和可重启对账的 intent journal 共同拒绝重复执行、过期提交与半提交状态。第三次失败会持续返回 `HUMAN_REVIEW_REQUIRED`，直到人工使用精确确认短语调用 `spec_task_reset_failures`。
+`spec_list` discovers existing specs that have no private state and returns them with
+`lifecycle=external`. Those must be explicitly `spec_adopt`ed before execution. Execution order is
+plan → begin → record_check → complete/fail; cross-process locks, owner tokens, 30-minute leases,
+state epochs, task raw revisions and a restartable reconciliation intent journal together refuse
+duplicate execution, stale submissions and half-committed states. A third failure keeps returning
+`HUMAN_REVIEW_REQUIRED` until a human calls `spec_task_reset_failures` with the exact confirmation
+phrase.
 
-`spec_task_plan/begin/complete` 接收由宿主采集的结构化 `workspaceSnapshot`，服务端负责 canonicalize 并重算 revision，但不自行运行 Git，因此仍是 collaborative 边界。纯检查叶子任务必须显式标记 `_Type:_ verification`，才可在 workspace revision 不变时完成。
+`spec_task_plan/begin/complete` accept a structured `workspaceSnapshot` collected by the host; the
+server canonicalises it and recomputes revisions but does not run Git itself, so this remains a
+collaborative boundary. A pure check leaf task must be explicitly marked `_Type:_ verification` in
+order to complete while the workspace revision is unchanged.
 
-启动诊断以单行 JSON 写入 stderr，字段包括版本、cwd、显式配置的项目根、`tools` 和 `fileGuardrail=false`。该日志不包含 Spec 内容、token、receipt 或私有状态。工具参数中的绝对 `projectRoot` 优先级最高；旧调用才依次回退到 `KIRO_SPEC_PROJECT_ROOT` 和进程 cwd。`spec_health` 会回显规范化后的 `projectRoot`，安装后必须核对它是否指向目标项目。
+Startup diagnostics are written to stderr as a single line of JSON, including version, cwd, the
+explicitly configured project root, `tools`, and `fileGuardrail=false`. That log contains no spec
+content, tokens, receipts or private state. An absolute `projectRoot` in the tool arguments takes
+highest priority; only legacy calls fall back, in order, to `KIRO_SPEC_PROJECT_ROOT` and then the
+process cwd. `spec_health` echoes back the normalised `projectRoot`, and after installation you must
+verify that it points at the intended project.
 
-`.codex-spec-private/` 保存可重建的 workflow cache 与协作确认摘要；context proof 仅保存在当前进程的内存中，进程退出或五分钟有效期结束后必须重新调用 `spec_context`。Markdown 仍是共享真源。私有状态丢失后可通过 `spec_adopt` 和重新确认恢复，且不会提升 assurance。
+`.codex-spec-private/` holds the rebuildable workflow cache and collaborative confirmation
+summaries; context proofs live only in the current process's memory, so after the process exits or
+the five-minute validity window lapses, `spec_context` must be called again. Markdown remains the
+shared source of truth. After a loss of private state, `spec_adopt` plus re-confirmation recovers
+it, without raising assurance.
 
-当前 stdio transport 在 `mcp-server.mjs` 中全局串行处理请求，因此 MCP 调用不会并发进入 service。直接导入 `createMcpService` 后并发调用不属于本版本保证的契约；若未来开放该用法，需要先统一串行化所有会读写 spec state 的操作。
+The current stdio transport handles requests globally serially in `mcp-server.mjs`, so MCP calls do
+not enter the service concurrently. Concurrent calls after importing `createMcpService` directly are
+outside this version's contract; enabling that would first require serialising every operation that
+reads or writes spec state.
 
-`spec_health`、`spec_list`、`spec_context` 与 `spec_diagnostics` 不创建私有状态并声明 `readOnlyHint=true`。`spec_read`、`spec_status` 与 `spec_task_plan` 可能因发现外部变化而刷新 workflow state，因此保守声明为非只读；会替换共享 Markdown 的工具另声明 `destructiveHint=true`。
+`spec_health`, `spec_list`, `spec_context` and `spec_diagnostics` create no private state and
+declare `readOnlyHint=true`. `spec_read`, `spec_status` and `spec_task_plan` may refresh workflow
+state upon discovering external changes, so they are conservatively declared non-read-only; tools
+that replace shared Markdown additionally declare `destructiveHint=true`.
 
-## 本地验证
+## Local verification
 
 ```bash
 cd plugins/codex-spec
 npm run doctor
 ```
 
-无 Hook 时是支持的基础模式：`fileGuardrail=false` 表示直接文件工具没有 guardrail；它不阻断已安装插件的 Skill 与 MCP 启动。
+Without hooks, this is the supported baseline mode: `fileGuardrail=false` means direct file tools
+have no guardrail; it does not block the Skill or MCP startup of an installed plugin.
 
-安装、启用、禁用、卸载、配置合并/回滚和离线验证见 [INSTALL.md](INSTALL.md)。
+For installation, enabling, disabling, uninstalling, configuration merging/rollback and offline
+verification, see [INSTALL.md](INSTALL.md).
 
-## 消费项目 evaluation-only 准入
+## Evaluation-only admission
 
-仓库内的 `research/04-consumer-admission/` 提供固定的适配器样本和可重复运行的 probe。它只用于评估目录 `_eval-codex-YYYYMMDD/`，并拒绝正式 Spec 及所有非评估前缀的写入。probe 通过 `createMcpService()` 写入 requirements、design、tasks，读取 tasks 验证字节稳定性，然后只以固定 argv 运行 `python3 scripts/spec-tasks-lint.py --strict <tasks-path>`。
+The plugin supports an **evaluation-only** admission mode for a downstream project that wants to
+try the plugin out without touching its real specs. In that mode:
 
-样本中的 authority hash 是对当前消费项目 steering 文件的原始字节绑定，不是通用默认值；运行前必须重新验证。真实消费项目写入必须获得用户明确的跨仓授权，并先确认其工作树干净。未满足这两个前提时，只能运行插件内的隔离测试，不能把结果表述为真实宿主准入通过。
+- writes are confined to `.kiro/specs/_eval-codex-YYYYMMDD/`, and nested sub-specs beneath it are
+  refused;
+- the policy is bound to the raw-byte SHA-256 of the project's authoritative steering file, so a
+  sample hash is not a reusable default and **must be re-derived** before use;
+- formal specs, and any prefix outside the evaluation directory, are refused.
+
+The same mode is exercised by the plugin's own isolated test fixtures, which write requirements,
+design and tasks through `createMcpService()`, read tasks back to verify byte stability, and then
+run a fixed-argv linter over the result.
+
+> 🔴 Writing into a real downstream project is a **cross-repository write**: it requires the user's
+> explicit authorisation, and that project's working tree must be confirmed clean first. With either
+> precondition unmet, only the plugin's isolated tests may be run — and their result must not be
+> described as a real-host admission pass.
