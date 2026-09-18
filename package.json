@@ -5,6 +5,7 @@
   "description": "Kiro-compatible Spec workflow (requirements to design to tasks) for three hosts: DeepSeek Harness, Codex, and Claude.",
   "license": "MIT",
   "engines": { "node": ">=20 <26" },
+  "packageManager": "pnpm@11.0.4",
   "scripts": {
     "test": "pnpm -r test",
     "pack:dsh-spec": "rm -f dist/dsh-spec.plugin && node scripts/pack-plugin.mjs dsh-spec --out dist/dsh-spec.plugin",
