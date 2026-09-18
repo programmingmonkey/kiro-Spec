@@ -1,3 +1,5 @@
+> 🌐 [English](README.md) · **中文**
+
 # kiro-spec
 
 **A Kiro-compatible Spec workflow — requirements → design → tasks — for three hosts.**
@@ -29,10 +31,10 @@
 本项目的三条主张，正是对着这三点：
 
 1. **格式是判据，不是风格建议。** 41 条规则复刻自 Kiro 的出厂校验器，逐条带规则码与严重级。
-2. **降级必须出声。** 依赖图解析不了**不许**静默回退成串行 —— 见 [docs/philosophy.md](docs/philosophy.md)。
+2. **降级必须出声。** 依赖图解析不了**不许**静默回退成串行 —— 见 [docs/philosophy.zh-CN.md](docs/philosophy.zh-CN.md)。
 3. **判定内核宿主无关。** 三个适配层都调同一个 `spec-diagnose`，结论必须一致。
 
-理念与设计取舍写在 **[docs/philosophy.md](docs/philosophy.md)**。
+理念与设计取舍写在 **[docs/philosophy.zh-CN.md](docs/philosophy.zh-CN.md)**。
 
 ## 快速开始
 
@@ -81,11 +83,11 @@ spec_task_plan / spec_task_begin / spec_task_complete
 
 | 文档 | 内容 |
 |---|---|
-| [docs/tools/dsh-spec.md](docs/tools/dsh-spec.md) | 13 个工具 + `/spec` 命令 |
-| [docs/tools/codex-spec.md](docs/tools/codex-spec.md) | 25 个 MCP 工具 |
-| [docs/tools/claude-spec.md](docs/tools/claude-spec.md) | 26 个 MCP 工具 + 阶段门控 |
-| [docs/spec-conventions.md](docs/spec-conventions.md) | 怎么写：标题格式、EARS 句式、任务三态、依赖图 |
-| [docs/compat.md](docs/compat.md) | 与 Kiro 的差异（含**已知未建模**的部分） |
+| [docs/tools/dsh-spec.zh-CN.md](docs/tools/dsh-spec.zh-CN.md) | 13 个工具 + `/spec` 命令 |
+| [docs/tools/codex-spec.zh-CN.md](docs/tools/codex-spec.zh-CN.md) | 25 个 MCP 工具 |
+| [docs/tools/claude-spec.zh-CN.md](docs/tools/claude-spec.zh-CN.md) | 26 个 MCP 工具 + 阶段门控 |
+| [docs/spec-conventions.zh-CN.md](docs/spec-conventions.zh-CN.md) | 怎么写：标题格式、EARS 句式、任务三态、依赖图 |
+| [docs/compat.zh-CN.md](docs/compat.zh-CN.md) | 与 Kiro 的差异（含**已知未建模**的部分） |
 
 ## 仓库结构
 
@@ -132,14 +134,14 @@ CONSUMER_REPO_ROOT=/path/to/your/project npm test
 ```
 
 ⚠️ 本仓是从一个更大的开发仓库导出的公开子集。**哪些东西没在这里、为什么**，
-以及 `skip` 与「通过」的区别，都写在 [TEST-SCOPE.md](TEST-SCOPE.md) —— 那一篇是记账，不是免责。
+以及 `skip` 与「通过」的区别，都写在 [TEST-SCOPE.zh-CN.md](TEST-SCOPE.zh-CN.md) —— 那一篇是记账，不是免责。
 
 ## 与 Kiro 的关系
 
 规则表复刻自 Kiro 的出厂校验器（版本与 sha256 记在 `packages/kiro-rules`）。**判定不一致时，
 以 Kiro 为准，改我们这边** —— 这条写在这里是因为它决定了每一个 bug 该往哪边修。
 
-已知的未建模部分、以及刻意保留的差异，列在 [docs/compat.md](docs/compat.md)。
+已知的未建模部分、以及刻意保留的差异，列在 [docs/compat.zh-CN.md](docs/compat.zh-CN.md)。
 
 ## 许可
 

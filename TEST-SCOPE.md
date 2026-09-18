@@ -1,74 +1,95 @@
-# 测试范围：这个仓库里有什么、**没有什么**
+> 🌐 **English** · [中文](TEST-SCOPE.zh-CN.md)
 
-> 本仓是从一个更大的开发仓库导出出来的公开子集。导出时刻意留下了一些东西，
-> 也刻意排除了一些东西。本文把两件事都写下来 —— **「测试全绿」与「测试完整」是两句话**，
-> 混为一谈就是撒谎。
+# Test scope: what is in this repository, and **what is not**
 
-## 本仓的测试怎么跑
+> This repository is a public subset exported from a larger development repository. Some things
+> were deliberately left in; others were deliberately excluded. This document records both —
+> **"the tests are green" and "the tests are complete" are two different sentences**, and
+> conflating them is lying.
+
+## How to run the tests here
 
 ```bash
 pnpm install
 npm test            # = pnpm -r test
 ```
 
-**若干个用例在没有下游消费项目语料时会 skip。** 这是有意的设计，不是故障：
+**Some tests skip when no downstream consumer corpus is present.** That is a deliberate design
+decision, not a malfunction.
 
-有些回归测试必须对着**一份真实的下游语料**跑（合成语料验不出真实世界里的文件形态：
-缩进、CRLF、历史遗留的第三态标记、写歪的围栏……）。那份语料属于使用本插件的项目，是私有的，
-不在本仓。相关用例经 `scripts/consumer-root.mjs` 解析一个**可配置**的根：
+Some regression tests must run against **a real downstream corpus** (synthetic corpora can't
+reproduce the shapes real-world files take: indentation, CRLF, historic third-state markers,
+malformed fences…). That corpus belongs to the project consuming this plugin, and is private — it
+is not in this repository. The tests concerned resolve a **configurable** root through
+`scripts/consumer-root.mjs`:
 
 ```bash
 CONSUMER_REPO_ROOT=/path/to/your/project npm test
 ```
 
-解析不到时它们 **skip-with-loud-message**（把试过的每条路径原样打进消息里），
-**不会静默通过**。这条规矩的由来值得记：早先有一处写成 `if (!existsSync(root)) return []`，
-于是语料整层归零而判据照常「通过」——语料没了、测试反而全绿。
+When it can't be resolved they **skip with a loud message** (printing every path they tried) and
+**never pass silently**. The reason for that rule is worth recording: an earlier version wrote
+`if (!existsSync(root)) return []`, so the whole corpus layer silently zeroed out while the checks
+kept "passing" — the corpus disappeared and the tests went *greener*.
 
-⚠️ **skip 不算通过。** 想跑全量回归就设 `CONSUMER_REPO_ROOT`。
+⚠️ **A skip is not a pass.** For a full run, set `CONSUMER_REPO_ROOT`.
 
-## 刻意排除的东西（按原因分类）
+## What was deliberately excluded, by category
 
-### 1. 语料绑定的 golden 回归
+### 1. Corpus-bound golden regressions
 
-被排除的用例，其断言是**本仓开发语料的逐字节期望** —— 例如
-「5 份真实 spec 的 15 个 artifact 的诊断输出与抽取前逐字节相同」。
+The excluded tests assert **byte-exact expectations of this repository's development corpus** —
+for example, "the diagnostic output for 15 artifacts across 5 real specs is byte-identical to
+before the extraction".
 
-**合成语料救不了它们**：断言比的是那几份特定文档的字节，不是形状。而那份语料是开发仓库
-自己的 `.kiro/specs/`，属于开发史的自证材料，没有理由公开。所以整块排除。
+**Synthetic corpora cannot save them**: the assertions compare the bytes of those specific
+documents, not their shape. And that corpus is the development repository's own `.kiro/specs/`,
+which is self-documenting material about its own history and has no reason to be public. So the
+whole block was excluded.
 
-代价要说清：**本仓因此少了这一块覆盖**。它们仍然在开发仓库里跑。
+The cost, stated plainly: **this repository is missing that coverage.** Those tests still run in
+the development repository.
 
-涉及 `test/corpus-*.test.mjs`、`test/*-reachability.test.mjs`、`test/*-closure.test.mjs`、
-`test/assembly-equivalence.test.mjs`、`test/signature-fences.test.mjs`、
-`test/amendments-guard.test.mjs`、`test/evidence.test.mjs` 等。
+This covers `test/corpus-*.test.mjs`, `test/*-reachability.test.mjs`, `test/*-closure.test.mjs`,
+`test/assembly-equivalence.test.mjs`, `test/signature-fences.test.mjs`,
+`test/amendments-guard.test.mjs`, `test/evidence.test.mjs` and others.
 
-### 2. 下游项目的语料与派生的证据存档
+### 2. Downstream corpus artifacts and derived evidence archives
 
-- 下游项目真实 spec 文件的只读复制（曾作为诊断器的权威回归夹具）；
-- 从该语料生成的 golden / baseline / 冲突后果存档；
-- 依赖下游项目**产品域**的用例（spec 目录名本身就会泄露那个项目在做什么）。
+- Read-only copies of the downstream project's real spec files (once used as authoritative
+  regression fixtures for the diagnoser);
+- Goldens / baselines / conflict-consequence archives generated from that corpus;
+- Tests that depend on the downstream project's **product domain** (the spec directory names
+  themselves give away what that project does).
 
-### 3. 开发仓库的内部材料
+### 3. The development repository's internal material
 
-开发期的复盘文、调研笔记、任务级计划、样例资产、一次性探针 —— 与插件使用者无关。
+Development retrospectives, research notes, task-level plans, sample assets, one-off probes —
+irrelevant to anyone using the plugin.
 
-### 4. 作者机器专属的断言
+### 4. Assertions specific to the author's machine
 
-少数用例断言「本机应能解析到某个下游项目」或「README 引用的某个证据文件存在」。
-前一条对任何外部读者必然为假；后一条引用的是**按设计不公开**的内部文件，
-留着会让 README 出现悬空引用。整块排除。
+A few tests assert "this machine should resolve to a certain downstream project" or "the evidence
+file referenced by the README exists". The former is necessarily false for any external reader; the
+latter references files that are **deliberately unpublished**, and keeping it would leave dangling
+references in the README. Excluded as a block.
 
-## 导出机制
+## The export mechanism
 
-导出脚本（在开发仓库里）做三件事，且**第三件是硬门**：
+The export script (which lives in the development repository) does three things, and **the third is
+a hard gate**:
 
-1. **净名而非删名** —— 下游项目的名字换成中性词。注释是这个仓库的论证骨架，
-   删掉等于毁掉可维护性；换名之后外部读者读到的是「一份真实语料」，论证价值原样保留。
-2. **测试不删，改成可选** —— 见上文 `CONSUMER_REPO_ROOT` 那一节。
-3. **禁用内容是断言，不是愿望** —— 逐行扫描产物，命中即非零退出。三类：
-   下游项目标识、本机绝对路径、下游项目语料名。
+1. **Rename rather than delete** — the downstream project's name is replaced with a neutral term.
+   The comments are this repository's argumentative backbone; deleting them would destroy
+   maintainability. After renaming, an external reader still gets the full argument, with the
+   protagonist recast as "a real corpus".
+2. **Keep the tests, make them optional** — see the `CONSUMER_REPO_ROOT` section above.
+3. **Forbidden content is an assertion, not a wish** — the output is scanned line by line, and a
+   single hit exits non-zero. Three categories: the downstream project's identifier, local absolute
+   paths, and the downstream project's corpus names.
 
-第 3 条里「语料名」那类是**吃过亏才加的**：有一个存档文件不含项目名，却含该项目 20 多个
-真实 spec 目录名 —— 字符串闸门完全放行，而看名字就知道那是什么产品、在做什么。
-闸门只能抓字符串，抓不到「语料形状」，所以那一层靠显式排除 + 名单兜底。
+The third category's "corpus names" rule was **added after being burned**: an archive file contained
+no project name, yet held more than twenty of that project's real spec directory names. The
+string-based gate let it through completely — and one glance at those names tells you what that
+product does and where it's going. A gate can only catch strings; it cannot catch **corpus shape**.
+So that layer relies on explicit exclusion plus a names list as a backstop.

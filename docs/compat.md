@@ -1,72 +1,81 @@
-# 与 Kiro 的差异
+> 🌐 **English** · [中文](compat.zh-CN.md)
 
-**判定不一致时，以 Kiro 为准，改我们这边。** 这一篇列的是**已知的**差异，
-分三类 —— 混在一起就没人能判断该不该修。
+# Differences from Kiro
+
+**When our verdict disagrees with Kiro's, Kiro is right and we change.** This page lists the
+**known** differences, in three categories — mixing them together makes it impossible to tell
+whether something should be fixed.
 
 ---
 
-## 一、刻意保留的差异（不改）
+## 1. Deliberate differences (do not change)
 
-这类差异是**有意**的，改掉反而错。
+These are **intentional**; "fixing" them would be wrong.
 
-| 项 | Kiro | 本项目 | 为什么 |
+| Item | Kiro | This project | Why |
 |---|---|---|---|
-| 任务状态标记 | 认 `[~]`（`queued`，是一等状态） | 只认 `[ ]` / `[-]` / `[x]` | 本项目的约定更紧；`[/]` / `[!]` 判 error |
-| 部分围栏语义 | 缩进式 | 取 Kiro 的缩进式语义 | 有意对齐，不是差异 |
+| Task state markers | recognises `[~]` (`queued`, a first-class state) | only `[ ]` / `[-]` / `[x]` | This project's convention is tighter; `[/]` / `[!]` are errors |
+| Fence semantics | indentation-based | same as Kiro's indentation-based semantics | deliberately aligned, not a difference |
 
-⚠️ 注意「只认三态」**不是**因为「Kiro 不认」—— Kiro 认。别拿那个当理由。
+⚠️ Note that "three states only" is **not** justified by "Kiro doesn't recognise it" — Kiro does.
+Don't use that as the reason.
 
 ---
 
-## 二、已知未建模（「没做」，不是「做错了」）
+## 2. Known un-modelled ("not done", not "done wrong")
 
-### 1. 两档 workflow 未建模
+### 1. Two workflow types are not modelled
 
-真机的 `WorkflowType` 枚举里有两个，本项目**已知但不实现**：
+The real `WorkflowType` enum has two more that this project **knows about but does not implement**:
 
-| 真机 `workflowType` | 本仓现状 |
+| Real `workflowType` | Status here |
 |---|---|
-| `fast-task` | **未建模**。文档集与 requirements-first 相同（`.config.kiro` + requirements/design/tasks），但**流程与呈现顺序**不同（真机是 tasks 优先的清单）。实测有若干实例在跑 |
-| `verify-first` | **未建模**。在一批真实 `.config.kiro` 里 **0 例** —— 不能说它不存在，只能说语料未覆盖 |
+| `fast-task` | **not modelled.** The document set matches requirements-first (`​.config.kiro` + requirements/design/tasks), but the **flow and presentation order** differ (the real one is a tasks-first checklist). A number of instances were observed in the wild |
+| `verify-first` | **not modelled.** **Zero** instances across a body of real `​.config.kiro` files — which does not mean it doesn't exist, only that the corpus doesn't cover it |
 
-### 2. `quick` 这一档的文档集三方不一致
+### 2. The document set for `quick` differs three ways
 
-真机 / 某些实现 / 本项目三方的 `quick` **文档集**不一致。本项目要求
-`quick` 写齐三份 artifact 后以一次整体确认通过；已知另有实现不产 `design.md`。
-**这一处仍待真机样本才能裁定。**
+Kiro, certain implementations, and this project do not agree on the **document set** for `quick`.
+This project requires `quick` to write all three artifacts and then pass a single whole-batch
+confirmation; another known implementation produces no `design.md`.
+**This one still needs a real-machine sample to settle.**
 
-### 3. 差异登记表
+### 3. The declared-differences register
 
-有意保留的差异逐条记在 `packages/spec-parser` 的 `declared-diffs.json` 里。
-那份清单是**权威溯源**的一部分：诊断器的 `source` 字段会标明一条判定来自
-`kiro-binary` 还是 `repo-convention`。
+Deliberate differences are recorded one by one in `packages/spec-parser`'s `declared-diffs.json`.
+That list is part of **authoritative provenance**: the diagnoser's `source` field states whether a
+given verdict came from `kiro-binary` or from `repo-convention`.
 
 ---
 
-## 三、宿主之间的差异
+## 3. Differences between the hosts
 
-三个宿主共用判定内核，差异只在适配层。已知的能力差：
+All three hosts share the decision core; only the adapters differ. Known capability gaps:
 
-| 能力 | dsh-spec | codex-spec | claude-spec |
+| Capability | dsh-spec | codex-spec | claude-spec |
 |---|---|---|---|
-| 工具数 | 13 + `/spec` 命令 | 25 | 26 |
-| 阶段门控（`PreToolUse`） | ❌ | ❌ | ✅ |
+| Tool count | 13 + `/spec` command | 25 | 26 |
+| Stage gate (`PreToolUse`) | ❌ | ❌ | ✅ |
 | `spec_amend` | ✅ | ❌ | ✅ |
-| 部分读（`outline` / `section`） | ❌ | ❌ | ✅ |
-| `knownRevisions` 回执 | ❌ | ❌ | ✅ |
-| 署名合并进原子写 | ❌ | ❌ | ✅ |
+| Partial reads (`outline` / `section`) | ❌ | ❌ | ✅ |
+| `knownRevisions` receipts | ❌ | ❌ | ✅ |
+| Signature merged into the atomic write | ❌ | ❌ | ✅ |
 
-⚠️ **`codex-spec` 缺的那几项（`spec_amend`、部分读、`knownRevisions`）不是经过评估的决定** ——
-共享层已经实现了它们，只是该宿主的工具清单没有开放。要开放须同步该目录的
-`tool-schema.test.mjs` 与 `SKILL.md`，并重跑打包漂移网。如实标注，免得被读成「有意不支持」。
+⚠️ **The capabilities missing from `codex-spec` (`spec_amend`, partial reads, `knownRevisions`) were
+not a considered decision** — the shared layer already implements them; that host's tool list simply
+doesn't expose them. Exposing them means updating that directory's `tool-schema.test.mjs` and
+`SKILL.md`, plus re-running the packer drift checks. This is stated plainly so it isn't read as
+"deliberately unsupported".
 
 ---
 
-## 四、被替换的判据来源
+## 4. Replaced sources of truth
 
-有一类判据的**事实源不在 Kiro**，而在使用方的项目约定里（例如署名格式）。
-这类判据在本项目的公开版本里改为**本项目自己的约定文档**，由
-[spec-conventions.md](spec-conventions.md) 承载。
+Some verdicts do **not** originate in Kiro — they originate in a consuming project's conventions
+(the signature format, for example). In this project's public version, those verdicts are anchored
+to **this project's own conventions document**, carried by
+[spec-conventions.md](spec-conventions.md).
 
-这么做是因为：**一条判据的权威必须是可复核的**。指向一个读者够不着的地方，
-等于没有权威 —— 下一个人无法判断该不该改它。
+The reason: **the authority behind a verdict must be checkable.** Pointing at something the reader
+cannot reach is equivalent to having no authority at all — the next person has no way to judge
+whether it should change.

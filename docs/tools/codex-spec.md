@@ -1,107 +1,119 @@
-# `codex-spec` 工具参考
+> 🌐 **English** · [中文](codex-spec.zh-CN.md)
 
-Codex 宿主。**25 个 MCP 工具**，全部经 schema 校验。
+# `codex-spec` tool reference
 
-- 形态：stdio MCP server（见 [../../plugins/codex-spec/INSTALL.md](../../plugins/codex-spec/INSTALL.md)）
-- 没有 Hook、没有阶段门控：**唯一的强制层是工具自己**（CAS、lease、审批、确认短语）
+The Codex host. **25 MCP tools**, all schema-validated.
+
+- Form: stdio MCP server (see [../../plugins/codex-spec/INSTALL.md](../../plugins/codex-spec/INSTALL.md))
+- No hook, no stage gate: **the tools themselves are the only enforcement layer**
+  (CAS, lease, approval, confirmation phrases)
 
 ---
 
-## 一、侦察（只读）
+## 1. Reconnaissance (read-only)
 
-| 工具 | 必填 | 说明 |
+| Tool | Required | Meaning |
 |---|---|---|
-| `spec_health` | `projectRoot` | 检查目标项目 adapter、写入边界和插件基础能力 |
-| `spec_list` | `projectRoot` | 发现已管理与 external Spec，**不接管也不修改** |
-| `spec_template` | `projectRoot`, `workflow`, `artifact` | 返回某工作流某 artifact 的规范起草模板，不写任何文件 |
+| `spec_health` | `projectRoot` | Check the target project's adapter, write boundary, and the plugin's basic capabilities |
+| `spec_list` | `projectRoot` | Discover managed and external specs, **without adopting or modifying them** |
+| `spec_template` | `projectRoot`, `workflow`, `artifact` | Return the canonical drafting template for a workflow+artifact; writes nothing |
 
-`spec_health` 是最该先调的一个：它同时回答「adapter 在不在」「写入边界是什么」
-「门控活着吗」（后者见 [claude-spec.md](claude-spec.md)）。
+`spec_health` is the one to call first: it answers "is the adapter there", "what is the write
+boundary", and "is the gate alive" (the last one — see [claude-spec.md](claude-spec.md)).
 
-## 二、立项与接管
+## 2. Starting and adopting
 
-| 工具 | 必填 | 说明 |
+| Tool | Required | Meaning |
 |---|---|---|
-| `spec_init` | `projectRoot`, `spec`, `workflow` | 创建私有状态与受控目录，推进到该工作流的起草阶段 |
-| `spec_adopt` | `projectRoot`, `spec` | 接管已有 Spec 并记录 artifact 基线 |
+| `spec_init` | `projectRoot`, `spec`, `workflow` | Create private state and the controlled directory; advance to that workflow's drafting stage |
+| `spec_adopt` | `projectRoot`, `spec` | Adopt an existing spec and record the artifact baseline |
 
-⚠️ **`spec_adopt` 的接管不等于批准。** `workflow` 可省略：省略时按 spec 自己的
-`.config.kiro` 派生；**显式值与它冲突则拒绝接管**（不猜）。
+⚠️ **`spec_adopt` is not approval.** `workflow` may be omitted: when omitted it is derived from the
+spec's own `.config.kiro`; **an explicit value that conflicts with it is refused** (it does not guess).
 
-## 三、写作
+## 3. Writing
 
-| 工具 | 必填 | 说明 |
+| Tool | Required | Meaning |
 |---|---|---|
-| `spec_read` | `projectRoot`, `spec`, `artifact` | 读一个已管理 artifact，并刷新其 rawRevision 与语义指纹基线 |
-| `spec_context` | `projectRoot`, `spec`, `artifact` | 加载写作/执行所需的项目权威规则，签发**短期** `contextProof` |
-| `spec_write` | `projectRoot`, `spec`, `artifact`, `content`, `expectedRawRevision`, `contextProof` | 用 `contextProof` + rawRevision **CAS** 原子替换当前阶段的 Markdown |
+| `spec_read` | `projectRoot`, `spec`, `artifact` | Read one managed artifact and refresh its rawRevision and semantic-fingerprint baseline |
+| `spec_context` | `projectRoot`, `spec`, `artifact` | Load the project's authoritative rules needed to write/execute; issue a **short-lived** `contextProof` |
+| `spec_write` | `projectRoot`, `spec`, `artifact`, `content`, `expectedRawRevision`, `contextProof` | Atomically replace the current stage's Markdown, guarded by `contextProof` + **CAS** on rawRevision |
 
-这三个是一条链：**读 → 取 proof → 写**。
+Those three form a chain: **read → obtain proof → write**.
 
-- `expectedRawRevision` 是**乐观锁**：拿旧 revision 去写会被拒，而不是覆盖别人的改动。
-- `contextProof` 是**短期凭证**：它证明「写之前确实读过当前的权威规则（steering）」。
-  没有它写不进去 —— 这条设计是为了让「规则变了但代理还用着旧理解」无法静默发生。
+- `expectedRawRevision` is an **optimistic lock**: writing with a stale revision is refused rather
+  than silently overwriting someone else's change.
+- `contextProof` is a **short-lived credential**: it proves that the current authoritative rules
+  (steering) really were read before writing. Without it the write does not go through — this
+  design exists so that "the rules changed but the agent is still working from its old
+  understanding" cannot happen silently.
 
-## 四、状态与诊断
+## 4. State and diagnostics
 
-| 工具 | 必填 | 只读 | 说明 |
+| Tool | Required | Read-only | Meaning |
 |---|---|---|---|
-| `spec_status` | `projectRoot`, `spec` | | 读 phase、批准、任务、waves、执行恢复状态；发现外部变化时刷新 |
-| `spec_diagnostics` | `projectRoot`, `spec` | ✅ | 对标 Kiro `getDiagnostics` 的 spec 分支 |
-| `spec_validate_artifacts` | `projectRoot`, `workflow`, `artifacts` | ✅ | 校验**调用方传入的** Markdown（尚未落盘的草稿） |
+| `spec_status` | `projectRoot`, `spec` | | Read phase, approvals, tasks, waves and execution-recovery state; refresh on external change |
+| `spec_diagnostics` | `projectRoot`, `spec` | ✅ | The counterpart of Kiro's `getDiagnostics` spec branch |
+| `spec_validate_artifacts` | `projectRoot`, `workflow`, `artifacts` | ✅ | Validate **caller-supplied** Markdown (drafts not yet on disk) |
 
-`spec_diagnostics` 值得单说：它**直接读盘上该 spec 的全部 artifact**，按 Kiro 规则与本仓约定
-返回 findings（spec 类型取 `.config.kiro` 写明的值），缺席的列入 `missingArtifacts`；
-另附 tasks 解析警告与应由宿主执行的只读 validator 计划。**只读，不刷新基线。**
+`spec_diagnostics` deserves a note: it **reads every artifact of that spec straight off disk** and
+returns findings under Kiro's rules plus this project's conventions (the spec type comes from what
+`.config.kiro` states); absent ones are listed under `missingArtifacts`. It also attaches task-parse
+warnings and the read-only validator plan the host should execute. **Read-only; it does not refresh
+baselines.**
 
-> ⚠️ `workflow` 只决定「哪些 artifact 合法」，**不代表 spec 类型**。已落盘的 spec 请用
-> `spec_diagnostics`，不必传正文。
+> ⚠️ `workflow` only determines **which artifacts are legal** — it does **not** represent the spec
+> type. For a spec already on disk, use `spec_diagnostics`; you needn't pass the body.
 
-## 五、跨 artifact 分析（全部只读）
+## 5. Cross-artifact analysis (all read-only)
 
-| 工具 | 说明 |
+| Tool | Meaning |
 |---|---|
-| `spec_analyze` | 只读比较 requirements/design/tasks，返回**带来源定位**的可追溯性结论 |
-| `spec_quality_preview` | 只读汇总三份 artifact 的质量画面与源 rawRevision |
-| `spec_sync_preview` | 只读给出**无歧义的追加型**同步建议，不改任何 artifact |
+| `spec_analyze` | Read-only comparison of requirements/design/tasks, returning traceability conclusions **with source locations** |
+| `spec_quality_preview` | Read-only summary of the three artifacts' quality picture and source rawRevisions |
+| `spec_sync_preview` | Read-only, **unambiguous, append-only** sync suggestions; modifies nothing |
 
-`spec_analyze` 的结论可以经 `spec_record_analysis` 记进私有状态（以 `stateEpoch` CAS），
-**不改写 Markdown** —— 分析与文档是两件事。
+`spec_analyze`'s conclusions can be recorded into private state via `spec_record_analysis` (CAS on
+`stateEpoch`) **without rewriting the Markdown** — analysis and documents are two separate things.
 
-## 六、同步
+## 6. Sync
 
-| 工具 | 必填 | 说明 |
+| Tool | Required | Meaning |
 |---|---|---|
-| `spec_sync_apply` | `projectRoot`, `spec`, `sourceRevisions`, `contextProof`, `confirmationText` | 应用唯一的追加型设计同步建议 |
+| `spec_sync_apply` | `projectRoot`, `spec`, `sourceRevisions`, `contextProof`, `confirmationText` | Apply the single unambiguous append-only design sync suggestion |
 
-它要求**三样齐备**才动：三份源 revision、design `contextProof`、精确确认短语。
-随后**使受影响的确认失效**。
+It requires **three things together** before acting: the three source revisions, the design
+`contextProof`, and the exact confirmation phrase. It then **invalidates the affected approvals**.
 
-## 七、审批
+## 7. Approval
 
-| 工具 | 必填 | 说明 |
+| Tool | Required | Meaning |
 |---|---|---|
-| `spec_request_approval` | `projectRoot`, `spec`, `artifact` | 固定当前 artifact 指纹，返回**精确批准短语**与 `stateEpoch` |
-| `spec_record_approval` | `projectRoot`, `spec`, `artifact`, `expectedStateEpoch`, `confirmationText` | 记录与最新请求匹配的批准，推进阶段 |
+| `spec_request_approval` | `projectRoot`, `spec`, `artifact` | Freeze the current artifact fingerprint; return the **exact approval phrase** and `stateEpoch` |
+| `spec_record_approval` | `projectRoot`, `spec`, `artifact`, `expectedStateEpoch`, `confirmationText` | Record an approval matching the latest request; advance the workflow stage |
 
-「精确批准短语」是防误触设计：批准必须**回填**系统给出的那串字，而不是一句 `yes`。
+The "exact approval phrase" is an anti-misclick design: approval must **echo back** the string the
+system produced, not just say `yes`.
 
-## 八、任务执行（串行，带 lease）
+## 8. Task execution (serial, with leases)
 
-| 工具 | 必填 | 说明 |
+| Tool | Required | Meaning |
 |---|---|---|
-| `spec_task_set` | `projectRoot`, `spec`, `taskId`, `state` | 手动标三态；**严格执行 lease 存在时拒绝绕过** |
-| `spec_task_plan` | `projectRoot`, `spec`, `scope`, `workspaceSnapshot` | 为已 adopt 且进入 implementing 的 Spec 计算 `task`/`wave`/`all` 串行执行计划 |
-| `spec_task_begin` | `projectRoot`, `spec`, `taskId`, `planRevision`, `expectedStateEpoch`, `workspaceSnapshot` | 验证计划与 epoch，取得**单个任务 lease**，把 `[ ]` 原子改为 `[-]` |
-| `spec_task_record_check` | `projectRoot`, `spec`, `ownerToken`, `expectedStateEpoch`, `command`, `exitCode`, `summary` | 记录 agent-reported 命令与退出码，**不执行命令** |
-| `spec_task_complete` | `projectRoot`, `spec`, `ownerToken`, `expectedStateEpoch`, `workspaceSnapshot`, `summary` | 要求成功检查 + 有效 owner，把 `[-]` 原子改为 `[x]` |
-| `spec_task_fail` | `projectRoot`, `spec`, `ownerToken`, `expectedStateEpoch`, `summary` | 关闭 attempt，把插件拥有的 `[-]` 恢复为 `[ ]` 并累计失败次数 |
-| `spec_task_reset_failures` | `projectRoot`, `spec`, `taskId`, `expectedStateEpoch`, `confirmationText` | 人工复核后解除**三次失败**门禁，保留审计记录 |
+| `spec_task_set` | `projectRoot`, `spec`, `taskId`, `state` | Manually set the three-state marker; **refuses to bypass an active execution lease** |
+| `spec_task_plan` | `projectRoot`, `spec`, `scope`, `workspaceSnapshot` | Compute a serial execution plan (`task`/`wave`/`all`) for an adopted spec in `implementing`; refresh on external change |
+| `spec_task_begin` | `projectRoot`, `spec`, `taskId`, `planRevision`, `expectedStateEpoch`, `workspaceSnapshot` | Verify plan and epoch, take a **single-task lease**, atomically flip `[ ]` → `[-]` |
+| `spec_task_record_check` | `projectRoot`, `spec`, `ownerToken`, `expectedStateEpoch`, `command`, `exitCode`, `summary` | Record an agent-reported command, exit code and summary; **does not execute the command** |
+| `spec_task_complete` | `projectRoot`, `spec`, `ownerToken`, `expectedStateEpoch`, `workspaceSnapshot`, `summary` | Require a successful check and a valid owner; atomically flip `[-]` → `[x]` |
+| `spec_task_fail` | `projectRoot`, `spec`, `ownerToken`, `expectedStateEpoch`, `summary` | Close the attempt, revert the plugin-owned `[-]` to `[ ]`, accumulate the failure count |
+| `spec_task_reset_failures` | `projectRoot`, `spec`, `taskId`, `expectedStateEpoch`, `confirmationText` | After human review, lift the **three-failure** gate with the exact confirmation phrase, retaining the audit record |
 
-设计要点：
+Design notes:
 
-- **`planRevision` + `expectedStateEpoch` + `workspaceSnapshot` 三重校验**：计划变了、
-  状态变了、或工作区变了都会拒绝 begin。这是为了防「按旧计划推进」这种最难查的错误。
-- **`ownerToken` 是 lease 凭证**：过期的 owner 不能调 complete / fail。
-  `spec_task_fail` 把 `[-]` 恢复成 `[ ]` 而不是留在中间态 —— 不留悬空的进行中标记。
-- **连续失败三次会被门禁挡住**，解除需要人工确认短语，且审计记录保留。
+- **`planRevision` + `expectedStateEpoch` + `workspaceSnapshot` is a triple check**: the plan
+  changed, the state changed, or the workspace changed — any of them refuses `begin`. This guards
+  against the hardest class of bug to find: "advancing according to a stale plan".
+- **`ownerToken` is the lease credential**: an expired owner cannot call complete/fail.
+  `spec_task_fail` restores `[-]` to `[ ]` rather than leaving it in an intermediate state — no
+  dangling in-progress markers.
+- **Three consecutive failures hit a gate**; lifting it needs a human confirmation phrase, and the
+  audit record is retained.

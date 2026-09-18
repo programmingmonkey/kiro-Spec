@@ -19,9 +19,7 @@ All three hosts share the **same L0 decision core** (`packages/`). Only the adap
 So the same spec gets the same diagnosis on all three — which is the problem this project
 set out to solve.
 
-> 📖 **The detailed docs are in Chinese** (`docs/philosophy.md`, `docs/spec-conventions.md`,
-> `docs/tools/*`). The README is bilingual because discoverability matters; translating the
-> rest is on the list. 中文版见 [README.zh-CN.md](README.zh-CN.md)。
+> 🌐 **English** · [中文 README](README.zh-CN.md)
 
 ---
 
