@@ -1,5 +1,11 @@
 > 🌐 [中文](../../../plugins/dsh-spec/INSTALL.md) · **English**
 
+> 📖 These documents exist in **two forms, and they are not translations of each other**: the
+> Chinese original beside the plugin (`../../../plugins/dsh-spec/`) and this English version.
+> This one is adapted for a public audience — it removes references to internal-only material.
+> Reach for the Chinese original when you want to know *how* a conclusion was reached.
+
+
 # dsh-spec installation guide
 
 > Normalises a feature or a fix into Kiro-style three-document specs and enforces staged progress.

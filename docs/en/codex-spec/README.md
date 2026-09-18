@@ -1,5 +1,11 @@
 > 🌐 [中文](../../../plugins/codex-spec/README.md) · **English**
 
+> 📖 These documents exist in **two forms, and they are not translations of each other**: the
+> Chinese original beside the plugin (`../../../plugins/codex-spec/`) and this English version.
+> This one is adapted for a public audience — it removes references to internal-only material.
+> Reach for the Chinese original when you want to know *how* a conclusion was reached.
+
+
 # codex-spec
 
 `codex-spec` is a Kiro-compatible Spec plugin for Codex. It provides the authoring loop for four

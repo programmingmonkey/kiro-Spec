@@ -1,5 +1,11 @@
 > 🌐 [中文](../../../plugins/dsh-spec/README.md) · **English**
 
+> 📖 These documents exist in **two forms, and they are not translations of each other**: the
+> Chinese original beside the plugin (`../../../plugins/dsh-spec/`) and this English version.
+> This one is adapted for a public audience — it removes references to internal-only material.
+> Reach for the Chinese original when you want to know *how* a conclusion was reached.
+
+
 # dsh-spec
 
 A DeepSeek Harness cordis plugin replicating Kiro's Spec mechanism. It turns a feature or a fix
