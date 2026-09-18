@@ -1,5 +1,10 @@
 > 🌐 [English](../../../plugins/codex-spec/INSTALL.md) · **中文**
 
+> ⚠️ **本文件是开发期的原版，不是英文版的翻译。**
+> 英文版是**面向公开读者的改写**：它去掉了带日期的事故记录，并移除了指向内部资料的引用。
+> 两者实质有差异处，**以英文版为准**。
+
+
 # 安装与运维
 
 ## 单一路径安装
@@ -90,7 +95,7 @@ npm_config_cache=/private/tmp/codex-spec-npm-cache npm pack --dry-run --json
 
 任务 01 不安装 `/hooks`，也不要求 Hook trust 或 security bootstrap。启动诊断中的 `fileGuardrail=false` 是预期结果，而不是启动失败。直接文件写的 guardrail 只会在后续可选任务 07 引入。
 
-## the consumer repo evaluation-only probe
+## evaluation-only probe
 
 `plugins/codex-spec/fixtures/adapter.example.json` 是当前消费项目权威 steering 文件的原始字节哈希样本。它只能安装到消费项目的 `.codex/kiro-spec.json` 后使用，且该写入需要用户明确授权；不要复制到其他仓库，也不要将 hash 当作可长期复用的默认值。
 
@@ -104,4 +109,4 @@ node plugins/codex-spec/fixtures/admission-probe.mjs \
   --output /tmp/probe-result.json
 ```
 
-probe 仅会请求 evaluation-only 目录写入；它会记录两次被拒绝的越界写入、tasks 读写字节稳定性及固定消费项目 validator 的退出状态。它不会修改 steering、模板或 validator。真实运行完成后仍要独立检查 authority hash 与 `git diff -- .kiro/steering scripts/spec-tasks-lint.py`。
+probe 仅会请求 evaluation-only 目录写入；它会记录两次被拒绝的越界写入、tasks 读写字节稳定性及固定 validator 的退出状态。它不会修改 steering、模板或 validator。真实运行完成后仍要独立检查 authority hash 与 `git diff -- .kiro/steering scripts/spec-tasks-lint.py`。

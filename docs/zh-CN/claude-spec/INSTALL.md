@@ -1,5 +1,10 @@
 > 🌐 [English](../../../plugins/claude-spec/INSTALL.md) · **中文**
 
+> ⚠️ **本文件是开发期的原版，不是英文版的翻译。**
+> 英文版是**面向公开读者的改写**：它去掉了带日期的事故记录，并移除了指向内部资料的引用。
+> 两者实质有差异处，**以英文版为准**。
+
+
 # 安装与运维
 
 > ⚠️ **本文件里有若干 `⟨待测⟩` 槽位，它们是刻意留白的。** 计划 Task 7（安装与冒烟）标了
@@ -363,7 +368,7 @@ node scripts/gen-rules.mjs --out <dir>  # 写到别处
 ⚠️ 产物当前**入不了消费项目的库**：那边 `.gitignore` 忽略 `.claude/`，并明文写着不要再加
 `!.claude/...` 例外。本轮**没有**改它的 `.gitignore`，也**没有**提交那 5 份文件 ——
 它们以未跟踪状态存在，功能上仍会被加载，但换机器/新 clone 就归零。
-细节与三条可选路线见 `docs/superpowers/plans/artifacts/06-consumer-precommit-request.md`。
+细节与三条可选路线的记录在开发仓，不在本仓。
 
 ## 本文件里哪些是**没测过**的
 
@@ -385,7 +390,7 @@ node scripts/gen-rules.mjs --out <dir>  # 写到别处
 | 本地 marketplace 安装 | 🔁 **实际走的不是这条** —— 走的是服务端 `My Uploads` 上传。本地 marketplace 这条路径仍 `⟨待测⟩` |
 | **多账号** | 🆕 **已测**：同机每账号各一份安装，版本可不同。任何「装了没生效」的排查都要先确定账号 |
 
-## 消费项目 evaluation-only probe（历史通道，仍受支持但已不是本轮默认）
+## evaluation-only probe（历史通道，仍受支持但已不是本轮默认）
 
 插件内的 `fixtures/admission-probe.mjs` 是那次准入的证据生成器，用于**评估目录**
 `_eval-codex-YYYYMMDD/`，并拒绝正式 Spec 的写入。它是 `evaluation-only` 模式的回归夹具 ——

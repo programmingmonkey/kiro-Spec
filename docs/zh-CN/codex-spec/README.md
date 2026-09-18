@@ -1,8 +1,13 @@
 > 🌐 [English](../../../plugins/codex-spec/README.md) · **中文**
 
+> ⚠️ **本文件是开发期的原版，不是英文版的翻译。**
+> 英文版是**面向公开读者的改写**：它去掉了带日期的事故记录，并移除了指向内部资料的引用。
+> 两者实质有差异处，**以英文版为准**。
+
+
 # codex-spec
 
-`codex-spec` 是面向 Codex 的 Kiro-compatible Spec 插件。它提供四种协作级工作流的写作闭环、存量 Spec 发现、跨 artifact 分析与同步、串行任务执行，以及消费项目 evaluation-only 准入；不提供并行执行、Hook 或 Hard-security。
+`codex-spec` 是面向 Codex 的 Kiro-compatible Spec 插件。它提供四种协作级工作流的写作闭环、存量 Spec 发现、跨 artifact 分析与同步、串行任务执行，以及 evaluation-only 准入；不提供并行执行、Hook 或 Hard-security。
 
 ## 支持矩阵
 
@@ -53,7 +58,7 @@ npm run doctor
 
 安装、启用、禁用、卸载、配置合并/回滚和离线验证见 [INSTALL.md](INSTALL.md)。
 
-## 消费项目 evaluation-only 准入
+## evaluation-only 准入
 
 插件内的 `fixtures/` 提供固定的适配器样本和可重复运行的 probe。它只用于评估目录 `_eval-codex-YYYYMMDD/`，并拒绝正式 Spec 及所有非评估前缀的写入。probe 通过 `createMcpService()` 写入 requirements、design、tasks，读取 tasks 验证字节稳定性，然后只以固定 argv 运行一次 validator。
 

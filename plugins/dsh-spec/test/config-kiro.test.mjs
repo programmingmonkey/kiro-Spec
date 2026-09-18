@@ -1,6 +1,6 @@
 // 第 9 期 T3 —— `.config.kiro` 让判定源与真机对齐。
 //
-// 背景（`research/15` §3 / §4）：真机 Kiro 建 spec 时 MUST 往 spec 目录写一份
+// 背景（开发仓实测 §3 / §4）：真机 Kiro 建 spec 时 MUST 往 spec 目录写一份
 // `.config.kiro`，内容是 `{"specId":…, "workflowType":…, "specType":…}`，并**用它**决定
 // 规则表与文档清单顺序。本仓此前零处理它，只能靠 `bugfix.md` 是否存在去**猜**类型。
 //

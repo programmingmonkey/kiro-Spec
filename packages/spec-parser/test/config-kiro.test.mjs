@@ -3,7 +3,7 @@
 // 语料**逐条取自盘上实测**（2026-09-16，消费项目 `.kiro/specs/**/.config.kiro` 共 77 个
 // 文件），不是编出来的形状：8 种 keys 形态就是那 77 个文件去重后的全部。这条约束有意义
 // —— 自己编语料只能测自己想得到的形态，而「想得到」正是这次差点漏掉 `validateLinkHeaderFormat`
-// 的同一个毛病（见 `research/15` §8 与 T1 的提交信息）。
+// 的同一个毛病（见 开发仓实测 §8 与 T1 的提交信息）。
 //
 // 判定语义对齐真机**每条字段各自白名单**的那条路径（`resolveSpecType` / `FVu`）：
 // 类型对且值在枚举里才收，否则静默丢这一个字段。见 `lib/config-kiro.js` 的头注释。
@@ -108,7 +108,7 @@ describe('逐字段白名单：类型对且值在枚举里，才收', () => {
 
   it('枚举与真机逐字一致（改这里必须是升版，不是顺手）', () => {
     // 真机 bundle 1.1.28：`el` 是 WorkflowType、`Mo` 是 SpecType。这两个数组是复刻件，
-    // Kiro 升版时它们可能变 —— 变了要连带改 `research/15` 与提取脚本的核对。
+    // Kiro 升版时它们可能变 —— 变了要连带改 开发仓实测 与提取脚本的核对。
     assert.deepEqual(WORKFLOW_TYPES, ['requirements-first', 'design-first', 'fast-task', 'verify-first'])
     assert.deepEqual(SPEC_TYPES, ['feature', 'bugfix', 'quick-spec'])
   })

@@ -108,6 +108,19 @@ spec_task_plan / spec_task_begin / spec_task_complete
 | [docs/spec-conventions.md](docs/spec-conventions.md) | How to write: headings, EARS, task states, dependency graph |
 | [docs/compat.md](docs/compat.md) | Differences from Kiro — including what is **deliberately not modelled** |
 
+### Documentation layout
+
+Core documents are **bilingual side by side**: `X.md` (English, the default filename) and
+`X.zh-CN.md` (Chinese), cross-linked at the top of each.
+
+The plugin-level documents (`plugins/<name>/README.md` and `INSTALL.md`) keep their Chinese
+versions under [`docs/zh-CN/<name>/`](docs/zh-CN/) instead — same information, different location.
+
+⚠️ Those plugin-level Chinese documents are the **original development version**, not a
+translation of the English. The English ones are a **public-audience rewrite**: they drop a dated
+incident record and remove references to internal-only material. Where the two differ in
+substance, follow the English.
+
 ## Repository layout
 
 ```
@@ -137,7 +150,7 @@ npm test
 
 | | Requirement | Why |
 |---|---|---|
-| **Plugin runtime**<br>(`plugins/*/package.json`) | `>=20 <26` | The code only uses `import.meta.dirname` (Node 20.11+). Whatever the host gives it, it runs |
+| **Plugin runtime**<br>(`plugins/*/package.json`) | `>=20 <26` | All three plugins declare this. Node 18 is EOL, so declaring `>=18` would invite installs on an unsupported runtime |
 | **This repo's toolchain**<br>(root `package.json`) | `>=22 <26` | pnpm 11 depends on `node:sqlite` (Node 22.5+), so it **cannot start on Node 20** |
 
 CI runs **22 and 24** only — consistent with the toolchain claim. Putting Node 20 in the matrix
@@ -147,6 +160,10 @@ start), which would point people at the wrong conclusion.
 > This distinction was added on 2026-09-18. Previously the root `package.json` said `>=20`,
 > and that number **could never be verified in CI**. An unverifiable compatibility claim is worse
 > than no claim: it packages "untested" as "supported".
+>
+> ⚠️ An earlier version of this table justified the plugin range with "the code only uses
+> `import.meta.dirname`". That was **inaccurate** — `import.meta.dirname` appears in the **tests**,
+> not in the runtime code. The range is a support-policy statement, not a derived minimum.
 
 **Some tests skip when no downstream corpus is present** — that is by design. For a full run:
 
@@ -165,6 +182,27 @@ The rule table is replicated from Kiro's factory validator (version and sha256 a
 this is written down because it decides which side every bug gets fixed on.
 
 Known un-modelled parts and deliberate differences are listed in [docs/compat.md](docs/compat.md).
+
+## Versioning
+
+**Repo tags and plugin versions are two different things, and they are meant to be.**
+
+| | Value |
+|---|---|
+| latest repo tag | `v1.0.1` |
+| root `package.json` | `1.0.1` |
+| `claude-spec` | `1.0.0` |
+| `codex-spec` | `1.0.0` |
+| `dsh-spec` | `0.2.0` |
+
+A repo tag (`vX.Y.Z`) labels a **release of the set** — "this is the state of the three plugins
+together". Each plugin also carries **its own version** in its manifest, and that is the version
+that shows after installing.
+
+The two are independent on purpose: the three plugins evolve at different rates, and forcing one
+shared number would either overstate a small change or bury a large one. So a `claude-spec.plugin`
+downloaded from release `v1.0.1` reports `1.0.0` — that is the plugin's own version, not a
+mismatch.
 
 ## License
 

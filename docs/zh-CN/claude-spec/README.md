@@ -1,5 +1,10 @@
 > 🌐 [English](../../../plugins/claude-spec/README.md) · **中文**
 
+> ⚠️ **本文件是开发期的原版，不是英文版的翻译。**
+> 英文版是**面向公开读者的改写**：它去掉了带日期的事故记录，并移除了指向内部资料的引用。
+> 两者实质有差异处，**以英文版为准**。
+
+
 # claude-spec
 
 `claude-spec` is a Kiro-compatible Spec plugin for Claude. It provides the authoring loop for four

@@ -1,6 +1,6 @@
 // 真机把 spec 校验器模块**装了两遍**，而两份的消费者不同 —— 这条用例是那份一致性的**唯一钉子**。
 //
-// 事实（1.1.28 实测，`research/15` §8.4 ②）：副本 1 `GPd/HPd/VPd/WPd` 经 `KPd`
+// 事实（1.1.28 实测，开发仓实测 §8.4 ②）：副本 1 `GPd/HPd/VPd/WPd` 经 `KPd`
 // （= `validateSpecDocument`）供 **IDE 侧**格式诊断；副本 2 `lQu/uQu/dQu/pQu` 经 `fQu`
 // 供 **agent 工具 `validate_spec_format`**（其描述原文：*"Use this after a subagent writes
 // or fixes a spec document to check for format compliance"*，且它先调 `resolveSpecType`
@@ -24,7 +24,7 @@ import { kiroBundleAbsenceMessage, resolveKiroBundle } from '../../../scripts/ki
 
 /**
  * 每个校验器一条**只属于它**的规则码，用来在 bundle 里定位它的两份副本。
- * 与 `research/15` §8.4 的实测同源。
+ * 与 开发仓实测 §8.4 的实测同源。
  */
 export const PROBE_CODE = {
   validateRequirementsFormat: 'requirements/missing-introduction',
@@ -153,7 +153,7 @@ export function literalSequence(source) {
  *
  * 🔴 为什么字面量比对**覆盖不到**这一层：`pis.SpecType.Bugfix` 与 `Mo.Bugfix` 都是**属性访问**，
  * 属性名是标识符、会被 `literalSequence` 归一化掉。于是「副本 1 判 Bugfix、副本 2 判 Feature」
- * 这种分岔在字面量序列上**完全看不出来** —— 这正是 `research/15` §8.4 里我当时得靠**手工**
+ * 这种分岔在字面量序列上**完全看不出来** —— 这正是 开发仓实测 §8.4 里我当时得靠**手工**
  * 补一眼的地方。这里把它变成断言。
  *
  * 只比属性名、不比对象别名：`pis.SpecType.X` 与 `Mo.X` 指向同一个枚举对象（`Mo` 就是它本体，
@@ -208,7 +208,7 @@ const skip = (t) => {
   return true
 }
 
-describe('真机 spec 校验器的**两份副本**必须一致（research/15 §8.4 ③）', () => {
+describe('真机 spec 校验器的**两份副本**必须一致（开发仓实测 §8.4 ③）', () => {
   it('每个校验器恰好定位到两份副本（锚点有效）', (t) => {
     if (skip(t)) return
     for (const [validator, code] of Object.entries(PROBE_CODE)) {

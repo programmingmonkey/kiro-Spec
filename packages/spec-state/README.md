@@ -75,8 +75,7 @@ re-export shim，因此既有的 `../lib/core/xxx.mjs` import 与它们的回归
 
 `node scripts/snapshot-07.mjs --check` —— **8 个场景**，每步记「返回体 / stateEpoch /
 私有状态文件的整份字节」。两个 host 除已知有意的差异（署名接线、adapter authority 台账）外
-逐条相同，且抽取前后逐条相同。golden 在
-`docs/superpowers/plans/artifacts/07-snapshot-2026-09-13.json`。
+逐条相同，且抽取前后逐条相同。golden 是一次性采集的留档（在开发仓，不在本仓）。
 
 - 完整生命周期、五条异常路径、**假时钟下的租约过期**；
 - `task-set`（`spec_task_set` 的三态通道 —— F11 点名的那个函数）；

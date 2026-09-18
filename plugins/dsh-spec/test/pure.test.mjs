@@ -58,7 +58,7 @@ describe('F2 — only id-bearing, unfenced checkbox lines are tasks', () => {
   })
 
   it('DOES count an id-bearing task appended under its own heading', () => {
-    // Deliberate: a real spec in this repo (`samples/specs/thinking-control`)
+    // Deliberate: a real spec in the development repository
     // appends follow-up tasks under `## Review Follow-up`. Scoping the parse to
     // `## Tasks` silently dropped task 12 there — undercounting can report
     // `complete` while work remains, which is the dangerous direction.

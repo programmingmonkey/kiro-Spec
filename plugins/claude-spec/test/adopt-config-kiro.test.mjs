@@ -1,6 +1,6 @@
 // T3b（第 9 期）—— `spec_adopt` 从哪里知道「这是哪一种 spec」。
 //
-// 真机把类型写在 `<specDir>/.config.kiro` 里并**用它**选规则表（`research/15` §3.4）。
+// 真机把类型写在 `<specDir>/.config.kiro` 里并**用它**选规则表（开发仓实测 §3.4）。
 // 所以接管一个存量 spec 时那个文件是第一手证据：让调用方凭记忆手写 `workflow`，等于把
 // 盘上已经写好的答案换成一次猜测。本文件钉三件事：
 //
@@ -80,7 +80,7 @@ test('specType=bugfix ⇒ 真的选中 bugfix 那条流程（不只看字段）'
 });
 
 test('specType=feature + 无 workflowType ⇒ 走真机读取端的默认回落 requirements-first', async () => {
-  // 依据：真机读侧 `r.workflowType || WorkflowType.RequirementsFirst`（research/15 §3.2）。
+  // 依据：真机读侧 `r.workflowType || WorkflowType.RequirementsFirst`（开发仓实测 §3.2）。
   const { call } = await setup({ config: '{"specType":"feature"}' });
   const adopted = await call({});
   assert.equal(adopted.workflow, 'requirements-first');
