@@ -13,9 +13,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # engines 声明的是 ">=20 <26"。取两个 LTS 端点 —— 只跑一个版本
-        # 会让「哪个版本上会坏」这件事永远没人知道。
-        node: ['20', '22']
+        # ⚠️ 这里**故意不含 Node 20**，虽然插件自己声明的是 `>=20 <26`。
+        #
+        # 两个声称不是一回事，分开说：
+        #   · **插件运行时**（`plugins/*/package.json` 的 engines）—— `>=20 <26`。
+        #     代码只用到 `import.meta.dirname`（Node 20.11+），宿主给什么版本就能跑什么版本。
+        #   · **本仓的工具链**（根 package.json 的 engines）—— `>=22 <26`。
+        #     因为 pnpm 11 依赖 `node:sqlite`（Node 22.5+），**它在 Node 20 上根本起不来**。
+        #
+        # 所以这里只测工具链真能跑的版本。把 Node 20 放进矩阵会红，而且红的原因
+        # 与插件无关 —— 那会让人以为是兼容性坏了，实际是包管理器起不来。
+        # **只声称在 CI 里验过的版本**，别写一个永远不会被验证的数字。
+        node: ['22', '24']
     steps:
       - uses: actions/checkout@v4
 
