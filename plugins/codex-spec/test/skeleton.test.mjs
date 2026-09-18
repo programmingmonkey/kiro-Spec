@@ -128,14 +128,17 @@ test('installation documentation defines offline validation and no-Hook rollback
 
   assert.match(readme, /Node 20/);
   assert.match(readme, /fileGuardrail=false/);
-  assert.match(readme, /context proof[^\n]*内存/);
-  assert.match(readme, /全局串行/);
+  // ⚠️ 这些模式**同时接受中英文**：文档改成双语之后（英文为默认文件名、中文在
+  // `docs/zh-CN/`），钉中文措辞会让英文版被误判成「文档缺了这一节」。
+  // 测试的意图是「文档提到了这件事」，不是「文档用中文提到了这件事」。
+  assert.match(readme, /context proof[^\n]*(内存|memory)/);
+  assert.match(readme, /(全局串行|globally serially)/);
   assert.doesNotMatch(readme, /私有目录保存[^\n]*context proof/);
-  assert.match(install, /离线验证/);
-  assert.match(install, /卸载/);
+  assert.match(install, /(离线验证|Offline verification)/);
+  assert.match(install, /(卸载|ninstall)/);
   assert.match(install, /adapter\.example\.json/);
   assert.match(install, /ADAPTER_MISSING/);
-  assert.match(install, /宿主 smoke/);
+  assert.match(install, /(宿主 smoke|host smoke)/);
   assert.match(install, /\.codex-spec-private\//);
   assert.doesNotMatch(install, /也不写 `\.kiro\/specs\/`/);
   assert.doesNotMatch(install, /不创建私有状态/);
