@@ -18,7 +18,7 @@ function protocolError(id, code, message) { return { jsonrpc: '2.0', id, error: 
 // Task 2 Step 6 明确留白的 ⟨待测⟩ 槽位（不许按 Codex 侧的行为推断）。若它解析成插件根，
 // `process.cwd()` 指的就是插件的安装目录 —— 拿它当项目根会让每一次工具调用都静默地
 // 对着错误的目录干活，而错误只在结果里以「找不到 spec」的形式间接浮现。
-// `CLAUDE_PROJECT_DIR` 是探针实测存在的变量（`spikes/cowork-hook-probe`，hook 侧确认），
+// `CLAUDE_PROJECT_DIR` 是探针实测存在的变量（见 `spikes/cowork-hook-probe/evidence/admission.json`，hook 侧确认），
 // 排在 cwd 前面可以把这个坑挡掉；两者都不存在时退回 cwd，行为与 fork 前一致。
 const PROJECT_ROOT_ENV = ['CLAUDE_SPEC_PROJECT_ROOT', 'CLAUDE_PROJECT_DIR'];
 

@@ -1,6 +1,7 @@
 {
   "name": "codex-spec",
   "version": "1.0.0+codex.20260918",
+  "license": "MIT",
   "description": "Codex plugin for Kiro-compatible requirements-first Spec authoring and serial execution.",
   "author": {
     "name": "kiro-spec"

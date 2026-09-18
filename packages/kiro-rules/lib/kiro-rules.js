@@ -447,7 +447,7 @@ const DESIGN_STRUCTURAL_RULES = [
 //     enum (`VIu`: Completed→"x", InProgress→"-", Queued→"~", NotStarted→" "),
 //     and Kiro's write-back path produces `[~]` itself. This repo bans it as a
 //     fourth state anyway, but that ban is a REPO CONVENTION, not a fact about
-//     Kiro (2026-09-16 corrected; see samples/docs/open-questions.md Q18). Both
+//     Kiro (2026-09-16, from a real-machine measurement). Both
 //     `- [ ]* N.` and `- [ ]\* N.` parse because of `\\?\*?` (optional literal
 //     backslash, then optional asterisk);
 //   - `tasks/missing-dependency-graph` is SKIPPED when the spec type is bugfix
@@ -841,7 +841,7 @@ export const REPO_CONVENTIONS = deepFreeze([
   // 措辞在这里是有后果的：写成「Kiro 不认它」会让人在**真机产出的语料**上判错 ——
   // 消费项目的 224 份 `tasks.md` 里有 3 处真实的 `[~]`（`example-spec-beta`），
   // 语义正是 `queued`。所以那句理由 2026-09-16 被订正，本轮只改措辞、不改归类（归类本来就对）。
-  // 见 samples/docs/open-questions.md Q18。
+  // 依据是 2026-09-16 的真机实测。
   repoConvention({
     code: 'tasks/too-many-units',
     severity: 'warning',

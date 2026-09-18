@@ -70,11 +70,11 @@ const TASK_LEASE_MS = 30 * 60 * 1000;
 // ── `spec_adopt` 的 workflow 从哪来（第 9 期 T3b）──────────────────────────────
 //
 // 真机把 spec 的类型写在 `<specDir>/.config.kiro` 里，并**用它**选规则表
-// （`research/15` §3.1/§3.4）。所以接管一个存量 spec 时，那个文件就是「这是哪一种 spec」
+// 。所以接管一个存量 spec 时，那个文件就是「这是哪一种 spec」
 // 的**第一手证据** —— 让调用方凭记忆手写 `workflow`，等于把一个已经写在盘上的答案
 // 换成一次猜测。T3 把读取建在 dsh-spec 里，T3b 把同一件事接到这里。
 //
-// 这张表只收**有证据支撑**的映射（括号里是盘上样本数，`research/15` §4.3）：
+// 这张表只收**有证据支撑**的映射（括号里是盘上样本数）：
 //
 //   `specType: bugfix`                        → `bugfix`（3 例；且它决定 artifact 是 `bugfix.md`）
 //   `specType: feature` + `workflowType` 有序 → 那个顺序（70 例）
@@ -92,7 +92,7 @@ const TASK_LEASE_MS = 30 * 60 * 1000;
 //   那就不是证据，是偏好。
 //   `fast-task` / `verify-first` 同理：真机有枚举与 prompt 模板，本仓没有对应阶段表。
 //   这时**要求调用方显式给**，并在错误里说清是哪一种情形 —— 而不是替它选一个。
-//   这正对应 `research/15` T4 的裁决：本仓未建模的东西不许静默套用另一套流程。
+//   这正对应那条既有裁决：本仓未建模的东西不许静默套用另一套流程。
 //
 // 返回判别式结果，让调用点能给出**具体**的错误（而不是一句「workflow 缺失」）：
 //   `{ workflow, source: 'config' }` | `{ code: 'CONFIG_ABSENT' | 'CONFIG_UNUSABLE' |
@@ -459,9 +459,8 @@ export async function createSpecState({
    * evaluation-only 模式下故意只接受与前缀完全相等的 Spec 名,不接受其下的嵌套名。
    *
    * 注意字段名与语义有意的不一致:`allowedPrefixes` 的字面含义是目录子树,但在
-   * evaluation-only 下这里按精确名比较。原因见
-   * docs/superpowers/plans/2026-08-27-kiro-spec-consumer-unified-naming-change-request.md
-   * ——前缀会授权到并未获批的嵌套 Spec,这被列为要修正的缺陷。
+   * evaluation-only 下这里按精确名比较。原因：前缀会授权到并未获批的嵌套 Spec，
+   * 这已被列为要修正的缺陷。
    *
    * 该变更请求的终态是把 `allowedPrefixes` 换成精确的 `allowedSpecs`,但那需要先改
    * 消费项目的 steering 权威文件并取得独立批准,因此尚未实施。在那之前这里是过渡态:
@@ -754,7 +753,7 @@ export async function createSpecState({
             `${CONFIG_KIRO_FILE} declares ${derived.workflow} but this call requested ${explicit} — adoption will not choose between them`,
             { requested: explicit, fromConfig: derived.workflow, ...declared },
             `两者必须一致：要么改传 "${derived.workflow}"，要么先修正 ${CONFIG_KIRO_FILE}`
-            + '。⚠️ 改那个文件会同时改变**真机**的判定（它按 specType 选规则表）—— 见 research/15 §3');
+            + '。⚠️ 改那个文件会同时改变**真机**的判定（它按 specType 选规则表）');
         }
 
         let workflowState = createWorkflowState({ workflow });

@@ -1,0 +1,218 @@
+{
+  "schemaVersion": 1,
+  "about": [
+    "第 4 期（spec-revision 抽取）的**抽取前**历史快照。生成器：scripts/gen-revision-golden.mjs。",
+    "校验器：scripts/revision-golden.test.mjs —— 抽取后重算必须逐字节相同。",
+    "rawRevision：任意字节变化即变（BOM / 换行 / 尾空格都算）。",
+    "approvalFingerprint：合法 checkbox / execution-event 变化**不变**；标题、正文、_Requirements:_、依赖、waves、自由 Notes 变化**才变**。",
+    "semanticControls 的价值**实测过两条**：① 覆盖语料里没有的输入形状（去掉 event-format 的 TRANSITIONS 项时只有对照 ③ 红，5 份语料全绿）；② 输入自包含，不依赖仓库 spec 的当前内容。",
+    "⚠️ 原文的理由「把 approvalFingerprint 换成 rawRevision 别名时那 5 个值一个都不会变」已被实测证伪（那种变异会让 5 条语料用例全红）。",
+    "strictAxis 是 2026-09-13 补的盲区：语料与三组对照对 strictTaskState 轴原本零判别力（翻转默认值 golden 仍 12/12 绿）。",
+    "testCounts 的口径是各包 package.json 的 test 脚本（node --test test/*.test.mjs），不是裸 node --test。",
+    "🔴 2026-09-14 按 `semantic-v2` 重捕（`spec-sign-approval-clobber`）：审批指纹新增**合法署名行豁免**，payload 的 schemaVersion 由 semantic-v1 升为 semantic-v2。重捕前先做了归因验证——把 salt 单独改回 v1 后，5 份语料里只有**真正含署名行**的那 2 份（dsh-spec-advancement / dsh-spec-live-fire-fixes，各 2 行）仍然不等，其余 3 份逐字节复原。也就是说本次差异**只有两个来源**：salt（全部指纹）与署名豁免（恰好那 2 份）。"
+  ],
+  "capturedAt": "2026-09-14T04:58:15.121Z",
+  "specs": [
+    {
+      "name": "hello-world",
+      "kind": "feature",
+      "artifacts": {
+        "requirements": {
+          "bytes": 1441,
+          "rawRevision": "sha256:87a504b86bcfcabf43864b4f8c43c4521f865c91acf61cd7b6edf1767116e9f9",
+          "approvalFingerprint": "sha256:f10cfdd122447a6544e7c0701f7d31206224fb2858e208309d85b7e3feaaf248",
+          "sha256": "87a504b86bcfcabf43864b4f8c43c4521f865c91acf61cd7b6edf1767116e9f9"
+        },
+        "design": {
+          "bytes": 1266,
+          "rawRevision": "sha256:c4aca5e195a47aaf4e38c5b18a63126e20cf88dafa95cb0fb17f99a3a2c8a0c2",
+          "approvalFingerprint": "sha256:5ff1b5343c502ec612cdaf5b3b425844b7e7499dc3b9f297c195a263011f733e",
+          "sha256": "c4aca5e195a47aaf4e38c5b18a63126e20cf88dafa95cb0fb17f99a3a2c8a0c2"
+        },
+        "tasks": {
+          "bytes": 1056,
+          "rawRevision": "sha256:7a898f37a6f67633dca45b628db611710aac1999cb88ab60866bbd799a301865",
+          "approvalFingerprint": "sha256:16486eb0f8d5e35713d608dd3491e9ede3def02b189c39586e25edf14862791f",
+          "sha256": "7a898f37a6f67633dca45b628db611710aac1999cb88ab60866bbd799a301865"
+        }
+      }
+    },
+    {
+      "name": "dsh-spec-advancement",
+      "kind": "feature",
+      "artifacts": {
+        "requirements": {
+          "bytes": 18963,
+          "rawRevision": "sha256:a2e983635751505d0f38bfc87ee05b500a3369fbc2eb84943dbc2bfa04cd0a1e",
+          "approvalFingerprint": "sha256:4530591f459e6dfbbe467888d53c04ff1da13077753d818b96e4c7266e208109",
+          "sha256": "a2e983635751505d0f38bfc87ee05b500a3369fbc2eb84943dbc2bfa04cd0a1e"
+        },
+        "design": {
+          "bytes": 20529,
+          "rawRevision": "sha256:80c16035ad493e1ace5b2a9ceb2a5b72421876b22ce3181afb148279755567b3",
+          "approvalFingerprint": "sha256:a5f1a0760a1c774aa103b144180d95288b28a2c258bda81b9640fc6a2e876373",
+          "sha256": "80c16035ad493e1ace5b2a9ceb2a5b72421876b22ce3181afb148279755567b3"
+        },
+        "tasks": {
+          "bytes": 21204,
+          "rawRevision": "sha256:4d2232b63d6dcf2a6af29983f9e594df4218d8d6f43ce8f9b35c86648194d829",
+          "approvalFingerprint": "sha256:5f5538b2efb81c72ebee81d828388906856792ad9102172391c1b063a7879c9b",
+          "sha256": "4d2232b63d6dcf2a6af29983f9e594df4218d8d6f43ce8f9b35c86648194d829"
+        }
+      }
+    },
+    {
+      "name": "subagent-model-toggle",
+      "kind": "feature",
+      "artifacts": {
+        "requirements": {
+          "bytes": 3661,
+          "rawRevision": "sha256:e566d72fcea259131b9af08e14c0dbda924b9e7a20a0e3080b4f12ea80af18ae",
+          "approvalFingerprint": "sha256:b117027e16e0cafb0fc670c2365e5e9483e2137ae024489a08d119f8bd05412f",
+          "sha256": "e566d72fcea259131b9af08e14c0dbda924b9e7a20a0e3080b4f12ea80af18ae"
+        },
+        "design": {
+          "bytes": 5188,
+          "rawRevision": "sha256:7e3c89e80c40b30e661664a355201b0e0b6e7c06cbc96c2d081d6afce0834b9d",
+          "approvalFingerprint": "sha256:e651d437475a85fd93191ac18bb52e11b8f7ee6c65bc589fee1761d590e62ace",
+          "sha256": "7e3c89e80c40b30e661664a355201b0e0b6e7c06cbc96c2d081d6afce0834b9d"
+        },
+        "tasks": {
+          "bytes": 1390,
+          "rawRevision": "sha256:70642a1f16137d8a9b291a91c6688934377b95cbc37fa64834e2fffc8cece008",
+          "approvalFingerprint": "sha256:93efc7c15b86cf9b8d660e5c53133518e8e08583dd30967b086c5d4c9edf0915",
+          "sha256": "70642a1f16137d8a9b291a91c6688934377b95cbc37fa64834e2fffc8cece008"
+        }
+      }
+    },
+    {
+      "name": "dsh-spec-hardening",
+      "kind": "bugfix",
+      "artifacts": {
+        "bugfix": {
+          "bytes": 9911,
+          "rawRevision": "sha256:02d2b5e8fc15ef987fe9dce88d07a21ee73aa0b075d14864a471bf9cacb9c50d",
+          "approvalFingerprint": "sha256:bf25077a81e43a6e4d3772113018d489745896e468fe92bc45f1a98c54a556df",
+          "sha256": "02d2b5e8fc15ef987fe9dce88d07a21ee73aa0b075d14864a471bf9cacb9c50d"
+        },
+        "design": {
+          "bytes": 8861,
+          "rawRevision": "sha256:f33b5ec25964d48345bf0404cff5ad31c0ca16996e89d53c7b45d2b6a40f13ef",
+          "approvalFingerprint": "sha256:0cd2db2ea768984f570ceec321013021ae79c555321898656d91f2a841ef2f9e",
+          "sha256": "f33b5ec25964d48345bf0404cff5ad31c0ca16996e89d53c7b45d2b6a40f13ef"
+        },
+        "tasks": {
+          "bytes": 5510,
+          "rawRevision": "sha256:2e4f471e66b40f4ac01df03bf02efc26dc65b9f18f1953506f731ce82684da11",
+          "approvalFingerprint": "sha256:61ccd741aa265f93365ddd06ba7cfbd026ba2bb57e17d52ac9f1afe8e6e6894d",
+          "sha256": "2e4f471e66b40f4ac01df03bf02efc26dc65b9f18f1953506f731ce82684da11"
+        }
+      }
+    },
+    {
+      "name": "dsh-spec-live-fire-fixes",
+      "kind": "bugfix",
+      "artifacts": {
+        "bugfix": {
+          "bytes": 5645,
+          "rawRevision": "sha256:79d53b646103c642011c55f52e8f8824e83a6239e7081a7eca9994948dd8d55c",
+          "approvalFingerprint": "sha256:2ae070f945a29c05a19519a65f43ac9fc81705a84aacdeec488efcebd84b9129",
+          "sha256": "79d53b646103c642011c55f52e8f8824e83a6239e7081a7eca9994948dd8d55c"
+        },
+        "design": {
+          "bytes": 12923,
+          "rawRevision": "sha256:ab59b56836109c096f15abc729f5a4e283c433f9efb00728ce1025d19ba865fc",
+          "approvalFingerprint": "sha256:190c84a14e33fd4a1a4286788f7cff1c338daeaaf7d29a87d03aa42c95e1469f",
+          "sha256": "ab59b56836109c096f15abc729f5a4e283c433f9efb00728ce1025d19ba865fc"
+        },
+        "tasks": {
+          "bytes": 12717,
+          "rawRevision": "sha256:6b84838c26220f2b2f1cb0f848396780c0d7fa4527b3c9d99337277a6879096b",
+          "approvalFingerprint": "sha256:beba208119b301611fc8740c04bf4b6c93e0640257b0e248217957d3a5ca589f",
+          "sha256": "6b84838c26220f2b2f1cb0f848396780c0d7fa4527b3c9d99337277a6879096b"
+        }
+      }
+    }
+  ],
+  "semanticControls": [
+    {
+      "id": "checkbox-state-only",
+      "note": "① 同一份 tasks.md 的 [ ] → [x]",
+      "artifact": "tasks",
+      "before": "# Implementation Plan\n\n## Tasks\n\n- [ ] 1. First task\n  - _Requirements: 1.1_\n\n- [ ] 1.1 A leaf under one\n  - _Requirements: 1.2_\n\n- [ ] 2. Second task\n  - _Requirements: 2.1_\n",
+      "after": "# Implementation Plan\n\n## Tasks\n\n- [x] 1. First task\n  - _Requirements: 1.1_\n\n- [x] 1.1 A leaf under one\n  - _Requirements: 1.2_\n\n- [x] 2. Second task\n  - _Requirements: 2.1_\n",
+      "expect": {
+        "rawRevision": "changed",
+        "approvalFingerprint": "unchanged"
+      },
+      "beforeHashes": {
+        "rawRevision": "sha256:d7aa046dbee398626a565666a4f35277173352fbaf70e0fd99ef170cd481e3a1",
+        "approvalFingerprint": "sha256:44d866fd94425483c395aa9dde2ced1efbcc323257a5d33a4f73cef1abda994f"
+      },
+      "afterHashes": {
+        "rawRevision": "sha256:9d788f34d8b259bf07ec4dcec14c990edc9647729161c69a677428b03802b6df",
+        "approvalFingerprint": "sha256:44d866fd94425483c395aa9dde2ced1efbcc323257a5d33a4f73cef1abda994f"
+      }
+    },
+    {
+      "id": "task-title-changed",
+      "note": "② 改任务标题",
+      "artifact": "tasks",
+      "before": "# Implementation Plan\n\n## Tasks\n\n- [ ] 1. First task\n  - _Requirements: 1.1_\n\n- [ ] 1.1 A leaf under one\n  - _Requirements: 1.2_\n\n- [ ] 2. Second task\n  - _Requirements: 2.1_\n",
+      "after": "# Implementation Plan\n\n## Tasks\n\n- [ ] 1. Renamed task\n  - _Requirements: 1.1_\n\n- [ ] 1.1 A leaf under one\n  - _Requirements: 1.2_\n\n- [ ] 2. Second task\n  - _Requirements: 2.1_\n",
+      "expect": {
+        "rawRevision": "changed",
+        "approvalFingerprint": "changed"
+      },
+      "beforeHashes": {
+        "rawRevision": "sha256:d7aa046dbee398626a565666a4f35277173352fbaf70e0fd99ef170cd481e3a1",
+        "approvalFingerprint": "sha256:44d866fd94425483c395aa9dde2ced1efbcc323257a5d33a4f73cef1abda994f"
+      },
+      "afterHashes": {
+        "rawRevision": "sha256:3732f999b8ea0f57bcf88a458414d033401ca103f57d2f43645410ddc233c29d",
+        "approvalFingerprint": "sha256:5f600e057a4d29c407399f29a5b94cfe2f070cbdc1a935eb2ae28cd841b7336c"
+      }
+    },
+    {
+      "id": "execution-event-appended",
+      "note": "③ 追加一条合法 execution event",
+      "artifact": "tasks",
+      "before": "# Implementation Plan\n\n## Tasks\n\n- [ ] 1. First task\n  - _Requirements: 1.1_\n\n- [ ] 1.1 A leaf under one\n  - _Requirements: 1.2_\n\n- [ ] 2. Second task\n  - _Requirements: 2.1_\n",
+      "after": "# Implementation Plan\n\n## Tasks\n\n- [ ] 1. First task\n  - _Requirements: 1.1_\n\n- [ ] 1.1 A leaf under one\n  - _Requirements: 1.2_\n\n- [ ] 2. Second task\n  - _Requirements: 2.1_\n\n<!-- kiro-spec:execution-events:v1:start -->\n{\n  \"schemaVersion\": 1,\n  \"events\": [\n    {\n      \"id\": \"3f2504e0-4f89-41d3-9a0c-0305e82c3301\",\n      \"taskId\": \"1\",\n      \"kind\": \"task-transition\",\n      \"from\": \"-\",\n      \"to\": \"x\"\n    }\n  ]\n}\n<!-- kiro-spec:execution-events:v1:end -->\n",
+      "expect": {
+        "rawRevision": "changed",
+        "approvalFingerprint": "unchanged"
+      },
+      "beforeHashes": {
+        "rawRevision": "sha256:d7aa046dbee398626a565666a4f35277173352fbaf70e0fd99ef170cd481e3a1",
+        "approvalFingerprint": "sha256:44d866fd94425483c395aa9dde2ced1efbcc323257a5d33a4f73cef1abda994f"
+      },
+      "afterHashes": {
+        "rawRevision": "sha256:3686fe7103a9e9bf4ffe651e926f9c480cc9557c54620d8b415f27faa52b46e9",
+        "approvalFingerprint": "sha256:44d866fd94425483c395aa9dde2ced1efbcc323257a5d33a4f73cef1abda994f"
+      }
+    }
+  ],
+  "strictAxis": {
+    "why": "A1/A2 声明分歧的判别式。语料与三组对照原本对这条轴零判别力（实测：翻转默认值仍 12/12 绿，15 个 artifact 敏感者 0），故单列一段。两值必须不同。",
+    "artifact": "tasks",
+    "markdown": "# Implementation Plan\n\n## Tasks\n\n- [~] 1. A tilde task\n  - _Requirements: 1.1_\n",
+    "strictTrue": "sha256:cd14f83b15193099e171620996f62873ed208e1593d32b00a5d05d156b633f79",
+    "strictFalse": "sha256:bab8fdddd4c03f7b874b88e1467f6b6ee77a0111117c97db785ffde50d0aab01",
+    "differ": true
+  },
+  "testCounts": {
+    "kiro-spec": {
+      "tests": 154,
+      "fail": 0
+    },
+    "claude-spec": {
+      "tests": 238,
+      "fail": 0
+    },
+    "dsh-spec": {
+      "tests": 249,
+      "fail": 0
+    }
+  }
+}

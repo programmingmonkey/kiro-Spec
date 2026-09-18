@@ -2,6 +2,7 @@
   "name": "claude-spec",
   "version": "1.0.0",
   "private": true,
+  "license": "MIT",
   "description": "Kiro-compatible requirements-first Spec authoring, PreToolUse stage gating, and serial task execution for Claude — local Claude Code CLI by default, Claude Cowork as an explicit alternate topology. collaborative tier.",
   "type": "module",
   "dependencies": {

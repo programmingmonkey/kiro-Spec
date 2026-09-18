@@ -703,7 +703,7 @@ function nextTask(tasks) {
 // here. Kiro also renumbers wave ids by array index, so a wave's `id` must be
 // present and numeric but its actual value carries no meaning.
 //
-// See samples/docs/open-questions.md (Q17) for the executed-extract evidence.
+// Evidence: an executed extraction against the real machine (2026-09-16).
 // ---------------------------------------------------------------------------
 
 // Extract and parse the dependency graph from tasks.md. Returns `undefined`
@@ -837,7 +837,7 @@ function parseTaskList(tasksContent) {
 //
 // Returns `{ waves, warnings }`.
 //
-// 🔴 「没有图」这一态 2026-09-16 **裁决为严格串行**（`research/15` T7）。三条理由：
+// 🔴 「没有图」这一态 2026-09-16 **真机裁决为严格串行**。三条理由：
 //
 //   ① **真机就是串行**：无图时 `getReadyTasksSequential()` 只返回**第一个** ready 叶子，
 //      一次一个；有 wave 信息才允许多路。本仓此前把它当成「一个 wave 装下全部任务」→
@@ -1342,7 +1342,7 @@ async function readMetaForPreserve(ctx, dir) {
 
 // Derive this spec's workflow from every source that carries it, in ONE place.
 //
-// Precedence, and why (第 9 期 T3 · `research/15` §3):
+// Precedence, and why:
 //
 //   ① `.config.kiro` — **真机权威**。Kiro 建 spec 时 MUST 写它（官方 prompt 模板原话），
 //      真机用它选规则表、排文档清单顺序。判定源与真机对齐是本函数存在的理由。
@@ -1403,7 +1403,7 @@ async function deriveWorkflow(ctx, dir) {
   if (config.usable && (config.workflowType === 'fast-task' || config.workflowType === 'verify-first')) {
     notes.push(
       `${CONFIG_KIRO_FILE} 的 workflowType=${config.workflowType} 本仓未建模` +
-      '（真机的文档清单顺序与阶段都不同，见 research/15 T4）—— 本次按既有流程走',
+      '（真机的文档清单顺序与阶段都不同）—— 本次按既有流程走',
     )
   }
 

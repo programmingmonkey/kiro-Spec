@@ -1,6 +1,6 @@
 // `.config.kiro` 的**识别器** —— 真机 Kiro 写在 spec 目录里的类型元数据。
 //
-// 为什么需要它（第 9 期 `research/15` T3）：Kiro 建一个 spec 时，除了三份 md，还会在
+// 为什么需要它：Kiro 建一个 spec 时，除了三份 md，还会在
 // `.kiro/specs/<feature>/` 下写一份 `.config.kiro`，内容是
 //
 //     {"specId": "<uuid>", "workflowType": "...", "specType": "..."}
