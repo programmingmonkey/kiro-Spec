@@ -278,8 +278,8 @@ async function listEntries(port, dir) {
 // Append the signature to the END of tasks.md's `## Notes` section and return
 // the rendered line. Idempotent: an attribution that is already in the file is
 // not repeated.
-export async function appendSignature({ port, dir, summary, env = 'DSH', date } = {}) {
-  const line = renderSignature({ date, env, summary })
+export async function appendSignature({ port, dir, summary, env = 'DSH', date, timeZone } = {}) {
+  const line = renderSignature({ date, env, summary, timeZone })
   const abs = joinPath(dir, 'tasks.md')
 
   let content

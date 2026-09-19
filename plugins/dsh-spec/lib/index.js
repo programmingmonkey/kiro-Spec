@@ -1219,6 +1219,24 @@ async function codexSpecsRoot(ctx, root) {
   }
 }
 
+// `signatureTimeZone` —— 同一份共享档案里的署名基准时区（IANA 名，如 `Asia/Shanghai`）。
+// 与 `plugins/claude-spec/lib/mcp/adapter.mjs` 的 `normaliseSignatureTimeZone` 同源
+// （docs/2026-09-18-claude-spec-plugin-defects.md 第 3 条）：未配置时返回 undefined，
+// `appendSignature`/`todayDate` 照旧回落本机时区，行为不变；配了非法时区名不在此处吞掉，
+// 留给 `Intl.DateTimeFormat`（在 `todayDate` 里）抛出，避免静默回落把「日期错一天」再来一遍。
+async function codexSignatureTimeZone(ctx, root) {
+  const raw = (await readSpecFile(ctx, join(root, CODEX_SPEC_CONFIG)))
+    ?? (await readSpecFile(ctx, join(root, LEGACY_CODEX_SPEC_CONFIG)))
+  if (raw === undefined) return undefined
+  try {
+    const cfg = JSON.parse(raw)
+    const value = cfg && typeof cfg.signatureTimeZone === 'string' ? cfg.signatureTimeZone.trim() : ''
+    return value || undefined
+  } catch {
+    return undefined
+  }
+}
+
 // The Kiro specs parent directory (holds `<feature>/` dirs + `_active`):
 // `.codex/codex-spec.json`'s `specsRoot` (a parent that contains `specs/`),
 // else the default `.kiro`.
@@ -2450,7 +2468,8 @@ function apply(ctx, config = {}) {
         return { rendered: lines.join('\n'), report }
       }
       if (action !== 'sign') throw new Error(`invalid action "${args.action}"; expected 'sign' or 'check'`)
-      const line = await appendSignature({ port: portOf(exec), dir: specDir, summary: args.summary, env: args.env || 'DSH', exec })
+      const timeZone = await codexSignatureTimeZone(ctx, rootOf(exec))
+      const line = await appendSignature({ port: portOf(exec), dir: specDir, summary: args.summary, env: args.env || 'DSH', timeZone, exec })
       return { rendered: `Signed ${join(specDir, 'tasks.md')}:\n${line}`, line }
     },
   }))
