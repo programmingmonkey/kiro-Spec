@@ -1,6 +1,6 @@
 {
   "name": "kiro-spec",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "Kiro-compatible Spec workflow (requirements to design to tasks) for three hosts: DeepSeek Harness, Codex, and Claude.",
   "license": "MIT",

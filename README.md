@@ -207,6 +207,25 @@ CONSUMER_REPO_ROOT=/path/to/your/project npm test
 
 已知的未建模部分、以及刻意保留的差异，列在 [docs/compat.md](docs/compat.md)。
 
+## 版本
+
+**仓库 tag 与插件自身的版本号是两回事，而且刻意保持独立。**
+
+| | 取值 |
+|---|---|
+| 最新仓库 tag | `v1.0.2` |
+| 根 `package.json` | `1.0.2` |
+| `claude-spec` | `1.0.0` |
+| `codex-spec` | `1.0.0` |
+| `dsh-spec` | `0.2.0` |
+
+仓库 tag（`vX.Y.Z`）是对**整套三插件状态的统称**（“这是三个插件作为一个集合的状态”）。
+每个插件在各自的 manifest 中也保留**自己的版本号**，安装后呈现给使用者的也是那个版本号。
+
+两者的解耦是有意的：三个插件的演进速率不同，强行绑定同一个版本号要么会把小改动放大，
+要么会掩盖大改动。因此从 `v1.0.2` Release 下载的 `claude-spec.plugin` 显示为 `1.0.0` ——
+这是插件自身的版本，不是版本错配。
+
 ## 许可
 
 MIT —— 见 [LICENSE](LICENSE)。

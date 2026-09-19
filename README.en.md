@@ -245,8 +245,8 @@ Known un-modelled parts and deliberate differences are listed in [docs/compat.md
 
 | | Value |
 |---|---|
-| latest repo tag | `v1.0.1` |
-| root `package.json` | `1.0.1` |
+| latest repo tag | `v1.0.2` |
+| root `package.json` | `1.0.2` |
 | `claude-spec` | `1.0.0` |
 | `codex-spec` | `1.0.0` |
 | `dsh-spec` | `0.2.0` |
@@ -257,7 +257,7 @@ that shows after installing.
 
 The two are independent on purpose: the three plugins evolve at different rates, and forcing one
 shared number would either overstate a small change or bury a large one. So a `claude-spec.plugin`
-downloaded from release `v1.0.1` reports `1.0.0` — that is the plugin's own version, not a
+downloaded from release `v1.0.2` reports `1.0.0` — that is the plugin's own version, not a
 mismatch.
 
 ## License
